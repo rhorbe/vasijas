@@ -1,0 +1,10 @@
+/.venv/
+/uv.lock
+/install-pyenv-win.ps1
+/.python-version
+.idea/.gitignore
+.idea/misc.xml
+.idea/modules.xml
+.idea/vasijas.iml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
