@@ -26,10 +26,9 @@ def load_env() -> None:
     Carga variables desde .env si existe.
     """
     try:
-        from dotenv import load_dotenv  # pip install python-dotenv
+        from dotenv import load_dotenv
         load_dotenv()
     except Exception:
-        # Si no está python-dotenv, no rompemos nada.
         pass
 
 def project_root() -> Path:
