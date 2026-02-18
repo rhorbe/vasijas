@@ -2,17 +2,21 @@ from __future__ import annotations
 from pathlib import Path
 from .config import project_root
 
+
 def paths() -> dict[str, Path]:
     root = project_root()
+    data = root / "data"
+    models = root / "models"
+    reports = root / "reports"
     return {
         "root": root,
-        "data_originales": root / "data" / "originales",
-        "data_originales_corregidos": root / "data" / "corregidos",
-        "data_clasificados": root / "data" / "clasificados",
-        "data_mitades": root / "data" / "mitades",
-        "data_processed": root / "data" / "processed",
-        "models": root / "models",
-        "reports": root / "reports",
-        "figures": root / "reports" / "figures",
+        "data": root / "data",
+        "data_originales": data / "originales",
+        "data_originales_corregidos": data / "corregidos",
+        "data_clasificados": data / "clasificados",
+        "data_mitades": data / "mitades",
+        "models": models,
+        "reports": reports,
+        "figures": reports / "figures",
         "tables": root / "reports" / "tables",
     }
