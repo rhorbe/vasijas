@@ -1,0 +1,9 @@
+ipykernel>=7.2.0
+load-dotenv>=0.1.0
+matplotlib>=3.10.8
+numpy>=2.4.2
+opencv-python>=4.13.0.92
+pandas-stubs~=3.0.0
+
+[dev]
+pytest

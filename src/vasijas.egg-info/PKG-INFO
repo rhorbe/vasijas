@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: vasijas
+Version: 0.1.0
+Summary: Proyecto de Tesis - Vasijas
+Author-email: Rafael Orbe <rafaelorbe@outlook.com>
+Requires-Python: >=3.11
+Requires-Dist: ipykernel>=7.2.0
+Requires-Dist: load-dotenv>=0.1.0
+Requires-Dist: matplotlib>=3.10.8
+Requires-Dist: numpy>=2.4.2
+Requires-Dist: opencv-python>=4.13.0.92
+Requires-Dist: pandas-stubs~=3.0.0
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
