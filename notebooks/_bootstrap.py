@@ -1,15 +1,55 @@
-# _bootstrap.py (en la raíz del repo)
-from __future__ import annotations
-
-import sys
+from dataclasses import dataclass
 from pathlib import Path
+from types import SimpleNamespace
 
-# Asegura que /src esté en sys.path para poder importar el paquete
-SRC = (Path(__file__).resolve().parent.parent / "src").resolve()
-sys_path_resolved = {Path(p).resolve() for p in sys.path}
-if SRC not in sys_path_resolved:
-    sys.path.insert(0, str(SRC))
+@dataclass(frozen=True)
+class ProjectPaths:
+    ROOT: Path
+    DATA: Path
+    DATA_ORIGINALES: Path
+    DATA_CORREGIDOS: Path
+    DATA_CLASIFICADOS: Path
+    DATA_MITADES: Path
+    MODELS: Path
+    REPORTS: Path
+    FIGURES: Path
+    NOTEBOOKS: Path
 
-from config import setup  # noqa: E402  (import después de tocar sys.path)
+
+def get_paths() -> ProjectPaths:
+    root = _project_root()
+    structure = _build_structure(root)
+    _ensure_directories(structure)
+    return ProjectPaths(**structure)
+
+def _project_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+def _ensure_directories(paths: dict[str, Path]) -> None:
+    for path in paths.values():
+        path.mkdir(parents=True, exist_ok=True)
+
+def _build_structure(root: Path) -> dict[str, Path]:
+    data = root / "data"
+    reports = root / "reports"
+
+    return {
+        "ROOT": root,
+        "DATA": data,
+        "DATA_ORIGINALES": data / "originales",
+        "DATA_CORREGIDOS": data / "corregidos",
+        "DATA_CLASIFICADOS": data / "clasificados",
+        "DATA_MITADES": data / "mitades",
+        "MODELS": root / "models",
+        "REPORTS": reports,
+        "FIGURES": reports / "figures",
+        "NOTEBOOKS": root / "notebooks",
+    }
+
+def setup():
+    root = _project_root()
+    structure = _build_structure(root)
+    _ensure_directories(structure)
+    return SimpleNamespace(**structure)
 
 __all__ = ["setup"]
