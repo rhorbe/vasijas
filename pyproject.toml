@@ -1,6 +1,6 @@
 [project]
 name = "vasijas"
-authors = [{name = "Rafael Orbe", email = "rafaelorbe@outlook.com"}]
+authors = [{ name = "Rafael Orbe", email = "rafaelorbe@outlook.com" }]
 version = "0.1.0"
 description = "Proyecto de Tesis - Vasijas"
 
@@ -16,6 +16,9 @@ dependencies = [
     "torch>=2.10.0",
     "torchvision>=0.25.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [project.optional-dependencies]
 dev = [
