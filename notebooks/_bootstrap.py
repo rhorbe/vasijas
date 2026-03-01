@@ -38,6 +38,7 @@ def _build_structure(root: Path) -> dict[str, Path]:
         "DATA": data,
         "DATA_ORIGINALES": data / "originales",
         "DATA_CORREGIDOS": data / "corregidos",
+        "DATA_UBICADOS": data / "ubicados",
         "DATA_CLASIFICADOS": data / "clasificados",
         "DATA_MITADES": data / "mitades",
         "MODELS": root / "models",
