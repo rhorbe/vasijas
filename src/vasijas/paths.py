@@ -11,7 +11,7 @@ def paths() -> dict[str, Path]:
     return {
         "root": root,
         "data": root / "data",
-        "data_originales": data / "originales",
+        "data_originales": data / "01.originales",
         "data_originales_corregidos": data / "corregidos",
         "data_clasificados": data / "clasificados",
         "data_mitades": data / "mitades",
