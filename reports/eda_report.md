@@ -1,11 +1,11 @@
 # Processing Report
-Fecha: 2026-03-02T17:28:14.101911
+Fecha: 2026-03-11T09:51:01.120244
 
 ## Métricas
 - **cant_ubicaciones_encontradas**: 22
-- **ubicaciones_encontradas**: ['Almedinilla', 'Atalayuelas', 'Baños de la Muela', 'Baza', 'Castellones de Ceal', 'Cazalilla', 'Cerrillo de los Gordos', 'Cerro de la Compañía', 'Estacar de Luciano', 'Estacar de Robarinas', 'Giribaile', 'La Bobadilla', 'La Guardia', 'Loma del Peinado', 'Los Patos', 'Marroquies Bajos', 'Molino de Caldona', 'Puente Tablas', 'Puente del Obispo', 'Puerta Norte', 'Toya', 'Tútugi']
+- **ubicaciones_encontradas**: ['Almedinilla', 'Atalayuelas', 'Baza', 'Baños de la Muela', 'Castellones de Ceal', 'Cazalilla', 'Cerrillo de los Gordos', 'Cerro de la Compañía', 'Estacar de Luciano', 'Estacar de Robarinas', 'Giribaile', 'La Bobadilla', 'La Guardia', 'Loma del Peinado', 'Los Patos', 'Marroquies Bajos', 'Molino de Caldona', 'Puente Tablas', 'Puente del Obispo', 'Puerta Norte', 'Toya', 'Tútugi']
 - **cant_total_perfiles**: 1242
-- **perfiles_por_ubicacion**: [('Molino de Caldona', 3), ('Cerro de la Compañía', 4), ('Puente Tablas', 4), ('Baños de la Muela', 6), ('Giribaile', 7), ('Cazalilla', 12), ('Estacar de Luciano', 16), ('Los Patos', 16), ('Marroquies Bajos', 18), ('Toya', 21), ('Estacar de Robarinas', 27), ('Puente del Obispo', 28), ('Cerrillo de los Gordos', 30), ('Atalayuelas', 35), ('Loma del Peinado', 43), ('La Bobadilla', 51), ('Almedinilla', 66), ('La Guardia', 70), ('Tútugi', 100), ('Puerta Norte', 135), ('Castellones de Ceal', 182), ('Baza', 368)]
+- **perfiles_por_ubicacion**: [('Molino de Caldona', 3), ('Puente Tablas', 4), ('Cerro de la Compañía', 4), ('Baños de la Muela', 6), ('Giribaile', 7), ('Cazalilla', 12), ('Estacar de Luciano', 16), ('Los Patos', 16), ('Marroquies Bajos', 18), ('Toya', 21), ('Estacar de Robarinas', 27), ('Puente del Obispo', 28), ('Cerrillo de los Gordos', 30), ('Atalayuelas', 35), ('Loma del Peinado', 43), ('La Bobadilla', 51), ('Almedinilla', 66), ('La Guardia', 70), ('Tútugi', 100), ('Puerta Norte', 135), ('Castellones de Ceal', 182), ('Baza', 368)]
 - **cant_nombres_invalidos**: 14
 - **nombres_invalidos**: ['CC_07_2(1)', 'CC_07_4(1)', 'CC_07_5(1)', 'CC_10_1(1)', 'CC_10_2(1)', 'CC_11_ 14', 'CC_11_ 15', 'CC_11_ 17', 'CC_11_ 18', 'CC_11_1(1)', 'CC_11_2(1)', 'CC_13_14 1_3', 'CC_13_14 2_1', 'CC_13_14 2_3']
 - **cant_registros_en_metadata**: 1242

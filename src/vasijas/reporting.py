@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+import pandas as pd
 
 
 @dataclass
@@ -24,3 +25,9 @@ class ProcessingReport:
             lines.append(f"- **{k}**: {v}")
 
         output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+@dataclass
+class ProcessingResult:
+    df: pd.DataFrame
+    report: ProcessingReport
