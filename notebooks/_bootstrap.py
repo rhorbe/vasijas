@@ -41,6 +41,7 @@ def _build_structure(root: Path) -> dict[str, Path]:
         "DATA_UBICADOS": data / "03.ubicados",
         "DATA_CLASIFICADOS": data / "04.clasificados",
         "DATA_MITADES": data / "05.mitades",
+        "DATA_FRACCIONES": data / "06.fracciones",
         "MODELS": root / "models",
         "REPORTS": reports,
         "FIGURES": reports / "figures",

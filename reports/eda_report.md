@@ -1,5 +1,5 @@
 # Processing Report
-Fecha: 2026-03-11T09:51:01.120244
+Fecha: 2026-03-18T08:09:26.424823
 
 ## Métricas
 - **cant_ubicaciones_encontradas**: 22
