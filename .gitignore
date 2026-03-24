@@ -10,3 +10,4 @@
 .idea/inspectionProfiles/profiles_settings.xml
 .env
 notebooks/__pycache__/*
+/data
