@@ -5,9 +5,9 @@ import scipy.misc
 import imageio
 import bisect
 import warnings
+from itertools import accumulate
 import pandas as pd
 import shutil
-from torch._utils import _accumulate
 from torch import randperm, utils
 from torchvision import datasets, transforms
 from PIL import Image
@@ -50,7 +50,7 @@ def random_split(dataset, lengths):
         raise ValueError("Sum of input lengths does not equal the length of the input dataset!")
 
     indices = randperm(sum(lengths))
-    return [Subset(dataset, indices[offset - length:offset]) for offset, length in zip(_accumulate(lengths), lengths)]
+    return [Subset(dataset, indices[offset - length:offset]) for offset, length in zip(accumulate(lengths), lengths)]
 
 
 def print_network(net):
