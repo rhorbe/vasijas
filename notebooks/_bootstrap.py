@@ -31,11 +31,11 @@ def _ensure_directories(paths: dict[str, Path]) -> None:
 
 def _build_structure(root: Path) -> dict[str, Path]:
     data = root / "data"
-    reports = root / "reports"
+    notebooks = root / "notebooks"
+    output = root / "output"
 
     return {
         "ROOT": root,
-        "DATA": data,
         "DATA_ORIGINALES": data / "01.originales",
         "DATA_CORREGIDOS": data / "02.corregidos",
         "DATA_UBICADOS": data / "03.ubicados",
@@ -43,10 +43,9 @@ def _build_structure(root: Path) -> dict[str, Path]:
         "DATA_MITADES": data / "05.mitades",
         "DATA_FRACCIONES": data / "06.fracciones",
         "DATA_CENTRADOS": data / "07.centrados",
-        "MODELS": root / "models",
-        "REPORTS": reports,
-        "FIGURES": reports / "figures",
-        "NOTEBOOKS": root / "notebooks",
+        "NOTEBOOKS": notebooks,
+        "OUTPUT_MODELS": output / "models",
+        "OUTPUT_REPORTS": output / "reports",
     }
 
 def setup():
