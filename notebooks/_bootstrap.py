@@ -10,6 +10,7 @@ class ProjectPaths:
     DATA_CORREGIDOS: Path
     DATA_CLASIFICADOS: Path
     DATA_MITADES: Path
+    DATA_UNIFICADO: Path
     MODELS: Path
     REPORTS: Path
     FIGURES: Path
@@ -44,6 +45,7 @@ def _build_structure(root: Path) -> dict[str, Path]:
         "DATA_MITADES": data / "06.mitades",
         "DATA_FRACCIONES": data / "07.fracciones",
         "DATA_CENTRADOS": data / "08.centrados",
+        "DATA_UNIFICADO": data / "09.unificado",
         "NOTEBOOKS": notebooks,
         "OUTPUT_MODELS": output / "models",
         "OUTPUT_REPORTS": output / "reports",

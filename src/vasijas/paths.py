@@ -15,6 +15,7 @@ def paths() -> dict[str, Path]:
         "data_originales_corregidos": data / "corregidos",
         "data_clasificados": data / "clasificados",
         "data_mitades": data / "mitades",
+        "data_unificado": data / "unificado",
         "models": models,
         "reports": reports,
         "figures": reports / "figures",
