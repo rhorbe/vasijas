@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from src.vasijas.files import es_formato_nombre_valido
+
 
 def get_ubicaciones(data: Path) -> list[str]:
     return sorted(
@@ -23,3 +25,14 @@ def contar_perfiles_por_ubicacion(data: Path) -> tuple[int, list[tuple[str, int]
 
 def get_nombres_archivos_perfiles(data: Path) -> set[str]:
     return {p.stem for p in data.rglob("*.png")}
+
+
+def resumir_nombres_invalidos(nombres: set[str]) -> tuple[int, list[str]]:
+    nombres_invalidos = {
+        nombre
+        for nombre in nombres
+        if not es_formato_nombre_valido(nombre)
+    }
+
+    nombres_invalidos_ordenados = sorted(nombres_invalidos)
+    return len(nombres_invalidos_ordenados), nombres_invalidos_ordenados
