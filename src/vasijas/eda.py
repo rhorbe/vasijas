@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from src.vasijas.files import es_formato_nombre_valido
 
 
@@ -36,3 +38,52 @@ def resumir_nombres_invalidos(nombres: set[str]) -> tuple[int, list[str]]:
 
     nombres_invalidos_ordenados = sorted(nombres_invalidos)
     return len(nombres_invalidos_ordenados), nombres_invalidos_ordenados
+
+
+def cargar_metadata(data_originales: Path) -> pd.DataFrame:
+    archivo_csv = data_originales / "metadata.csv"
+    return pd.read_csv(archivo_csv)
+
+
+def resumir_metadata(df: pd.DataFrame, n: int = 5) -> tuple[int, pd.DataFrame]:
+    return len(df), df.head(n)
+
+
+def agregar_marca_identificador_en_fs(
+    df: pd.DataFrame,
+    nombres_archivos: set[str],
+    columna_identificador: str = "Identificador",
+) -> pd.DataFrame:
+    df_resultado = df.copy()
+    df_resultado["id_encontrado_en_fs"] = (
+        df_resultado[columna_identificador]
+        .astype(str)
+        .str.strip()
+        .isin(nombres_archivos)
+    )
+
+    return df_resultado
+
+
+def contar_identificadores_encontrados(df: pd.DataFrame) -> int:
+    return int(df["id_encontrado_en_fs"].sum())
+
+
+def contar_identificadores_no_encontrados(df: pd.DataFrame) -> int:
+    return int((~df["id_encontrado_en_fs"]).sum())
+
+
+def get_identificadores_no_encontrados(
+    df: pd.DataFrame,
+    columna_identificador: str = "Identificador",
+) -> list[str]:
+    ids_no_encontrados = set(
+        df.loc[~df["id_encontrado_en_fs"], columna_identificador]
+        .astype(str)
+        .str.strip()
+    )
+    return sorted(ids_no_encontrados)
+
+
+def contar_identificadores_unicos_no_encontrados(df: pd.DataFrame) -> int:
+    return len(get_identificadores_no_encontrados(df))
