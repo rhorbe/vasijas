@@ -13,6 +13,10 @@ def get_ubicaciones(data: Path) -> list[str]:
     )
 
 
+def contar_ubicaciones(ubicaciones: list[str]) -> int:
+    return len(ubicaciones)
+
+
 def contar_perfiles_por_ubicacion(data: Path) -> tuple[int, list[tuple[str, int]]]:
     conteo_png = {
         ruta_ubicacion.name: len(list(ruta_ubicacion.glob("*.png")))
@@ -29,15 +33,16 @@ def get_nombres_archivos_perfiles(data: Path) -> set[str]:
     return {p.stem for p in data.rglob("*.png")}
 
 
-def resumir_nombres_invalidos(nombres: set[str]) -> tuple[int, list[str]]:
-    nombres_invalidos = {
+def get_nombres_invalidos(nombres: set[str]) -> list[str]:
+    return sorted(
         nombre
         for nombre in nombres
         if not es_formato_nombre_valido(nombre)
-    }
+    )
 
-    nombres_invalidos_ordenados = sorted(nombres_invalidos)
-    return len(nombres_invalidos_ordenados), nombres_invalidos_ordenados
+
+def contar_nombres_invalidos(nombres_invalidos: list[str]) -> int:
+    return len(nombres_invalidos)
 
 
 def cargar_metadata(data_originales: Path) -> pd.DataFrame:
@@ -45,8 +50,12 @@ def cargar_metadata(data_originales: Path) -> pd.DataFrame:
     return pd.read_csv(archivo_csv)
 
 
-def resumir_metadata(df: pd.DataFrame, n: int = 5) -> tuple[int, pd.DataFrame]:
-    return len(df), df.head(n)
+def contar_registros_metadata(df: pd.DataFrame) -> int:
+    return len(df)
+
+
+def get_preview_metadata(df: pd.DataFrame, n: int = 5) -> pd.DataFrame:
+    return df.head(n)
 
 
 def agregar_marca_identificador_en_fs(
