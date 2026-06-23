@@ -1,0 +1,228 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Análisis Exploratorio de los Datos\"\n",
+        "author: \"Rafael Orbe\"\n",
+        "date: today\n",
+        "format:\n",
+        "  html:\n",
+        "    code-fold: false\n",
+        "---\n",
+        "\n",
+        "\n",
+        "# Análisis Exploratorio de los Datos\n"
+      ],
+      "id": "6e22a05c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from src.vasijas.paths import setup\n",
+        "import src.vasijas.eda as eda"
+      ],
+      "id": "3b201961",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "PATHS = setup()"
+      ],
+      "id": "df74aa1d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Ubicaciones\n"
+      ],
+      "id": "c167acd7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Ubicaciones detectadas en los datos 01.originales\n",
+        "ubicaciones_ordenadas = eda.get_ubicaciones(PATHS.DATA_ORIGINALES)\n",
+        "cantidad_ubicaciones = eda.contar_ubicaciones(ubicaciones_ordenadas)\n",
+        "\n",
+        "print(f\"Cantidad de ubicaciones: {cantidad_ubicaciones}\\n\")\n",
+        "for i, ubicacion in enumerate(ubicaciones_ordenadas, start=1):\n",
+        "    print(f\"{i}.\", ubicacion)"
+      ],
+      "id": "770c9d20",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Perfiles por ubicación\n"
+      ],
+      "id": "890092a3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Total de archivos y cantidad de perfiles encontrados por ubicación\n",
+        "total_png, conteo_png_ordenado = eda.contar_perfiles_por_ubicacion(PATHS.DATA_ORIGINALES)\n",
+        "\n",
+        "print(f\"Total de archivos PNG (perfiles) en filesystem: {total_png}\\n\")\n",
+        "for ubicacion, conteo in conteo_png_ordenado:\n",
+        "    print(f\"{ubicacion}: {conteo}\")"
+      ],
+      "id": "b57c3e3a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Nombres de archivos\n"
+      ],
+      "id": "fe027de5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "nombres_archivos_perfiles = eda.get_nombres_archivos_perfiles(PATHS.DATA_ORIGINALES)\n",
+        "\n",
+        "print(f\"Muestra nombre de archivos:{list(nombres_archivos_perfiles)[:10]}\")"
+      ],
+      "id": "5ed3e03c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Verificar cuáles nombres no cumplen con el formato\n",
+        "nombres_invalidos_ordenados = eda.get_nombres_invalidos(nombres_archivos_perfiles)\n",
+        "cantidad_invalidos = eda.contar_nombres_invalidos(nombres_invalidos_ordenados)\n",
+        "\n",
+        "print(f\"Cantidad de nombres que NO cumplen el formato: {cantidad_invalidos}\\n\")\n",
+        "print(\"Detalle de nombres inválidos:\")\n",
+        "for nombre in nombres_invalidos_ordenados:\n",
+        "    print(f\"  {nombre}\")"
+      ],
+      "id": "663aad50",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Metadata\n"
+      ],
+      "id": "360d7add"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Dataframe\n",
+        "df = eda.cargar_metadata(PATHS.DATA_ORIGINALES)\n",
+        "cantidad_registros = eda.contar_registros_metadata(df)\n",
+        "preview_metadata = eda.get_preview_metadata(df)\n",
+        "\n",
+        "print(f\"Cantidad de registros en metadata.csv: {cantidad_registros}\\n\")\n",
+        "print(preview_metadata)"
+      ],
+      "id": "9c1e6618",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(df.info())"
+      ],
+      "id": "6c6d4b56",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Cruce metadata y filesystem\n"
+      ],
+      "id": "8fa0b79c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Identificadores del dataset que aparecen en los nombres de los archivos\n",
+        "df = eda.agregar_marca_identificador_en_fs(df, nombres_archivos_perfiles)\n",
+        "cantidad_encontrados = eda.contar_identificadores_encontrados(df)\n",
+        "cantidad_no_encontrados = eda.contar_identificadores_no_encontrados(df)\n",
+        "\n",
+        "print(f\"Cantidad de Identificadores que aparecen en los nombres de los archivos: {cantidad_encontrados}\")\n",
+        "print(f\"Cantidad de Identificadores que NO aparecen en los nombres de los archivos: {cantidad_no_encontrados}\\n\")"
+      ],
+      "id": "2bb80c55",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Detalle de Identificadores del dataset que no encontrados en el conjunto de nombres de archivos:\n",
+        "ids_no_encontrados_ordenados = eda.get_identificadores_no_encontrados(df)\n",
+        "cantidad_no_encontrados = eda.contar_identificadores_unicos_no_encontrados(df)\n",
+        "\n",
+        "print(\"Cant. de Identificadores que aparecen en el metadata que no se corresponde con el nombre de un archivo PNG:\", cantidad_no_encontrados)\n",
+        "print(\"Detalle de identificadores no encontrados en archivos PNG:\")\n",
+        "print(ids_no_encontrados_ordenados)"
+      ],
+      "id": "4c422245",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Archivos PNG sin registro en dataset\n",
+        "ids_metadata = eda.get_identificadores_metadata(df)\n",
+        "archivos_sin_registro_ordenados = eda.get_archivos_sin_registro(nombres_archivos_perfiles, ids_metadata)\n",
+        "cantidad_archivos_sin_registro = eda.contar_archivos_sin_registro(nombres_archivos_perfiles, ids_metadata)\n",
+        "\n",
+        "print(f\"Cantidad de archivos PNG sin registro en metadata: {cantidad_archivos_sin_registro}\")\n",
+        "print(\"Detalle de archivos PNG no encontrados en metadata.csv:\")\n",
+        "print(archivos_sin_registro_ordenados)"
+      ],
+      "id": "82bd1fa3",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/rafael/Dev/vasijas/.venv/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
