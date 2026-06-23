@@ -5,7 +5,7 @@ from pathlib import Path
 PATTERN = r'^[A-Za-z0-9_-]+$'
 
 
-def validar_formato_nombre(cadena: str) -> bool:
+def es_formato_nombre_valido(cadena: str) -> bool:
     """
     Valida que una cadena cumpla con el formato especificado.
 
