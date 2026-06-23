@@ -87,3 +87,24 @@ def get_identificadores_no_encontrados(
 
 def contar_identificadores_unicos_no_encontrados(df: pd.DataFrame) -> int:
     return len(get_identificadores_no_encontrados(df))
+
+
+def get_identificadores_metadata(
+    df: pd.DataFrame,
+    columna_identificador: str = "Identificador",
+) -> set[str]:
+    return set(df[columna_identificador].astype(str).str.strip())
+
+
+def get_archivos_sin_registro(
+    nombres_archivos: set[str],
+    ids_metadata: set[str],
+) -> list[str]:
+    return sorted(nombres_archivos - ids_metadata)
+
+
+def contar_archivos_sin_registro(
+    nombres_archivos: set[str],
+    ids_metadata: set[str],
+) -> int:
+    return len(get_archivos_sin_registro(nombres_archivos, ids_metadata))
