@@ -27,5 +27,6 @@ where = ["src"]
 
 [project.optional-dependencies]
 dev = [
+    "pre-commit",
     "pytest"
 ]
