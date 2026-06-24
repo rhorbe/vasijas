@@ -2,15 +2,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.vasijas.files import es_formato_nombre_valido
+from vasijas.files import es_formato_nombre_valido
 
 
 def get_ubicaciones(data: Path) -> list[str]:
-    return sorted(
-        item.name
-        for item in data.iterdir()
-        if item.is_dir()
-    )
+    return sorted(item.name for item in data.iterdir() if item.is_dir())
 
 
 def contar_ubicaciones(ubicaciones: list[str]) -> int:
@@ -34,11 +30,7 @@ def get_nombres_archivos_perfiles(data: Path) -> set[str]:
 
 
 def get_nombres_invalidos(nombres: set[str]) -> list[str]:
-    return sorted(
-        nombre
-        for nombre in nombres
-        if not es_formato_nombre_valido(nombre)
-    )
+    return sorted(nombre for nombre in nombres if not es_formato_nombre_valido(nombre))
 
 
 def contar_nombres_invalidos(nombres_invalidos: list[str]) -> int:

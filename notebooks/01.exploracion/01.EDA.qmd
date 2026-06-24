@@ -5,34 +5,35 @@ jupyter: python3
 
 
 
-
 ```{python}
 #| collapsed: true
-#| ExecuteTime: {end_time: '2026-06-24T02:40:08.528934800Z', start_time: '2026-06-24T02:40:08.128864800Z'}
-from src.vasijas.paths import setup
-import src.vasijas.eda as eda
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.488025300Z', start_time: '2026-06-24T22:01:41.132201500Z'}
+from vasijas.paths import setup
+import vasijas.eda as eda
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.469805382Z', start_time: '2026-06-23T13:06:54.462620919Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.514545400Z', start_time: '2026-06-24T22:01:41.492026600Z'}
 PATHS = setup()
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.499697289Z', start_time: '2026-06-23T13:06:54.471371522Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.748738Z', start_time: '2026-06-24T22:01:41.518546800Z'}
 # Ubicaciones detectadas en los datos 01.originales
 ubicaciones_ordenadas = eda.get_ubicaciones(PATHS.DATA_ORIGINALES)
 cantidad_ubicaciones = eda.contar_ubicaciones(ubicaciones_ordenadas)
 
 print(f"Cantidad de ubicaciones: {cantidad_ubicaciones}\n")
-for i, ubicacion in enumerate(ubicaciones_ordenadas , start=1):
+for i, ubicacion in enumerate(ubicaciones_ordenadas, start=1):
     print(f"{i}.", ubicacion)
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.537000259Z', start_time: '2026-06-23T13:06:54.506076918Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.807028300Z', start_time: '2026-06-24T22:01:41.750739400Z'}
 # Total de archivos y cantidad de perfiles encontrados por ubicación
-total_png, conteo_png_ordenado = eda.contar_perfiles_por_ubicacion(PATHS.DATA_ORIGINALES)
+total_png, conteo_png_ordenado = eda.contar_perfiles_por_ubicacion(
+    PATHS.DATA_ORIGINALES
+)
 
 print(f"Total de archivos PNG (perfiles) en filesystem: {total_png}\n")
 for ubicacion, conteo in conteo_png_ordenado:
@@ -40,14 +41,14 @@ for ubicacion, conteo in conteo_png_ordenado:
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.549412435Z', start_time: '2026-06-23T13:06:54.538566240Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.855264100Z', start_time: '2026-06-24T22:01:41.811021Z'}
 nombres_archivos_perfiles = eda.get_nombres_archivos_perfiles(PATHS.DATA_ORIGINALES)
 
 print(f"Muestra nombre de archivos:{list(nombres_archivos_perfiles)[:10]}")
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.558748926Z', start_time: '2026-06-23T13:06:54.550514640Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.898296800Z', start_time: '2026-06-24T22:01:41.857262100Z'}
 # Verificar cuáles nombres no cumplen con el formato
 nombres_invalidos_ordenados = eda.get_nombres_invalidos(nombres_archivos_perfiles)
 cantidad_invalidos = eda.contar_nombres_invalidos(nombres_invalidos_ordenados)
@@ -59,7 +60,7 @@ for nombre in nombres_invalidos_ordenados:
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.575911798Z', start_time: '2026-06-23T13:06:54.559999173Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.931211800Z', start_time: '2026-06-24T22:01:41.900292200Z'}
 # Dataframe
 df = eda.cargar_metadata(PATHS.DATA_ORIGINALES)
 cantidad_registros = eda.contar_registros_metadata(df)
@@ -70,42 +71,55 @@ print(preview_metadata)
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.592989922Z', start_time: '2026-06-23T13:06:54.577651703Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:41.988087300Z', start_time: '2026-06-24T22:01:41.932214600Z'}
 print(df.info())
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.604181241Z', start_time: '2026-06-23T13:06:54.594210957Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:42.015973900Z', start_time: '2026-06-24T22:01:41.991086900Z'}
 # Identificadores del dataset que aparecen en los nombres de los archivos
 df = eda.agregar_marca_identificador_en_fs(df, nombres_archivos_perfiles)
 cantidad_encontrados = eda.contar_identificadores_encontrados(df)
 cantidad_no_encontrados = eda.contar_identificadores_no_encontrados(df)
 
-print(f"Cantidad de Identificadores que aparecen en los nombres de los archivos: {cantidad_encontrados}")
-print(f"Cantidad de Identificadores que NO aparecen en los nombres de los archivos: {cantidad_no_encontrados}\n")
+print(
+    f"Cantidad de Identificadores que aparecen en los nombres de los archivos: {cantidad_encontrados}"
+)
+print(
+    f"Cantidad de Identificadores que NO aparecen en los nombres de los archivos: {cantidad_no_encontrados}\n"
+)
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.616197935Z', start_time: '2026-06-23T13:06:54.605223362Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:42.045142600Z', start_time: '2026-06-24T22:01:42.017978700Z'}
 # Detalle de Identificadores del dataset que no encontrados en el conjunto de nombres de archivos:
 
 ids_no_encontrados_ordenados = eda.get_identificadores_no_encontrados(df)
 cantidad_no_encontrados = eda.contar_identificadores_unicos_no_encontrados(df)
 
-print("Cant. de Identificadores que aparecen en el metadata que no se corresponde con el nombre de un archivo PNG:", cantidad_no_encontrados)
+print(
+    "Cant. de Identificadores que aparecen en el metadata que no se corresponde con el nombre de un archivo PNG:",
+    cantidad_no_encontrados,
+)
 print("Detalle de identificadores no encontrados en archivos PNG:")
 print(ids_no_encontrados_ordenados)
 ```
 
 ```{python}
-#| ExecuteTime: {end_time: '2026-06-23T13:06:54.626809493Z', start_time: '2026-06-23T13:06:54.617151030Z'}
+#| ExecuteTime: {end_time: '2026-06-24T22:01:42.073666900Z', start_time: '2026-06-24T22:01:42.048143900Z'}
 # Archivos PNG sin registro en dataset
 
 ids_metadata = eda.get_identificadores_metadata(df)
-archivos_sin_registro_ordenados = eda.get_archivos_sin_registro(nombres_archivos_perfiles, ids_metadata)
-cantidad_archivos_sin_registro = eda.contar_archivos_sin_registro(nombres_archivos_perfiles, ids_metadata)
+archivos_sin_registro_ordenados = eda.get_archivos_sin_registro(
+    nombres_archivos_perfiles, ids_metadata
+)
+cantidad_archivos_sin_registro = eda.contar_archivos_sin_registro(
+    nombres_archivos_perfiles, ids_metadata
+)
 
-print(f"Cantidad de archivos PNG sin registro en metadata: {cantidad_archivos_sin_registro}")
+print(
+    f"Cantidad de archivos PNG sin registro en metadata: {cantidad_archivos_sin_registro}"
+)
 print("Detalle de archivos PNG no encontrados en metadata.csv:")
 print(archivos_sin_registro_ordenados)
 ```

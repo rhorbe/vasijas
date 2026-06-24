@@ -1,0 +1,445 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "6fca7a15",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "title: Análisis Exploratorio de los Datos\n",
+    "jupyter: python3\n",
+    "---\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "bf4d3d0c",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.488025300Z",
+     "start_time": "2026-06-24T22:01:41.132201500Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "from vasijas.paths import setup\n",
+    "import vasijas.eda as eda"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "9afcec5e",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.514545400Z",
+     "start_time": "2026-06-24T22:01:41.492026600Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "PATHS = setup()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "820775d1",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.748738Z",
+     "start_time": "2026-06-24T22:01:41.518546800Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Cantidad de ubicaciones: 22\n",
+      "\n",
+      "1. Almedinilla\n",
+      "2. Atalayuelas\n",
+      "3. Baños de la Muela\n",
+      "4. Baza\n",
+      "5. Castellones de Ceal\n",
+      "6. Cazalilla\n",
+      "7. Cerrillo de los Gordos\n",
+      "8. Cerro de la Compañía\n",
+      "9. Estacar de Luciano\n",
+      "10. Estacar de Robarinas\n",
+      "11. Giribaile\n",
+      "12. La Bobadilla\n",
+      "13. La Guardia\n",
+      "14. Loma del Peinado\n",
+      "15. Los Patos\n",
+      "16. Marroquies Bajos\n",
+      "17. Molino de Caldona\n",
+      "18. Puente Tablas\n",
+      "19. Puente del Obispo\n",
+      "20. Puerta Norte\n",
+      "21. Toya\n",
+      "22. Tútugi\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Ubicaciones detectadas en los datos 01.originales\n",
+    "ubicaciones_ordenadas = eda.get_ubicaciones(PATHS.DATA_ORIGINALES)\n",
+    "cantidad_ubicaciones = eda.contar_ubicaciones(ubicaciones_ordenadas)\n",
+    "\n",
+    "print(f\"Cantidad de ubicaciones: {cantidad_ubicaciones}\\n\")\n",
+    "for i, ubicacion in enumerate(ubicaciones_ordenadas, start=1):\n",
+    "    print(f\"{i}.\", ubicacion)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "353d6177",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.807028300Z",
+     "start_time": "2026-06-24T22:01:41.750739400Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Total de archivos PNG (perfiles) en filesystem: 1242\n",
+      "\n",
+      "Molino de Caldona: 3\n",
+      "Cerro de la Compañía: 4\n",
+      "Puente Tablas: 4\n",
+      "Baños de la Muela: 6\n",
+      "Giribaile: 7\n",
+      "Cazalilla: 12\n",
+      "Estacar de Luciano: 16\n",
+      "Los Patos: 16\n",
+      "Marroquies Bajos: 18\n",
+      "Toya: 21\n",
+      "Estacar de Robarinas: 27\n",
+      "Puente del Obispo: 28\n",
+      "Cerrillo de los Gordos: 30\n",
+      "Atalayuelas: 35\n",
+      "Loma del Peinado: 43\n",
+      "La Bobadilla: 51\n",
+      "Almedinilla: 66\n",
+      "La Guardia: 70\n",
+      "Tútugi: 100\n",
+      "Puerta Norte: 135\n",
+      "Castellones de Ceal: 182\n",
+      "Baza: 368\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Total de archivos y cantidad de perfiles encontrados por ubicación\n",
+    "total_png, conteo_png_ordenado = eda.contar_perfiles_por_ubicacion(\n",
+    "    PATHS.DATA_ORIGINALES\n",
+    ")\n",
+    "\n",
+    "print(f\"Total de archivos PNG (perfiles) en filesystem: {total_png}\\n\")\n",
+    "for ubicacion, conteo in conteo_png_ordenado:\n",
+    "    print(f\"{ubicacion}: {conteo}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "43e60685",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.855264100Z",
+     "start_time": "2026-06-24T22:01:41.811021Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Muestra nombre de archivos:['BA_177_3', 'CC_05_5', 'CC_06_6', 'CC_21_2', 'PN_96_797', 'LP_09_2', 'BA_102_3', 'PO_06', 'CC_07', 'BA_99_1']"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "nombres_archivos_perfiles = eda.get_nombres_archivos_perfiles(PATHS.DATA_ORIGINALES)\n",
+    "\n",
+    "print(f\"Muestra nombre de archivos:{list(nombres_archivos_perfiles)[:10]}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "657b8eef",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.898296800Z",
+     "start_time": "2026-06-24T22:01:41.857262100Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Cantidad de nombres que NO cumplen el formato: 14\n",
+      "\n",
+      "Detalle de nombres inválidos:\n",
+      "  CC_07_2(1)\n",
+      "  CC_07_4(1)\n",
+      "  CC_07_5(1)\n",
+      "  CC_10_1(1)\n",
+      "  CC_10_2(1)\n",
+      "  CC_11_ 14\n",
+      "  CC_11_ 15\n",
+      "  CC_11_ 17\n",
+      "  CC_11_ 18\n",
+      "  CC_11_1(1)\n",
+      "  CC_11_2(1)\n",
+      "  CC_13_14 1_3\n",
+      "  CC_13_14 2_1\n",
+      "  CC_13_14 2_3\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Verificar cuáles nombres no cumplen con el formato\n",
+    "nombres_invalidos_ordenados = eda.get_nombres_invalidos(nombres_archivos_perfiles)\n",
+    "cantidad_invalidos = eda.contar_nombres_invalidos(nombres_invalidos_ordenados)\n",
+    "\n",
+    "print(f\"Cantidad de nombres que NO cumplen el formato: {cantidad_invalidos}\\n\")\n",
+    "print(\"Detalle de nombres inválidos:\")\n",
+    "for nombre in nombres_invalidos_ordenados:\n",
+    "    print(f\"  {nombre}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "06f942d5",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.931211800Z",
+     "start_time": "2026-06-24T22:01:41.900292200Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Cantidad de registros en metadata.csv: 1242\n",
+      "\n",
+      "  Identificador Tiene asa Tendencia Formal  Borde Cuello  Cuerpo  Base  \\\n",
+      "0        AL_03A        No               II      1      B       2     2   \n",
+      "1        AL_03B        No               II      1      B       2     2   \n",
+      "2        AL_03C        No               II      1      B       2     2   \n",
+      "3        AL_03D        No               II      1      B       2     2   \n",
+      "4        AL_03E        No               II      1      B       2     2   \n",
+      "\n",
+      "   Clase Ana  Diametro Borde  Diametro Base  Altura Total Cronologia  \n",
+      "0       11.0             182             54            53      ibero  \n",
+      "1       11.0             178             57            46      ibero  \n",
+      "2       11.0             185             56            49      ibero  \n",
+      "3       11.0             160             41            45      ibero  \n",
+      "4       11.0             164             54            44      ibero  \n"
+     ]
+    }
+   ],
+   "source": [
+    "# Dataframe\n",
+    "df = eda.cargar_metadata(PATHS.DATA_ORIGINALES)\n",
+    "cantidad_registros = eda.contar_registros_metadata(df)\n",
+    "preview_metadata = eda.get_preview_metadata(df)\n",
+    "\n",
+    "print(f\"Cantidad de registros en metadata.csv: {cantidad_registros}\\n\")\n",
+    "print(preview_metadata)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "f42e55c4",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:41.988087300Z",
+     "start_time": "2026-06-24T22:01:41.932214600Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.DataFrame'>\n",
+      "RangeIndex: 1242 entries, 0 to 1241\n",
+      "Data columns (total 12 columns):\n",
+      " #   Column            Non-Null Count  Dtype  \n",
+      "---  ------            --------------  -----  \n",
+      " 0   Identificador     1242 non-null   str    \n",
+      " 1   Tiene asa         1242 non-null   str    \n",
+      " 2   Tendencia Formal  1242 non-null   str    \n",
+      " 3   Borde             1242 non-null   int64  \n",
+      " 4   Cuello            1242 non-null   str    \n",
+      " 5   Cuerpo            1242 non-null   int64  \n",
+      " 6   Base              1242 non-null   int64  \n",
+      " 7   Clase Ana         1081 non-null   float64\n",
+      " 8   Diametro Borde    1242 non-null   int64  \n",
+      " 9   Diametro Base     1242 non-null   int64  \n",
+      " 10  Altura Total      1242 non-null   int64  \n",
+      " 11  Cronologia        1241 non-null   str    \n",
+      "dtypes: float64(1), int64(6), str(5)\n",
+      "memory usage: 116.6 KB\n",
+      "None\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.info())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "042e56eb",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:42.015973900Z",
+     "start_time": "2026-06-24T22:01:41.991086900Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Cantidad de Identificadores que aparecen en los nombres de los archivos: 1177\n",
+      "Cantidad de Identificadores que NO aparecen en los nombres de los archivos: 65\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Identificadores del dataset que aparecen en los nombres de los archivos\n",
+    "df = eda.agregar_marca_identificador_en_fs(df, nombres_archivos_perfiles)\n",
+    "cantidad_encontrados = eda.contar_identificadores_encontrados(df)\n",
+    "cantidad_no_encontrados = eda.contar_identificadores_no_encontrados(df)\n",
+    "\n",
+    "print(\n",
+    "    f\"Cantidad de Identificadores que aparecen en los nombres de los archivos: {cantidad_encontrados}\"\n",
+    ")\n",
+    "print(\n",
+    "    f\"Cantidad de Identificadores que NO aparecen en los nombres de los archivos: {cantidad_no_encontrados}\\n\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "57a57c38",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:42.045142600Z",
+     "start_time": "2026-06-24T22:01:42.017978700Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Cant. de Identificadores que aparecen en el metadata que no se corresponde con el nombre de un archivo PNG: 65\n",
+      "Detalle de identificadores no encontrados en archivos PNG:\n",
+      "['Al_03G', 'Al_06A', 'BA115_5', 'BA132_1', 'BO3_2_1', 'BO_10_1', 'BO_10_1plato', 'BO_11a_1', 'BO_11a_2', 'BO_11a_3', 'BO_11b_1', 'BO_14_1', 'BO_14_2', 'BO_16_1', 'BO_17_1', 'BO_18_1', 'BO_18_2', 'BO_19_1', 'BO_19_2', 'BO_20_1', 'BO_21_1', 'BO_21_2', 'BO_22_1', 'BO_23_1', 'BO_24_1', 'BO_26_1', 'BO_27_1', 'BO_27_2', 'BO_28_1', 'BO_28_2', 'BO_29_1', 'BO_29_2', 'BO_29_3', 'BO_29_4', 'BO_29_5', 'BO_30_1', 'BO_30_2', 'BO_31_1', 'BO_31_2', 'BO_31_3', 'BO_31_4', 'BO_3_1', 'BO_4_1', 'BO_4_2', 'BO_4_3', 'BO_5_1', 'BO_5_1plato', 'BO_6_1', 'BO_6_2', 'BO_7_1', 'BO_7_2', 'BO_9_1', 'BO_9_2', 'BO_9_3', 'BO_9_4', 'CC0_8_2', 'CC_11_14', 'CC_11_15', 'CC_11_17', 'CC_11_18', 'CC_13_14_1_3', 'CC_13_14_2_1', 'CC_13_14_2_3', 'ER_23_1', 'PN10_1']\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Detalle de Identificadores del dataset que no encontrados en el conjunto de nombres de archivos:\n",
+    "\n",
+    "ids_no_encontrados_ordenados = eda.get_identificadores_no_encontrados(df)\n",
+    "cantidad_no_encontrados = eda.contar_identificadores_unicos_no_encontrados(df)\n",
+    "\n",
+    "print(\n",
+    "    \"Cant. de Identificadores que aparecen en el metadata que no se corresponde con el nombre de un archivo PNG:\",\n",
+    "    cantidad_no_encontrados,\n",
+    ")\n",
+    "print(\"Detalle de identificadores no encontrados en archivos PNG:\")\n",
+    "print(ids_no_encontrados_ordenados)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "9a25ee4a",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2026-06-24T22:01:42.073666900Z",
+     "start_time": "2026-06-24T22:01:42.048143900Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Cantidad de archivos PNG sin registro en metadata: 65\n",
+      "Detalle de archivos PNG no encontrados en metadata.csv:\n",
+      "['AL_03G', 'AL_06A', 'BA_115_5', 'BA_132_1', 'BO10_1', 'BO10_1plato', 'BO11a_1', 'BO11a_2', 'BO11a_3', 'BO11b_1', 'BO14_1', 'BO14_2', 'BO16_1', 'BO17_1', 'BO18_1', 'BO18_2', 'BO19_1', 'BO19_2', 'BO20_1', 'BO21_1', 'BO21_2', 'BO22_1', 'BO23_1', 'BO24_1', 'BO26_1', 'BO27_1', 'BO27_2', 'BO28_1', 'BO28_2', 'BO29_1', 'BO29_2', 'BO29_3', 'BO29_4', 'BO29_5', 'BO30_1', 'BO30_2', 'BO31_1', 'BO31_2', 'BO31_3', 'BO31_4', 'BO32_1', 'BO3_1', 'BO4_1', 'BO4_2', 'BO4_3', 'BO5_1', 'BO5_1plato', 'BO6_1', 'BO6_2', 'BO7_1', 'BO7_2', 'BO9_1', 'BO9_2', 'BO9_3', 'BO9_4', 'CC_08_2', 'CC_11_ 14', 'CC_11_ 15', 'CC_11_ 17', 'CC_11_ 18', 'CC_13_14 1_3', 'CC_13_14 2_1', 'CC_13_14 2_3', 'ER_23-1', 'PN_10_1']\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Archivos PNG sin registro en dataset\n",
+    "\n",
+    "ids_metadata = eda.get_identificadores_metadata(df)\n",
+    "archivos_sin_registro_ordenados = eda.get_archivos_sin_registro(\n",
+    "    nombres_archivos_perfiles, ids_metadata\n",
+    ")\n",
+    "cantidad_archivos_sin_registro = eda.contar_archivos_sin_registro(\n",
+    "    nombres_archivos_perfiles, ids_metadata\n",
+    ")\n",
+    "\n",
+    "print(\n",
+    "    f\"Cantidad de archivos PNG sin registro en metadata: {cantidad_archivos_sin_registro}\"\n",
+    ")\n",
+    "print(\"Detalle de archivos PNG no encontrados en metadata.csv:\")\n",
+    "print(archivos_sin_registro_ordenados)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3",
+   "path": "C:\\Users\\rafae\\Dev\\vasijas\\.venv\\share\\jupyter\\kernels\\python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

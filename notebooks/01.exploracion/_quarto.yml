@@ -4,6 +4,12 @@ project:
 
 jupyter: python3
 
+author:
+  Rafael Horacio Orbe
+
+title:
+  Análisis Exploratorio de los Datos
+
 execute:
   echo: true
   warning: false
