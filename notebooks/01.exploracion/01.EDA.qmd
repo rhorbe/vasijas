@@ -8,6 +8,15 @@ jupyter: python3
 ```{python}
 #| collapsed: true
 #| ExecuteTime: {end_time: '2026-06-24T22:01:41.488025300Z', start_time: '2026-06-24T22:01:41.132201500Z'}
+from pathlib import Path
+import sys
+
+PROJECT_ROOT = next(
+    parent for parent in [Path.cwd(), *Path.cwd().parents]
+    if (parent / "pyproject.toml").exists()
+)
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+
 from vasijas.paths import setup
 import vasijas.eda as eda
 ```
