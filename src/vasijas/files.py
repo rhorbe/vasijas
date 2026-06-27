@@ -1,8 +1,9 @@
 import re
+import shutil
 import unicodedata
 from pathlib import Path
 
-PATTERN = r'^[A-Za-z0-9_-]+$'
+PATTERN = r"^[A-Za-z0-9_-]+$"
 
 
 def es_formato_nombre_valido(cadena: str) -> bool:
@@ -56,3 +57,32 @@ def normalizar_nombre(nombre: str) -> str:
         stem = stem[:2] + "_" + stem[2:]
 
     return f"{stem}{suffix}"
+
+
+def copiar_png_normalizados_por_ubicacion(
+    ruta_origen: Path,
+    ruta_destino: Path,
+) -> list[Path]:
+    """
+    Copia archivos PNG desde subdirectorios de origen hacia destino,
+    preservando cada ubicación y normalizando los nombres de archivo.
+    """
+    destinos: list[Path] = []
+
+    rutas_ubicaciones = [ruta for ruta in ruta_origen.iterdir() if ruta.is_dir()]
+
+    for ruta_ubicacion in rutas_ubicaciones:
+        nombre_ubicacion = ruta_ubicacion.name
+
+        ruta_destino_ubicacion = ruta_destino / nombre_ubicacion
+        ruta_destino_ubicacion.mkdir(parents=True, exist_ok=True)
+
+        archivos_png = list(ruta_ubicacion.glob("*.png"))
+
+        for archivo in archivos_png:
+            nombre_normalizado = normalizar_nombre(archivo.name)
+            destino = ruta_destino_ubicacion / nombre_normalizado
+            shutil.copy2(archivo, destino)
+            destinos.append(destino)
+
+    return destinos
