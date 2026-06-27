@@ -2,6 +2,8 @@ README.md
 pyproject.toml
 src/vasijas/__init__.py
 src/vasijas/config.py
+src/vasijas/eda.py
+src/vasijas/files.py
 src/vasijas/paths.py
 src/vasijas/reporting.py
 src/vasijas.egg-info/PKG-INFO

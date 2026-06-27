@@ -7,11 +7,21 @@ Requires-Python: >=3.11
 Requires-Dist: ipykernel>=7.2.0
 Requires-Dist: load-dotenv>=0.1.0
 Requires-Dist: matplotlib>=3.10.8
+Requires-Dist: nbconvert>=7.16.6
+Requires-Dist: notebook>=7.6.0
 Requires-Dist: numpy>=2.4.2
 Requires-Dist: opencv-python>=4.13.0.92
-Requires-Dist: pandas-stubs~=3.0.0
+Requires-Dist: pandas>=3.0.1
+Requires-Dist: pandas-stubs~=3.0.1
+Requires-Dist: pyyaml>=6.0.3
+Requires-Dist: scikit-image>=0.26.0
+Requires-Dist: scikit-learn>=1.8.0
 Requires-Dist: scipy>=1.17.1
+Requires-Dist: scipy-stubs>=1.17.1.1
+Requires-Dist: seaborn>=0.13.2
 Requires-Dist: torch>=2.10.0
 Requires-Dist: torchvision>=0.25.0
 Provides-Extra: dev
+Requires-Dist: pre-commit; extra == "dev"
 Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
