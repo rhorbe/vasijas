@@ -5,8 +5,20 @@ format: html
 
 # Vasijas
 
-Este es el índice del proyecto.
+Índice de reportes generados por el proyecto.
 
-## Notebooks
+## Exploración
 
-- [EDA](output/reports/notebooks/01.exploracion/01.EDA.html)
+- [01. EDA](notebooks/01.exploracion/01.EDA.html)
+
+## Preparación
+
+- [02. Normalización de nombres](notebooks/02.preparacion/02.Normalizacion_nombres.html)
+- [03. Agregado de ubicación a dataset](notebooks/02.preparacion/03.Agregado_de_ubicacion_a_dataset.html)
+- [04. Clasificación de perfiles](notebooks/02.preparacion/04.Clasificacion_de_perfiles.html)
+- [05. Conversión a imágenes cuadradas](notebooks/02.preparacion/05.Conversion_a_imagenes_cuadradas.html)
+- [06. Corte en mitades](notebooks/02.preparacion/06.Corte_en_mitades.html)
+- [07. Corte en fracciones](notebooks/02.preparacion/07.Corte_en_fracciones.html)
+- [08. Centrado de fracciones](notebooks/02.preparacion/08.Centrado_de_fracciones.html)
+- [09. Prueba de transformaciones](notebooks/02.preparacion/09.Prueba_de_transformaciones.html)
+- [10. Unión de datasets](notebooks/02.preparacion/10.Union_de_datasets.html)

@@ -6,6 +6,13 @@ project:
     - notebooks/01.exploracion/01.EDA.ipynb
     - notebooks/02.preparacion/02.Normalizacion_nombres.ipynb
     - notebooks/02.preparacion/03.Agregado_de_ubicacion_a_dataset.ipynb
+    - notebooks/02.preparacion/04.Clasificacion_de_perfiles.ipynb
+    - notebooks/02.preparacion/05.Conversion_a_imagenes_cuadradas.ipynb
+    - notebooks/02.preparacion/06.Corte_en_mitades.ipynb
+    - notebooks/02.preparacion/07.Corte_en_fracciones.ipynb
+    - notebooks/02.preparacion/08.Centrado_de_fracciones.ipynb
+    - notebooks/02.preparacion/09.Prueba_de_transformaciones.ipynb
+    - notebooks/02.preparacion/10.Union_de_datasets.ipynb
 
 author: Rafael Horacio Orbe
 
