@@ -109,3 +109,15 @@ def contar_archivos_sin_registro(
     ids_metadata: set[str],
 ) -> int:
     return len(get_archivos_sin_registro(nombres_archivos, ids_metadata))
+
+
+def corregir_identificadores(
+    df: pd.DataFrame,
+    correcciones: dict[str, str],
+    columna_identificador: str = "Identificador",
+) -> pd.DataFrame:
+    df_resultado = df.copy()
+    df_resultado[columna_identificador] = df_resultado[columna_identificador].replace(
+        correcciones
+    )
+    return df_resultado

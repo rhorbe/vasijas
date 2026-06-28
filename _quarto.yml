@@ -1,0 +1,27 @@
+project:
+  type: default
+  output-dir: output/reports
+  render:
+    - index.qmd
+    - notebooks/01.exploracion/01.EDA.ipynb
+    - notebooks/02.preparacion/02.Normalizacion_nombres.ipynb
+
+author: Rafael Horacio Orbe
+
+preview:
+  port: 5555
+  browser: true
+
+jupyter: python3
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    theme: cosmo

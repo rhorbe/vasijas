@@ -19,3 +19,4 @@ __pycache__/
 /.quarto/
 
 **/*.quarto_ipynb
+/output/reports/*

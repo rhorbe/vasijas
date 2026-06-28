@@ -1,0 +1,12 @@
+---
+title: "Vasijas"
+format: html
+---
+
+# Vasijas
+
+Este es el índice del proyecto.
+
+## Notebooks
+
+- [EDA](output/reports/notebooks/01.exploracion/01.EDA.html)
