@@ -143,6 +143,48 @@ class ResultadoCorteFracciones:
         return " | ".join(partes)
 
 
+@dataclass(frozen=True)
+class RegistroCentrado:
+    archivo_origen: str
+    archivo_generado: str
+
+
+@dataclass(frozen=True)
+class ResultadoCentradoFracciones:
+    imagenes_procesadas: int
+    registros: list[RegistroCentrado]
+    clases_sin_imagenes: list[str]
+    errores: list[ErrorConversionImagen]
+    metadata_destino: Path | None = None
+
+    @property
+    def imagenes_con_error(self) -> int:
+        return len(self.errores)
+
+    @property
+    def dataframe_registros(self) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "archivo_origen": registro.archivo_origen,
+                    "archivo_generado": registro.archivo_generado,
+                }
+                for registro in self.registros
+            ]
+        )
+
+    @property
+    def mensaje_resumen(self) -> str:
+        partes = [
+            f"Imagenes procesadas: {self.imagenes_procesadas}",
+            f"Clases sin imagenes: {len(self.clases_sin_imagenes)}",
+            f"Errores: {self.imagenes_con_error}",
+        ]
+        if self.metadata_destino is not None:
+            partes.append(f"Metadata generada: {self.metadata_destino}")
+        return " | ".join(partes)
+
+
 def leer_imagen_grises(ruta_imagen: Path) -> np.ndarray:
     imagen = cv2.imread(str(ruta_imagen), cv2.IMREAD_GRAYSCALE)
     if imagen is None:
@@ -331,6 +373,48 @@ def cortar_imagen_en_fraccion(
     imagen_fraccion[corte_dst] = imagen[corte_src]
 
     return imagen_fraccion
+
+
+def centrar_trazo_bbox(
+    imagen: np.ndarray,
+    tamano_salida: tuple[int, int] | None = None,
+    valor_fondo: int = 255,
+) -> np.ndarray:
+    if imagen.ndim != 2:
+        raise ValueError("El centrado espera una imagen en escala de grises")
+
+    _, binaria_invertida = cv2.threshold(
+        imagen,
+        0,
+        255,
+        cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU,
+    )
+    ys, xs = np.where(binaria_invertida > 0)
+    if len(xs) == 0 or len(ys) == 0:
+        return imagen.copy()
+
+    x0, x1 = xs.min(), xs.max() + 1
+    y0, y1 = ys.min(), ys.max() + 1
+    region_interes = imagen[y0:y1, x0:x1]
+
+    alto_salida, ancho_salida = tamano_salida or imagen.shape
+    alto_region, ancho_region = region_interes.shape
+    alto_copia = min(alto_region, alto_salida)
+    ancho_copia = min(ancho_region, ancho_salida)
+    region_interes = region_interes[:alto_copia, :ancho_copia]
+
+    lienzo = np.full(
+        (alto_salida, ancho_salida),
+        valor_fondo,
+        dtype=imagen.dtype,
+    )
+    offset_y = (alto_salida - alto_copia) // 2
+    offset_x = (ancho_salida - ancho_copia) // 2
+    lienzo[offset_y : offset_y + alto_copia, offset_x : offset_x + ancho_copia] = (
+        region_interes
+    )
+
+    return lienzo
 
 
 def determinar_orientacion_corte(clase: int | str) -> OrientacionCorte:
@@ -796,5 +880,160 @@ def cortar_dataset_clasificado_en_fracciones(
     ruta_metadata_destino = ruta_destino / nombre_metadata
     ruta_metadata_destino.parent.mkdir(parents=True, exist_ok=True)
     metadata_fracciones.to_csv(ruta_metadata_destino, index=False)
+
+    return replace(resultado, metadata_destino=ruta_metadata_destino)
+
+
+def centrar_imagen_fraccion(
+    ruta_imagen: Path,
+    ruta_destino_clase: Path,
+    tamano_salida: tuple[int, int] | None = None,
+    valor_fondo: int = 255,
+) -> RegistroCentrado:
+    imagen = leer_imagen_grises(ruta_imagen)
+    nombre_original = obtener_nombre_archivo(ruta_imagen)
+    ruta_destino = crear_ruta_archivo(
+        ruta_base=ruta_destino_clase,
+        nombre_archivo=nombre_original,
+        sufijo="_centrado",
+    )
+    imagen_centrada = centrar_trazo_bbox(
+        imagen=imagen,
+        tamano_salida=tamano_salida,
+        valor_fondo=valor_fondo,
+    )
+
+    guardar_imagen(ruta_destino, imagen_centrada)
+
+    return RegistroCentrado(
+        archivo_origen=ruta_imagen.name,
+        archivo_generado=ruta_destino.name,
+    )
+
+
+def centrar_clase_fracciones(
+    ruta_origen: Path,
+    ruta_destino: Path,
+    clase: int | str,
+    extension: str = "png",
+    tamano_salida: tuple[int, int] | None = None,
+    valor_fondo: int = 255,
+) -> tuple[list[RegistroCentrado], list[ErrorConversionImagen]]:
+    rutas_imagenes = obtener_rutas_perfiles(ruta_origen, clase, extension)
+    if not rutas_imagenes:
+        return [], []
+
+    ruta_destino_clase = obtener_o_crear_directorio(
+        ruta_destino,
+        obtener_nombre_carpeta_clase(clase),
+    )
+    registros: list[RegistroCentrado] = []
+    errores: list[ErrorConversionImagen] = []
+
+    for ruta_imagen in rutas_imagenes:
+        try:
+            registros.append(
+                centrar_imagen_fraccion(
+                    ruta_imagen=ruta_imagen,
+                    ruta_destino_clase=ruta_destino_clase,
+                    tamano_salida=tamano_salida,
+                    valor_fondo=valor_fondo,
+                )
+            )
+        except Exception as exc:
+            errores.append(ErrorConversionImagen(ruta_imagen, str(exc)))
+
+    return registros, errores
+
+
+def centrar_imagenes_fracciones(
+    ruta_origen: Path,
+    ruta_destino: Path,
+    clases: Iterable[int | str],
+    extension: str = "png",
+    tamano_salida: tuple[int, int] | None = None,
+    valor_fondo: int = 255,
+) -> ResultadoCentradoFracciones:
+    registros: list[RegistroCentrado] = []
+    errores: list[ErrorConversionImagen] = []
+    clases_sin_imagenes: list[str] = []
+
+    for clase in clases:
+        registros_clase, errores_clase = centrar_clase_fracciones(
+            ruta_origen=ruta_origen,
+            ruta_destino=ruta_destino,
+            clase=clase,
+            extension=extension,
+            tamano_salida=tamano_salida,
+            valor_fondo=valor_fondo,
+        )
+
+        if not registros_clase and not errores_clase:
+            clases_sin_imagenes.append(obtener_nombre_carpeta_clase(clase))
+
+        registros.extend(registros_clase)
+        errores.extend(errores_clase)
+
+    return ResultadoCentradoFracciones(
+        imagenes_procesadas=len(registros),
+        registros=registros,
+        clases_sin_imagenes=clases_sin_imagenes,
+        errores=errores,
+    )
+
+
+def construir_metadata_centrados(
+    metadata_original: pd.DataFrame,
+    registros_centrados: pd.DataFrame,
+    columna_identificador: str = "Identificador",
+    columna_archivo_origen: str = "archivo_fraccion_origen",
+    how: str = "inner",
+) -> pd.DataFrame:
+    registros = registros_centrados[["archivo_origen", "archivo_generado"]].copy()
+    registros["archivo_origen_stem"] = registros["archivo_origen"].map(
+        lambda nombre: Path(nombre).stem
+    )
+
+    metadata_centrada = registros.merge(
+        metadata_original,
+        left_on="archivo_origen_stem",
+        right_on=columna_identificador,
+        how=how,
+        validate="one_to_one",
+    )
+    metadata_centrada[columna_identificador] = metadata_centrada[
+        "archivo_generado"
+    ].map(lambda nombre: Path(nombre).stem)
+    metadata_centrada[columna_archivo_origen] = metadata_centrada["archivo_origen"]
+
+    columnas_finales = list(metadata_original.columns) + [columna_archivo_origen]
+    return metadata_centrada[columnas_finales]
+
+
+def centrar_dataset_fracciones(
+    ruta_origen: Path,
+    ruta_destino: Path,
+    clases: Iterable[int | str],
+    nombre_metadata: str = "metadata.csv",
+    extension: str = "png",
+    tamano_salida: tuple[int, int] | None = None,
+    valor_fondo: int = 255,
+) -> ResultadoCentradoFracciones:
+    resultado = centrar_imagenes_fracciones(
+        ruta_origen=ruta_origen,
+        ruta_destino=ruta_destino,
+        clases=clases,
+        extension=extension,
+        tamano_salida=tamano_salida,
+        valor_fondo=valor_fondo,
+    )
+    metadata_original = pd.read_csv(ruta_origen / nombre_metadata)
+    metadata_centrada = construir_metadata_centrados(
+        metadata_original=metadata_original,
+        registros_centrados=resultado.dataframe_registros,
+    )
+    ruta_metadata_destino = ruta_destino / nombre_metadata
+    ruta_metadata_destino.parent.mkdir(parents=True, exist_ok=True)
+    metadata_centrada.to_csv(ruta_metadata_destino, index=False)
 
     return replace(resultado, metadata_destino=ruta_metadata_destino)
