@@ -5,6 +5,7 @@ project:
     - index.qmd
     - notebooks/01.exploracion/01.EDA.ipynb
     - notebooks/02.preparacion/02.Normalizacion_nombres.ipynb
+    - notebooks/02.preparacion/03.Agregado_de_ubicacion_a_dataset.ipynb
 
 author: Rafael Horacio Orbe
 
