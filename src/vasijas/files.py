@@ -34,6 +34,16 @@ class ResultadoCopiaClasificada:
         return len(self.rutas_no_encontradas)
 
 
+def obtener_o_crear_directorio(ruta_base: Path, nombre_directorio: str) -> Path:
+    ruta_completa = ruta_base / nombre_directorio
+    ruta_completa.mkdir(parents=True, exist_ok=True)
+
+    if not ruta_completa.is_dir():
+        raise RuntimeError(f"No se pudo crear el directorio: {ruta_completa}")
+
+    return ruta_completa
+
+
 def es_formato_nombre_valido(cadena: str) -> bool:
     """
     Valida que una cadena cumpla con el formato especificado.
