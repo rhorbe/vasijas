@@ -3,6 +3,8 @@ import shutil
 import unicodedata
 from pathlib import Path
 
+import pandas as pd
+
 PATTERN = r"^[A-Za-z0-9_-]+$"
 
 
@@ -86,3 +88,30 @@ def copiar_png_normalizados_por_ubicacion(
             destinos.append(destino)
 
     return destinos
+
+
+def cargar_metadata_con_identificadores_normalizados(
+    ruta_csv: Path,
+    columna_identificador: str = "Identificador",
+) -> pd.DataFrame:
+    """
+    Carga metadata desde CSV y normaliza la columna de identificadores.
+    """
+    df = pd.read_csv(ruta_csv)
+    df[columna_identificador] = (
+        df[columna_identificador].astype(str).apply(normalizar_nombre)
+    )
+    return df
+
+
+def guardar_metadata(
+    df: pd.DataFrame,
+    ruta_csv: Path,
+    columnas_auxiliares: list[str] | None = None,
+) -> None:
+    columnas_auxiliares = columnas_auxiliares or ["id_encontrado_en_fs"]
+    columnas_a_eliminar = [
+        columna for columna in columnas_auxiliares if columna in df.columns
+    ]
+    df_salida = df.drop(columns=columnas_a_eliminar)
+    df_salida.to_csv(ruta_csv, index=False)
