@@ -271,6 +271,20 @@ def copiar_png_normalizados_por_ubicacion(
     return destinos
 
 
+def normalizar_identificadores(
+    df: pd.DataFrame,
+    columna_identificador: str = "Identificador",
+) -> pd.DataFrame:
+    """
+    Normaliza la columna de identificadores sin modificar el DataFrame original.
+    """
+    df_resultado = df.copy()
+    df_resultado[columna_identificador] = (
+        df_resultado[columna_identificador].astype(str).apply(normalizar_nombre)
+    )
+    return df_resultado
+
+
 def cargar_metadata_con_identificadores_normalizados(
     ruta_csv: Path,
     columna_identificador: str = "Identificador",
@@ -279,15 +293,13 @@ def cargar_metadata_con_identificadores_normalizados(
     Carga metadata desde CSV y normaliza la columna de identificadores.
     """
     df = pd.read_csv(ruta_csv)
-    df[columna_identificador] = (
-        df[columna_identificador].astype(str).apply(normalizar_nombre)
-    )
-    return df
+    return normalizar_identificadores(df, columna_identificador)
 
 
 def guardar_metadata(
     df: pd.DataFrame,
-    ruta_csv: Path,
+    carpeta_destino: Path,
+    nombre_archivo: str = "metadata.csv",
     columnas_auxiliares: list[str] | None = None,
 ) -> None:
     columnas_auxiliares = columnas_auxiliares or ["id_encontrado_en_fs"]
@@ -295,4 +307,12 @@ def guardar_metadata(
         columna for columna in columnas_auxiliares if columna in df.columns
     ]
     df_salida = df.drop(columns=columnas_a_eliminar)
-    df_salida.to_csv(ruta_csv, index=False)
+    ruta_destino = carpeta_destino / nombre_archivo
+    df_salida.to_csv(ruta_destino, index=False)
+
+def cargar_metadata(
+        carpeta_origen_data: Path,
+        nombre_archivo="metadata.csv") \
+        -> pd.DataFrame:
+    archivo_csv = carpeta_origen_data / nombre_archivo
+    return pd.read_csv(archivo_csv)
