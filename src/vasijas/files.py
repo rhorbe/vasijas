@@ -299,16 +299,11 @@ def cargar_metadata_con_identificadores_normalizados(
 def guardar_metadata(
     df: pd.DataFrame,
     carpeta_destino: Path,
-    nombre_archivo: str = "metadata.csv",
-    columnas_auxiliares: list[str] | None = None,
-) -> None:
-    columnas_auxiliares = columnas_auxiliares or ["id_encontrado_en_fs"]
-    columnas_a_eliminar = [
-        columna for columna in columnas_auxiliares if columna in df.columns
-    ]
-    df_salida = df.drop(columns=columnas_a_eliminar)
+    nombre_archivo: str = "metadata.csv"
+) -> Path:
     ruta_destino = carpeta_destino / nombre_archivo
-    df_salida.to_csv(ruta_destino, index=False)
+    df.to_csv(ruta_destino, index=False)
+    return ruta_destino
 
 def cargar_metadata(
         carpeta_origen_data: Path,

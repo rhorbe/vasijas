@@ -56,7 +56,7 @@ def get_preview_metadata(df: pd.DataFrame, n: int = 5) -> pd.DataFrame:
     return df.head(n)
 
 
-def agregar_marca_identificador_en_fs(
+def agregar_marca_si_id_esta_en_fs(
         df: pd.DataFrame,
         nombres_archivos: set[str],
         columna_identificador: str = "Identificador",
@@ -71,6 +71,11 @@ def agregar_marca_identificador_en_fs(
 
     return df_resultado
 
+def eliminar_marca_id_esta_en_fs(df: pd.DataFrame) -> pd.DataFrame:
+    df_resultado = df.copy()
+    if "id_encontrado_en_fs" in df_resultado.columns:
+        df_resultado.drop(columns=["id_encontrado_en_fs"], inplace=True)
+    return df_resultado
 
 def contar_identificadores_encontrados(df: pd.DataFrame) -> int:
     return int(df["id_encontrado_en_fs"].sum())
