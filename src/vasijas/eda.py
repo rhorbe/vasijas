@@ -1,8 +1,11 @@
 from pathlib import Path
+from typing import TypeVar
 
 import pandas as pd
 
 from vasijas.files import es_formato_nombre_valido
+
+T = TypeVar("T")
 
 
 def get_ubicaciones(data: Path) -> list[str]:
@@ -88,6 +91,23 @@ def get_identificadores_no_encontrados(
 
 def contar_identificadores_unicos_no_encontrados(df: pd.DataFrame) -> int:
     return len(get_identificadores_no_encontrados(df))
+
+
+def calcular_ancho_maximo(textos: list[str]) -> int:
+    return max((len(texto) for texto in textos), default=0)
+
+
+def agrupar_en_filas(
+    elementos: list[T],
+    cantidad_columnas: int = 3,
+) -> list[list[T]]:
+    if cantidad_columnas < 1:
+        raise ValueError("cantidad_columnas debe ser mayor que cero")
+
+    return [
+        elementos[inicio : inicio + cantidad_columnas]
+        for inicio in range(0, len(elementos), cantidad_columnas)
+    ]
 
 
 def get_identificadores_metadata(

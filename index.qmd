@@ -3,8 +3,6 @@ title: "Vasijas"
 format: html
 ---
 
-# Vasijas
-
 Índice de reportes generados por el proyecto.
 
 ## Exploración
