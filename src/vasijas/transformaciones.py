@@ -62,17 +62,6 @@ def crear_dataloader(
     return data.DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 
-def crear_dataset_y_dataloader(
-    ruta_datos: Path,
-    config: ConfiguracionTransformaciones,
-    batch_size: int = 4,
-    shuffle: bool = True,
-) -> tuple[datasets.ImageFolder, data.DataLoader]:
-    dataset = crear_dataset_imagenes(ruta_datos, config)
-    dataloader = crear_dataloader(dataset, batch_size=batch_size, shuffle=shuffle)
-    return dataset, dataloader
-
-
 def imagen_a_array_visualizable(imagen) -> np.ndarray:
     if torch.is_tensor(imagen):
         imagen = imagen.detach().cpu()

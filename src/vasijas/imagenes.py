@@ -946,7 +946,7 @@ def centrar_clase_fracciones(
     return registros, errores
 
 
-def centrar_imagenes_fracciones(
+def centrar_imagenes(
     ruta_origen: Path,
     ruta_destino: Path,
     clases: Iterable[int | str],
@@ -1010,7 +1010,7 @@ def construir_metadata_centrados(
     return metadata_centrada[columnas_finales]
 
 
-def centrar_dataset_fracciones(
+def centrar_dataset_imagenes(
     ruta_origen: Path,
     ruta_destino: Path,
     clases: Iterable[int | str],
@@ -1019,7 +1019,7 @@ def centrar_dataset_fracciones(
     tamano_salida: tuple[int, int] | None = None,
     valor_fondo: int = 255,
 ) -> ResultadoCentradoFracciones:
-    resultado = centrar_imagenes_fracciones(
+    resultado = centrar_imagenes(
         ruta_origen=ruta_origen,
         ruta_destino=ruta_destino,
         clases=clases,
