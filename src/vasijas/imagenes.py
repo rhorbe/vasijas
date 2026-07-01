@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
-from vasijas.files import (
+from vasijas.archivos import (
     obtener_nombre_carpeta_clase,
     obtener_o_crear_directorio,
 )

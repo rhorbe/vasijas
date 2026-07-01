@@ -3,7 +3,7 @@ from typing import TypeVar
 
 import pandas as pd
 
-from vasijas.files import es_formato_nombre_valido
+from vasijas.nombres import es_formato_nombre_valido
 
 T = TypeVar("T")
 

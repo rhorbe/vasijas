@@ -1,12 +1,10 @@
-import re
 import shutil
-import unicodedata
+import pandas as pd
+
 from dataclasses import dataclass
 from pathlib import Path
 
-import pandas as pd
-
-PATTERN = r"^[A-Za-z0-9_-]+$"
+from vasijas.nombres import normalizar_nombre
 
 
 @dataclass(frozen=True)
@@ -42,59 +40,6 @@ def obtener_o_crear_directorio(ruta_base: Path, nombre_directorio: str) -> Path:
         raise RuntimeError(f"No se pudo crear el directorio: {ruta_completa}")
 
     return ruta_completa
-
-
-def es_formato_nombre_valido(cadena: str) -> bool:
-    """
-    Valida que una cadena cumpla con el formato especificado.
-
-    Formato:
-    - Comienza con 2 letras en mayúscula
-    - Continúa con 2 dígitos
-    - Un guión bajo
-    - Seguido de letras, números y guiones bajos (sin espacios en blanco)
-
-    Args:
-        cadena: La cadena a validar
-
-    Returns:
-        True si la cadena cumple con el formato, False en caso contrario
-    """
-    return bool(re.match(PATTERN, cadena))
-
-
-def normalizar_nombre(nombre: str) -> str:
-    """
-    Normaliza un nombre de archivo:
-    - minúsculas
-    - sin acentos
-    - caracteres no alfanuméricos -> _
-    - colapsa múltiples _
-    - conserva extensión
-    """
-
-    path = Path(nombre)
-    stem = path.stem.lower()
-    suffix = path.suffix.lower()
-
-    # Quitar acentos
-    stem = unicodedata.normalize("NFKD", stem)
-    stem = stem.encode("ascii", "ignore").decode("ascii")
-
-    # Reemplazar caracteres no alfanuméricos por _
-    stem = re.sub(r"[^a-z0-9]+", "_", stem)
-
-    # Quitar múltiples _
-    stem = re.sub(r"_+", "_", stem)
-
-    # Quitar _ al inicio y final
-    stem = stem.strip("_")
-
-    # Insertar _ después de las 2 primeras letras si no existe
-    if len(stem) > 2 and stem[2] != "_":
-        stem = stem[:2] + "_" + stem[2:]
-
-    return f"{stem}{suffix}"
 
 
 def obtener_nombre_carpeta_clase(valor_clase: str | int | float) -> str:
@@ -260,26 +205,3 @@ def copiar_png_normalizados_por_ubicacion(
     return destinos
 
 
-def normalizar_identificadores(
-    df: pd.DataFrame,
-    columna_identificador: str = "Identificador",
-) -> pd.DataFrame:
-    """
-    Normaliza la columna de identificadores sin modificar el DataFrame original.
-    """
-    df_resultado = df.copy()
-    df_resultado[columna_identificador] = (
-        df_resultado[columna_identificador].astype(str).apply(normalizar_nombre)
-    )
-    return df_resultado
-
-
-def cargar_metadata_con_identificadores_normalizados(
-    ruta_csv: Path,
-    columna_identificador: str = "Identificador",
-) -> pd.DataFrame:
-    """
-    Carga metadata desde CSV y normaliza la columna de identificadores.
-    """
-    df = pd.read_csv(ruta_csv)
-    return normalizar_identificadores(df, columna_identificador)

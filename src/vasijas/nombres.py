@@ -2,8 +2,7 @@ import re
 import unicodedata
 from pathlib import Path
 
-
-PATTERN = r"^[A-Za-z0-9_-]+$"
+PATTERN = r'^[A-Za-z]{2}_[0-9]{2}[A-Za-z0-9_]*$'
 
 
 def es_formato_nombre_valido(cadena: str) -> bool:
@@ -11,9 +10,9 @@ def es_formato_nombre_valido(cadena: str) -> bool:
     Valida que una cadena cumpla con el formato especificado.
 
     Formato:
-    - Comienza con 2 letras en mayúscula
+    - Comienza con 2 letras
+    - Continúa con un guión bajo
     - Continúa con 2 dígitos
-    - Un guión bajo
     - Seguido de letras, números y guiones bajos (sin espacios en blanco)
 
     Args:
