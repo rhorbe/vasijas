@@ -40,26 +40,10 @@ def contar_nombres_invalidos(nombres_invalidos: list[str]) -> int:
     return len(nombres_invalidos)
 
 
-def cargar_metadata(
-        carpeta_origen_data: Path,
-        nombre_archivo="metadata.csv") \
-        -> pd.DataFrame:
-    archivo_csv = carpeta_origen_data / nombre_archivo
-    return pd.read_csv(archivo_csv)
-
-
-def contar_registros_metadata(df: pd.DataFrame) -> int:
-    return len(df)
-
-
-def get_preview_metadata(df: pd.DataFrame, n: int = 5) -> pd.DataFrame:
-    return df.head(n)
-
-
 def agregar_marca_si_id_esta_en_fs(
-        df: pd.DataFrame,
-        nombres_archivos: set[str],
-        columna_identificador: str = "Identificador",
+    df: pd.DataFrame,
+    nombres_archivos: set[str],
+    columna_identificador: str = "Identificador",
 ) -> pd.DataFrame:
     df_resultado = df.copy()
     df_resultado["id_encontrado_en_fs"] = (
@@ -71,11 +55,13 @@ def agregar_marca_si_id_esta_en_fs(
 
     return df_resultado
 
+
 def eliminar_marca_id_esta_en_fs(df: pd.DataFrame) -> pd.DataFrame:
     df_resultado = df.copy()
     if "id_encontrado_en_fs" in df_resultado.columns:
         df_resultado.drop(columns=["id_encontrado_en_fs"], inplace=True)
     return df_resultado
+
 
 def contar_identificadores_encontrados(df: pd.DataFrame) -> int:
     return int(df["id_encontrado_en_fs"].sum())
@@ -86,8 +72,8 @@ def contar_identificadores_no_encontrados(df: pd.DataFrame) -> int:
 
 
 def get_identificadores_no_encontrados(
-        df: pd.DataFrame,
-        columna_identificador: str = "Identificador",
+    df: pd.DataFrame,
+    columna_identificador: str = "Identificador",
 ) -> list[str]:
     ids_no_encontrados = set(
         df.loc[~df["id_encontrado_en_fs"], columna_identificador]
@@ -106,43 +92,36 @@ def calcular_ancho_maximo(textos: list[str]) -> int:
 
 
 def agrupar_en_filas(
-        elementos: list[T],
-        cantidad_columnas: int = 3,
+    elementos: list[T],
+    cantidad_columnas: int = 3,
 ) -> list[list[T]]:
     if cantidad_columnas < 1:
         raise ValueError("cantidad_columnas debe ser mayor que cero")
 
     return [
-        elementos[inicio: inicio + cantidad_columnas]
+        elementos[inicio : inicio + cantidad_columnas]
         for inicio in range(0, len(elementos), cantidad_columnas)
     ]
 
 
-def get_identificadores_metadata(
-        df: pd.DataFrame,
-        columna_identificador: str = "Identificador",
-) -> set[str]:
-    return set(df[columna_identificador].astype(str).str.strip())
-
-
 def get_archivos_sin_registro(
-        nombres_archivos: set[str],
-        ids_metadata: set[str],
+    nombres_archivos: set[str],
+    ids_metadata: set[str],
 ) -> list[str]:
     return sorted(nombres_archivos - ids_metadata)
 
 
 def contar_archivos_sin_registro(
-        nombres_archivos: set[str],
-        ids_metadata: set[str],
+    nombres_archivos: set[str],
+    ids_metadata: set[str],
 ) -> int:
     return len(get_archivos_sin_registro(nombres_archivos, ids_metadata))
 
 
 def corregir_identificadores(
-        df: pd.DataFrame,
-        correcciones: dict[str, str],
-        columna_identificador: str = "Identificador",
+    df: pd.DataFrame,
+    correcciones: dict[str, str],
+    columna_identificador: str = "Identificador",
 ) -> pd.DataFrame:
     df_resultado = df.copy()
     df_resultado[columna_identificador] = df_resultado[columna_identificador].replace(

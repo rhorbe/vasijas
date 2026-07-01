@@ -231,17 +231,6 @@ def copiar_archivo(
     return destino
 
 
-def copiar_metadata(
-    ruta_origen: Path,
-    ruta_destino: Path,
-    nombre_archivo: str = "metadata.csv",
-) -> Path:
-    return copiar_archivo(
-        origen=ruta_origen / nombre_archivo,
-        destino=ruta_destino / nombre_archivo,
-    )
-
-
 def copiar_png_normalizados_por_ubicacion(
     ruta_origen: Path,
     ruta_destino: Path,
@@ -294,20 +283,3 @@ def cargar_metadata_con_identificadores_normalizados(
     """
     df = pd.read_csv(ruta_csv)
     return normalizar_identificadores(df, columna_identificador)
-
-
-def guardar_metadata(
-    df: pd.DataFrame,
-    carpeta_destino: Path,
-    nombre_archivo: str = "metadata.csv"
-) -> Path:
-    ruta_destino = carpeta_destino / nombre_archivo
-    df.to_csv(ruta_destino, index=False)
-    return ruta_destino
-
-def cargar_metadata(
-        carpeta_origen_data: Path,
-        nombre_archivo="metadata.csv") \
-        -> pd.DataFrame:
-    archivo_csv = carpeta_origen_data / nombre_archivo
-    return pd.read_csv(archivo_csv)

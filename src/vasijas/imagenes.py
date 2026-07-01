@@ -8,10 +8,11 @@ import numpy as np
 import pandas as pd
 
 from vasijas.files import (
-    copiar_metadata,
     obtener_nombre_carpeta_clase,
     obtener_o_crear_directorio,
 )
+
+from vasijas.metadata import copiar_metadata
 
 
 class OrientacionCorte(StrEnum):
@@ -149,8 +150,11 @@ class RegistroCentrado:
     archivo_generado: str
 
 
+COLUMNAS_REGISTRO_CENTRADO = ["archivo_origen", "archivo_generado"]
+
+
 @dataclass(frozen=True)
-class ResultadoCentradoFracciones:
+class ResultadoCentrado:
     imagenes_procesadas: int
     registros: list[RegistroCentrado]
     clases_sin_imagenes: list[str]
@@ -170,7 +174,8 @@ class ResultadoCentradoFracciones:
                     "archivo_generado": registro.archivo_generado,
                 }
                 for registro in self.registros
-            ]
+            ],
+            columns=COLUMNAS_REGISTRO_CENTRADO,
         )
 
     @property
@@ -953,7 +958,7 @@ def centrar_imagenes(
     extension: str = "png",
     tamano_salida: tuple[int, int] | None = None,
     valor_fondo: int = 255,
-) -> ResultadoCentradoFracciones:
+) -> ResultadoCentrado:
     registros: list[RegistroCentrado] = []
     errores: list[ErrorConversionImagen] = []
     clases_sin_imagenes: list[str] = []
@@ -974,7 +979,7 @@ def centrar_imagenes(
         registros.extend(registros_clase)
         errores.extend(errores_clase)
 
-    return ResultadoCentradoFracciones(
+    return ResultadoCentrado(
         imagenes_procesadas=len(registros),
         registros=registros,
         clases_sin_imagenes=clases_sin_imagenes,
@@ -984,30 +989,67 @@ def centrar_imagenes(
 
 def construir_metadata_centrados(
     metadata_original: pd.DataFrame,
-    registros_centrados: pd.DataFrame,
+    registros_centrados: pd.DataFrame | Iterable[RegistroCentrado],
     columna_identificador: str = "Identificador",
-    columna_archivo_origen: str = "archivo_fraccion_origen",
     how: str = "inner",
 ) -> pd.DataFrame:
-    registros = registros_centrados[["archivo_origen", "archivo_generado"]].copy()
-    registros["archivo_origen_stem"] = registros["archivo_origen"].map(
+    """Replica la metadata original con identificadores de imagenes centradas."""
+    if not isinstance(registros_centrados, pd.DataFrame):
+        registros_centrados = pd.DataFrame(
+            [
+                {
+                    "archivo_origen": registro.archivo_origen,
+                    "archivo_generado": registro.archivo_generado,
+                }
+                for registro in registros_centrados
+            ],
+            columns=COLUMNAS_REGISTRO_CENTRADO,
+        )
+
+    registros = registros_centrados[COLUMNAS_REGISTRO_CENTRADO].copy()
+    if registros.empty:
+        return metadata_original.iloc[0:0].copy()
+
+    registros["_identificador_original"] = registros["archivo_origen"].map(
+        lambda nombre: Path(nombre).stem
+    )
+    registros["_identificador_centrado"] = registros["archivo_generado"].map(
         lambda nombre: Path(nombre).stem
     )
 
-    metadata_centrada = registros.merge(
-        metadata_original,
-        left_on="archivo_origen_stem",
-        right_on=columna_identificador,
+    metadata_centrada = metadata_original.merge(
+        registros[["_identificador_original", "_identificador_centrado"]],
+        left_on=columna_identificador,
+        right_on="_identificador_original",
         how=how,
         validate="one_to_one",
     )
     metadata_centrada[columna_identificador] = metadata_centrada[
-        "archivo_generado"
-    ].map(lambda nombre: Path(nombre).stem)
-    metadata_centrada[columna_archivo_origen] = metadata_centrada["archivo_origen"]
+        "_identificador_centrado"
+    ]
 
-    columnas_finales = list(metadata_original.columns) + [columna_archivo_origen]
-    return metadata_centrada[columnas_finales]
+    return metadata_centrada[list(metadata_original.columns)]
+
+
+def guardar_metadata_centrados(
+    ruta_metadata_origen: Path,
+    ruta_metadata_destino: Path,
+    registros_centrados: pd.DataFrame | Iterable[RegistroCentrado],
+    columna_identificador: str = "Identificador",
+    how: str = "inner",
+) -> Path:
+    """Crea el CSV de metadata para imagenes ya centradas."""
+    metadata_original = pd.read_csv(ruta_metadata_origen)
+    metadata_centrada = construir_metadata_centrados(
+        metadata_original=metadata_original,
+        registros_centrados=registros_centrados,
+        columna_identificador=columna_identificador,
+        how=how,
+    )
+    ruta_metadata_destino.parent.mkdir(parents=True, exist_ok=True)
+    metadata_centrada.to_csv(ruta_metadata_destino, index=False)
+
+    return ruta_metadata_destino
 
 
 def centrar_dataset_imagenes(
@@ -1018,7 +1060,8 @@ def centrar_dataset_imagenes(
     extension: str = "png",
     tamano_salida: tuple[int, int] | None = None,
     valor_fondo: int = 255,
-) -> ResultadoCentradoFracciones:
+) -> ResultadoCentrado:
+    """Wrapper de compatibilidad; preferir centrar y guardar metadata por separado."""
     resultado = centrar_imagenes(
         ruta_origen=ruta_origen,
         ruta_destino=ruta_destino,
@@ -1027,13 +1070,10 @@ def centrar_dataset_imagenes(
         tamano_salida=tamano_salida,
         valor_fondo=valor_fondo,
     )
-    metadata_original = pd.read_csv(ruta_origen / nombre_metadata)
-    metadata_centrada = construir_metadata_centrados(
-        metadata_original=metadata_original,
-        registros_centrados=resultado.dataframe_registros,
+    ruta_metadata_destino = guardar_metadata_centrados(
+        ruta_metadata_origen=ruta_origen / nombre_metadata,
+        ruta_metadata_destino=ruta_destino / nombre_metadata,
+        registros_centrados=resultado.registros,
     )
-    ruta_metadata_destino = ruta_destino / nombre_metadata
-    ruta_metadata_destino.parent.mkdir(parents=True, exist_ok=True)
-    metadata_centrada.to_csv(ruta_metadata_destino, index=False)
 
     return replace(resultado, metadata_destino=ruta_metadata_destino)

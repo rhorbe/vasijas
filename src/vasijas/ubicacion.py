@@ -6,29 +6,6 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-def cargar_metadata(
-    ruta_base: Path,
-    nombre_archivo: str = "metadata.csv",
-) -> "pd.DataFrame":
-    """Carga el archivo de metadata desde una carpeta base."""
-    import pandas as pd
-
-    return pd.read_csv(ruta_base / nombre_archivo)
-
-
-def guardar_metadata(
-    df: "pd.DataFrame",
-    ruta_base: Path,
-    nombre_archivo: str = "metadata.csv",
-) -> tuple[Path, str]:
-    """Guarda el dataset de metadata en CSV sin índice."""
-    ruta_salida = ruta_base / nombre_archivo
-    ruta_salida.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(ruta_salida, index=False)
-
-    return ruta_salida, f"Archivo generado: {ruta_salida}"
-
-
 def agregar_ubicacion(
     df: "pd.DataFrame",
     archivo_ubicacion: dict[str, str],
@@ -61,13 +38,13 @@ def agregar_ubicacion(
 def copiar_estructura_archivos(
     ruta_origen: Path,
     ruta_destino: Path,
-) -> tuple[list[Path], str]:
+) -> int:
     """
     Copia todos los archivos de una estructura preservando rutas relativas.
 
-    Devuelve las rutas destino copiadas y un mensaje de resumen.
+    Devuelve la cantidad de archivos copiados.
     """
-    archivos_copiados: list[Path] = []
+    archivos_copiados = 0
 
     for archivo in sorted(ruta_origen.rglob("*")):
         if not archivo.is_file():
@@ -77,13 +54,9 @@ def copiar_estructura_archivos(
         destino = ruta_destino / ruta_relativa
         destino.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(archivo, destino)
-        archivos_copiados.append(destino)
+        archivos_copiados += 1
 
-    mensaje = (
-        f"{len(archivos_copiados)} archivos copiados desde "
-        f"{ruta_origen} hacia {ruta_destino}"
-    )
-    return archivos_copiados, mensaje
+    return archivos_copiados
 
 
 def mapear_archivos_a_ubicacion(

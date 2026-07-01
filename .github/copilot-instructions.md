@@ -3,7 +3,7 @@
 - Mantener formato Conventional Commits cuando aplique (feat, fix, chore, etc.).
 - Evitar mensajes en inglés o con jerga técnica innecesaria.
 - Incluir una breve descripción del cambio realizado.
-- No usar emojis en los mensajes de commit. 
+- No usar emojis en los mensajes de commit.
 - Evitar mensajes en inglés o con jerga técnica innecesaria.
 - Incluir una breve descripción del cambio realizado.
 - No usar emojis en los mensajes de commit.
