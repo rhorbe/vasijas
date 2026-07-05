@@ -65,6 +65,12 @@ def copiar_png_dataset(
     ruta_destino: Path,
     patron: str = "*.png",
 ) -> list[RegistroDatasetUnificado]:
+    """
+    Copia las imagenes de un dataset a una carpeta destino preservando su estructura.
+
+    Recorre recursivamente la ruta del dataset con el patron indicado y devuelve un
+    registro por cada archivo copiado para construir la metadata del dataset unificado.
+    """
     registros: list[RegistroDatasetUnificado] = []
 
     for archivo_origen in sorted(dataset.ruta.rglob(patron)):
