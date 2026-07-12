@@ -645,7 +645,7 @@ def cortar_clase_en_mitades(
     return registros, errores
 
 
-def cortar_imagenes_clasificadas_en_mitades(
+def cortar_imagenes_en_mitades(
     ruta_origen: Path,
     ruta_destino: Path,
     clases: Iterable[int | str],
@@ -686,58 +686,14 @@ def construir_metadata_mitades(
     columna_identificador: str = "Identificador",
     how: str = "inner",
 ) -> pd.DataFrame:
-    columnas_registros = ["archivo_origen", "archivo_generado", "mitad"]
-    if "porcentaje" in registros_mitades.columns:
-        columnas_registros.append("porcentaje")
+    from vasijas.metadata import construir_metadata_mitades as construir
 
-    mitades = registros_mitades[columnas_registros].copy()
-    mitades["archivo_origen_stem"] = mitades["archivo_origen"].map(
-        lambda nombre: Path(nombre).stem
-    )
-
-    metadata_mitades = mitades.merge(
-        metadata_original,
-        left_on="archivo_origen_stem",
-        right_on=columna_identificador,
-        how=how,
-        validate="many_to_one",
-    )
-    metadata_mitades[columna_identificador] = metadata_mitades["archivo_generado"].map(
-        lambda nombre: Path(nombre).stem
-    )
-
-    columnas_finales = list(metadata_original.columns) + ["archivo_origen", "mitad"]
-    if "porcentaje" in metadata_mitades.columns:
-        columnas_finales.append("porcentaje")
-
-    return metadata_mitades[columnas_finales]
-
-
-def cortar_dataset_clasificado_en_mitades(
-    ruta_origen: Path,
-    ruta_destino: Path,
-    clases: Iterable[int | str],
-    nombre_metadata: str = "metadata.csv",
-    extension: str = "png",
-    valor_fondo: int = 255,
-) -> ResultadoCorteMitades:
-    resultado = cortar_imagenes_clasificadas_en_mitades(
-        ruta_origen=ruta_origen,
-        ruta_destino=ruta_destino,
-        clases=clases,
-        extension=extension,
-        valor_fondo=valor_fondo,
-    )
-    metadata_original = pd.read_csv(ruta_origen / nombre_metadata)
-    metadata_mitades = construir_metadata_mitades(
+    return construir(
         metadata_original=metadata_original,
-        registros_mitades=resultado.dataframe_registros,
+        registros_mitades=registros_mitades,
+        columna_identificador=columna_identificador,
+        how=how,
     )
-    ruta_metadata_destino = ruta_destino / nombre_metadata
-    ruta_metadata_destino.parent.mkdir(parents=True, exist_ok=True)
-    metadata_mitades.to_csv(ruta_metadata_destino, index=False)
-
-    return replace(resultado, metadata_destino=ruta_metadata_destino)
 
 
 def cortar_perfil_en_fracciones(
@@ -860,35 +816,6 @@ def cortar_imagenes_clasificadas_en_fracciones(
     )
 
 
-def cortar_dataset_clasificado_en_fracciones(
-    ruta_origen: Path,
-    ruta_destino: Path,
-    clases: Iterable[int | str],
-    porcentaje_avance: float,
-    nombre_metadata: str = "metadata.csv",
-    extension: str = "png",
-    valor_fondo: int = 255,
-) -> ResultadoCorteFracciones:
-    resultado = cortar_imagenes_clasificadas_en_fracciones(
-        ruta_origen=ruta_origen,
-        ruta_destino=ruta_destino,
-        clases=clases,
-        porcentaje_avance=porcentaje_avance,
-        extension=extension,
-        valor_fondo=valor_fondo,
-    )
-    metadata_original = pd.read_csv(ruta_origen / nombre_metadata)
-    metadata_fracciones = construir_metadata_mitades(
-        metadata_original=metadata_original,
-        registros_mitades=resultado.dataframe_registros,
-    )
-    ruta_metadata_destino = ruta_destino / nombre_metadata
-    ruta_metadata_destino.parent.mkdir(parents=True, exist_ok=True)
-    metadata_fracciones.to_csv(ruta_metadata_destino, index=False)
-
-    return replace(resultado, metadata_destino=ruta_metadata_destino)
-
-
 def centrar_imagen_fraccion(
     ruta_imagen: Path,
     ruta_destino_clase: Path,
@@ -993,42 +920,14 @@ def construir_metadata_centrados(
     columna_identificador: str = "Identificador",
     how: str = "inner",
 ) -> pd.DataFrame:
-    """Replica la metadata original con identificadores de imagenes centradas."""
-    if not isinstance(registros_centrados, pd.DataFrame):
-        registros_centrados = pd.DataFrame(
-            [
-                {
-                    "archivo_origen": registro.archivo_origen,
-                    "archivo_generado": registro.archivo_generado,
-                }
-                for registro in registros_centrados
-            ],
-            columns=COLUMNAS_REGISTRO_CENTRADO,
-        )
+    from vasijas.metadata import construir_metadata_centrados as construir
 
-    registros = registros_centrados[COLUMNAS_REGISTRO_CENTRADO].copy()
-    if registros.empty:
-        return metadata_original.iloc[0:0].copy()
-
-    registros["_identificador_original"] = registros["archivo_origen"].map(
-        lambda nombre: Path(nombre).stem
-    )
-    registros["_identificador_centrado"] = registros["archivo_generado"].map(
-        lambda nombre: Path(nombre).stem
-    )
-
-    metadata_centrada = metadata_original.merge(
-        registros[["_identificador_original", "_identificador_centrado"]],
-        left_on=columna_identificador,
-        right_on="_identificador_original",
+    return construir(
+        metadata_original=metadata_original,
+        registros_centrados=registros_centrados,
+        columna_identificador=columna_identificador,
         how=how,
-        validate="one_to_one",
     )
-    metadata_centrada[columna_identificador] = metadata_centrada[
-        "_identificador_centrado"
-    ]
-
-    return metadata_centrada[list(metadata_original.columns)]
 
 
 def guardar_metadata_centrados(
@@ -1038,18 +937,15 @@ def guardar_metadata_centrados(
     columna_identificador: str = "Identificador",
     how: str = "inner",
 ) -> Path:
-    """Crea el CSV de metadata para imagenes ya centradas."""
-    metadata_original = pd.read_csv(ruta_metadata_origen)
-    metadata_centrada = construir_metadata_centrados(
-        metadata_original=metadata_original,
+    from vasijas.metadata import guardar_metadata_centrados as guardar
+
+    return guardar(
+        ruta_metadata_origen=ruta_metadata_origen,
+        ruta_metadata_destino=ruta_metadata_destino,
         registros_centrados=registros_centrados,
         columna_identificador=columna_identificador,
         how=how,
     )
-    ruta_metadata_destino.parent.mkdir(parents=True, exist_ok=True)
-    metadata_centrada.to_csv(ruta_metadata_destino, index=False)
-
-    return ruta_metadata_destino
 
 
 def centrar_dataset_imagenes(
@@ -1061,19 +957,15 @@ def centrar_dataset_imagenes(
     tamano_salida: tuple[int, int] | None = None,
     valor_fondo: int = 255,
 ) -> ResultadoCentrado:
-    """Wrapper de compatibilidad; preferir centrar y guardar metadata por separado."""
-    resultado = centrar_imagenes(
+    """Wrapper de compatibilidad; preferir vasijas.pipelines.centrar_dataset_imagenes."""
+    from vasijas.pipelines import centrar_dataset_imagenes as ejecutar
+
+    return ejecutar(
         ruta_origen=ruta_origen,
         ruta_destino=ruta_destino,
         clases=clases,
+        nombre_metadata=nombre_metadata,
         extension=extension,
         tamano_salida=tamano_salida,
         valor_fondo=valor_fondo,
     )
-    ruta_metadata_destino = guardar_metadata_centrados(
-        ruta_metadata_origen=ruta_origen / nombre_metadata,
-        ruta_metadata_destino=ruta_destino / nombre_metadata,
-        registros_centrados=resultado.registros,
-    )
-
-    return replace(resultado, metadata_destino=ruta_metadata_destino)
