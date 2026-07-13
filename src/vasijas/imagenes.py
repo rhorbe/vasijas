@@ -75,7 +75,7 @@ class ResultadoCorteMitades:
         return pd.DataFrame(
             [
                 {
-                    "archivo_origen": registro.archivo_origen,
+                    "id_perfil_completo": Path(registro.archivo_origen).stem,
                     "archivo_generado": registro.archivo_generado,
                     "mitad": registro.mitad,
                 }
@@ -122,7 +122,7 @@ class ResultadoCorteFracciones:
         return pd.DataFrame(
             [
                 {
-                    "archivo_origen": registro.archivo_origen,
+                    "id_perfil_completo": Path(registro.archivo_origen).stem,
                     "archivo_generado": registro.archivo_generado,
                     "mitad": registro.mitad,
                     "porcentaje": registro.porcentaje,
