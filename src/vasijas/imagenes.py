@@ -86,9 +86,9 @@ class ResultadoCorteMitades:
     @property
     def mensaje_resumen(self) -> str:
         partes = [
-            f"Imagenes origen procesadas: {self.imagenes_origen_procesadas}",
+            f"Imágenes origen procesadas: {self.imagenes_origen_procesadas}",
             f"Mitades generadas: {self.mitades_generadas}",
-            f"Clases sin imagenes: {len(self.clases_sin_imagenes)}",
+            f"Clases sin imágenes: {len(self.clases_sin_imagenes)}",
             f"Errores: {self.imagenes_con_error}",
         ]
         if self.metadata_destino is not None:
