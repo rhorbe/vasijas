@@ -1,7 +1,7 @@
 from dataclasses import dataclass, replace
 from enum import StrEnum
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, TypeAlias
 
 import cv2
 import numpy as np
@@ -58,45 +58,6 @@ class RegistroMitad:
 
 
 @dataclass(frozen=True)
-class ResultadoCorteMitades:
-    imagenes_origen_procesadas: int
-    mitades_generadas: int
-    registros: list[RegistroMitad]
-    clases_sin_imagenes: list[str]
-    errores: list[ErrorConversionImagen]
-    metadata_destino: Path | None = None
-
-    @property
-    def imagenes_con_error(self) -> int:
-        return len(self.errores)
-
-    @property
-    def dataframe_registros(self) -> pd.DataFrame:
-        return pd.DataFrame(
-            [
-                {
-                    "id_perfil_completo": Path(registro.archivo_origen).stem,
-                    "archivo_generado": registro.archivo_generado,
-                    "borde_origen": registro.mitad,
-                }
-                for registro in self.registros
-            ]
-        )
-
-    @property
-    def mensaje_resumen(self) -> str:
-        partes = [
-            f"Imágenes origen procesadas: {self.imagenes_origen_procesadas}",
-            f"Mitades generadas: {self.mitades_generadas}",
-            f"Clases sin imágenes: {len(self.clases_sin_imagenes)}",
-            f"Errores: {self.imagenes_con_error}",
-        ]
-        if self.metadata_destino is not None:
-            partes.append(f"Metadata generada: {self.metadata_destino}")
-        return " | ".join(partes)
-
-
-@dataclass(frozen=True)
 class RegistroFraccion:
     archivo_origen: str
     archivo_generado: str
@@ -104,13 +65,17 @@ class RegistroFraccion:
     porcentaje: float
 
 
+RegistroCorte: TypeAlias = RegistroMitad | RegistroFraccion
+
+
 @dataclass(frozen=True)
-class ResultadoCorteFracciones:
+class ResultadoCorte:
     imagenes_origen_procesadas: int
-    fracciones_generadas: int
-    registros: list[RegistroFraccion]
+    cortes_generados: int
+    registros: list[RegistroCorte]
     clases_sin_imagenes: list[str]
     errores: list[ErrorConversionImagen]
+    nombre_cortes: str
     metadata_destino: Path | None = None
 
     @property
@@ -118,15 +83,29 @@ class ResultadoCorteFracciones:
         return len(self.errores)
 
     @property
+    def mitades_generadas(self) -> int:
+        return self.cortes_generados
+
+    @property
+    def fracciones_generadas(self) -> int:
+        return self.cortes_generados
+
+    @property
     def dataframe_registros(self) -> pd.DataFrame:
         return pd.DataFrame(
             [
-                {
-                    "id_perfil_completo": Path(registro.archivo_origen).stem,
-                    "archivo_generado": registro.archivo_generado,
-                    "borde_origen": registro.mitad,
-                    "porcentaje": registro.porcentaje,
-                }
+                (
+                    {
+                        "id_perfil_completo": Path(registro.archivo_origen).stem,
+                        "archivo_generado": registro.archivo_generado,
+                        "borde_origen": registro.mitad,
+                    }
+                    | (
+                        {"porcentaje": registro.porcentaje}
+                        if hasattr(registro, "porcentaje")
+                        else {}
+                    )
+                )
                 for registro in self.registros
             ]
         )
@@ -135,13 +114,17 @@ class ResultadoCorteFracciones:
     def mensaje_resumen(self) -> str:
         partes = [
             f"Imagenes origen procesadas: {self.imagenes_origen_procesadas}",
-            f"Fracciones generadas: {self.fracciones_generadas}",
+            f"{self.nombre_cortes} generadas: {self.cortes_generados}",
             f"Clases sin imagenes: {len(self.clases_sin_imagenes)}",
             f"Errores: {self.imagenes_con_error}",
         ]
         if self.metadata_destino is not None:
             partes.append(f"Metadata generada: {self.metadata_destino}")
         return " | ".join(partes)
+
+
+ResultadoCorteMitades: TypeAlias = ResultadoCorte
+ResultadoCorteFracciones: TypeAlias = ResultadoCorte
 
 
 @dataclass(frozen=True)
@@ -651,7 +634,7 @@ def cortar_imagenes_en_mitades(
     clases: Iterable[int | str],
     extension: str = "png",
     valor_fondo: int = 255,
-) -> ResultadoCorteMitades:
+) -> ResultadoCorte:
     registros: list[RegistroMitad] = []
     errores: list[ErrorConversionImagen] = []
     clases_sin_imagenes: list[str] = []
@@ -671,12 +654,13 @@ def cortar_imagenes_en_mitades(
         registros.extend(registros_clase)
         errores.extend(errores_clase)
 
-    return ResultadoCorteMitades(
+    return ResultadoCorte(
         imagenes_origen_procesadas=len(registros) // 2,
-        mitades_generadas=len(registros),
+        cortes_generados=len(registros),
         registros=registros,
         clases_sin_imagenes=clases_sin_imagenes,
         errores=errores,
+        nombre_cortes="Mitades",
     )
 
 
@@ -779,7 +763,7 @@ def cortar_imagenes_clasificadas_en_fracciones(
     porcentaje_avance: float,
     extension: str = "png",
     valor_fondo: int = 255,
-) -> ResultadoCorteFracciones:
+) -> ResultadoCorte:
     registros: list[RegistroFraccion] = []
     errores: list[ErrorConversionImagen] = []
     clases_sin_imagenes: list[str] = []
@@ -807,12 +791,13 @@ def cortar_imagenes_clasificadas_en_fracciones(
         len(registros) // fracciones_por_imagen if fracciones_por_imagen else 0
     )
 
-    return ResultadoCorteFracciones(
+    return ResultadoCorte(
         imagenes_origen_procesadas=imagenes_origen_procesadas,
-        fracciones_generadas=len(registros),
+        cortes_generados=len(registros),
         registros=registros,
         clases_sin_imagenes=clases_sin_imagenes,
         errores=errores,
+        nombre_cortes="Fracciones",
     )
 
 
@@ -958,7 +943,7 @@ def centrar_dataset_imagenes(
     valor_fondo: int = 255,
 ) -> ResultadoCentrado:
     """Wrapper de compatibilidad; preferir vasijas.pipelines.centrar_dataset_imagenes."""
-    from vasijas.pipelines import centrar_dataset_imagenes as ejecutar
+    from vasijas.pipelines import centrar_dataset_clasificado_de_fracciones as ejecutar
 
     return ejecutar(
         ruta_origen=ruta_origen,
