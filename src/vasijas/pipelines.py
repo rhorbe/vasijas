@@ -33,14 +33,18 @@ def cortar_dataset_clasificado_en_mitades(
         valor_fondo=valor_fondo,
     )
 
-    metadata_original = cargar_metadata(ruta_origen)
+    metadata_original = cargar_metadata(ruta_origen, nombre_metadata)
     metadata_mitades = construir_metadata_mitades(
         metadata_original=metadata_original,
         registros_derivados=resultado.dataframe_registros,
     )
-    guardar_metadata(df=metadata_mitades, carpeta_destino=ruta_destino)
+    ruta_metadata_destino = guardar_metadata(
+        df=metadata_mitades,
+        carpeta_destino=ruta_destino,
+        nombre_archivo=nombre_metadata,
+    )
 
-    return replace(resultado, metadata_destino=metadata_mitades)
+    return replace(resultado, metadata_destino=ruta_metadata_destino)
 
 
 def cortar_dataset_clasificado_en_fracciones(
@@ -60,13 +64,16 @@ def cortar_dataset_clasificado_en_fracciones(
         extension=extension,
         valor_fondo=valor_fondo,
     )
-    metadata_original = cargar_metadata(ruta_origen)
+    metadata_original = cargar_metadata(ruta_origen, nombre_metadata)
     metadata_fracciones = construir_metadata_fracciones(
         metadata_original=metadata_original,
-        registros_mitades=resultado.dataframe_registros,
+        registros_derivados=resultado.dataframe_registros,
     )
-    guardar_metadata(df=metadata_fracciones, carpeta_destino=ruta_destino)
-    ruta_metadata_destino = ruta_destino + nombre_metadata
+    ruta_metadata_destino = guardar_metadata(
+        df=metadata_fracciones,
+        carpeta_destino=ruta_destino,
+        nombre_archivo=nombre_metadata,
+    )
 
     return replace(resultado, metadata_destino=ruta_metadata_destino)
 

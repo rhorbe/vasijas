@@ -6,8 +6,14 @@ from vasijas.archivos import copiar_archivo
 from vasijas.nombres import normalizar_nombre
 
 COLUMNA_IDENTIFICADOR = "Identificador"
-COLUMNAS_METADATA_DERIVADA = ["archivo_origen", "mitad", "porcentaje"]
+COLUMNAS_METADATA_DERIVADA = ["archivo_origen", "borde_origen", "porcentaje"]
 COLUMNAS_REGISTRO_CENTRADO = ["archivo_origen", "archivo_generado"]
+COLUMNAS_REGISTRO_CORTE = [
+    "id_perfil_completo",
+    "archivo_generado",
+    "borde_origen",
+    "porcentaje",
+]
 
 
 class RegistroCentradoLike(Protocol):
@@ -69,8 +75,8 @@ def completar_metadata_cuadrados(
     Completa la metadata de imagenes cuadradas con las columnas derivadas.
 
     Las columnas adicionales se toman de la metadata de referencia para conservar el
-    mismo orden. Para cuadrados, archivo_origen coincide con Identificador, mitad queda
-    vacia y porcentaje representa el 100% de la imagen.
+    mismo orden. Para cuadrados, archivo_origen coincide con Identificador,
+    borde_origen queda vacio y porcentaje representa el 100% de la imagen.
     """
     columnas_adicionales = columnas_derivadas or get_columnas_adicionales_metadata(
         df_metadata_cuadrados,
@@ -80,7 +86,7 @@ def completar_metadata_cuadrados(
     df_resultado = df_metadata_cuadrados.copy()
     valores_por_defecto = {
         "archivo_origen": df_resultado[columna_identificador],
-        "mitad": "",
+        "borde_origen": "",
         "porcentaje": porcentaje,
     }
 
@@ -101,17 +107,23 @@ def completar_metadata_cuadrados(
     return df_resultado[list(df_metadata_cuadrados.columns) + columnas_adicionales]
 
 
-def construir_metadata_mitades(
+def construir_metadata_cortes(
     metadata_original: pd.DataFrame,
     registros_derivados: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
     how: str = "inner",
+    porcentaje_por_defecto: float | None = None,
 ) -> pd.DataFrame:
-    columnas_registros = ["id_perfil_completo", "archivo_generado", "mitad"]
-    if "porcentaje" in registros_derivados.columns:
-        columnas_registros.append("porcentaje")
+    registros = registros_derivados.copy()
+    if "borde_origen" not in registros.columns and "mitad" in registros.columns:
+        registros = registros.rename(columns={"mitad": "borde_origen"})
 
-    derivados = registros_derivados[columnas_registros].copy()
+    if "porcentaje" not in registros.columns:
+        if porcentaje_por_defecto is None:
+            raise ValueError("registros_derivados debe incluir la columna porcentaje")
+        registros["porcentaje"] = porcentaje_por_defecto
+
+    derivados = registros[COLUMNAS_REGISTRO_CORTE].copy()
     derivados["id_perfil_completo_stem"] = derivados["id_perfil_completo"].map(
         lambda nombre: Path(nombre).stem
     )
@@ -127,15 +139,42 @@ def construir_metadata_mitades(
         "archivo_generado"
     ].map(lambda nombre: Path(nombre).stem)
 
-    columnas_finales = list(metadata_original.columns) + ["id_perfil_completo", "mitad"]
-    if "porcentaje" in metadata_derivada.columns:
-        columnas_finales.append("porcentaje")
+    columnas_finales = list(metadata_original.columns) + [
+        "id_perfil_completo",
+        "borde_origen",
+        "porcentaje",
+    ]
 
     return metadata_derivada[columnas_finales]
 
 
-def construir_metadata_fracciones():
-    pass
+def construir_metadata_mitades(
+    metadata_original: pd.DataFrame,
+    registros_derivados: pd.DataFrame,
+    columna_identificador: str = COLUMNA_IDENTIFICADOR,
+    how: str = "inner",
+) -> pd.DataFrame:
+    return construir_metadata_cortes(
+        metadata_original=metadata_original,
+        registros_derivados=registros_derivados,
+        columna_identificador=columna_identificador,
+        how=how,
+        porcentaje_por_defecto=50.0,
+    )
+
+
+def construir_metadata_fracciones(
+    metadata_original: pd.DataFrame,
+    registros_derivados: pd.DataFrame,
+    columna_identificador: str = COLUMNA_IDENTIFICADOR,
+    how: str = "inner",
+) -> pd.DataFrame:
+    return construir_metadata_cortes(
+        metadata_original=metadata_original,
+        registros_derivados=registros_derivados,
+        columna_identificador=columna_identificador,
+        how=how,
+    )
 
 
 def construir_metadata_centrados(

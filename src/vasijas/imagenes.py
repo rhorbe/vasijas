@@ -77,7 +77,7 @@ class ResultadoCorteMitades:
                 {
                     "id_perfil_completo": Path(registro.archivo_origen).stem,
                     "archivo_generado": registro.archivo_generado,
-                    "mitad": registro.mitad,
+                    "borde_origen": registro.mitad,
                 }
                 for registro in self.registros
             ]
@@ -124,7 +124,7 @@ class ResultadoCorteFracciones:
                 {
                     "id_perfil_completo": Path(registro.archivo_origen).stem,
                     "archivo_generado": registro.archivo_generado,
-                    "mitad": registro.mitad,
+                    "borde_origen": registro.mitad,
                     "porcentaje": registro.porcentaje,
                 }
                 for registro in self.registros
@@ -690,7 +690,7 @@ def construir_metadata_mitades(
 
     return construir(
         metadata_original=metadata_original,
-        registros_mitades=registros_mitades,
+        registros_derivados=registros_mitades,
         columna_identificador=columna_identificador,
         how=how,
     )
