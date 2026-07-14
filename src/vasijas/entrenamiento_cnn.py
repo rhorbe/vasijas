@@ -13,6 +13,10 @@ from torchvision import datasets, models
 from torchvision import transforms as tfs
 from torchvision.models import ResNet18_Weights, VGG16_Weights
 
+IMAGENET_MEAN = [0.485, 0.456, 0.406]
+IMAGENET_STD = [0.229, 0.224, 0.225]
+
+
 @dataclass(frozen=True)
 class ConfiguracionTransformacionesImagen:
     tamano_imagen: int = 224

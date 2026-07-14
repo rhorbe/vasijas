@@ -10,6 +10,7 @@ src/vasijas/imagenes.py
 src/vasijas/metadata.py
 src/vasijas/nombres.py
 src/vasijas/paths.py
+src/vasijas/pipelines.py
 src/vasijas/reporting.py
 src/vasijas/transformaciones.py
 src/vasijas/ubicacion.py

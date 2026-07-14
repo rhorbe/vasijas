@@ -17,6 +17,7 @@ class ProjectPaths:
     DATA_FRACCIONES: Path
     DATA_CENTRADOS: Path
     DATA_UNIFICADO: Path
+    DATA_DIVIDIDO: Path
     NOTEBOOKS: Path
     OUTPUT_MODELS: Path
     OUTPUT_REPORTS: Path
@@ -39,6 +40,7 @@ class ProjectPaths:
             DATA_FRACCIONES=data / "07.fracciones",
             DATA_CENTRADOS=data / "08.centrados",
             DATA_UNIFICADO=data / "09.unificado",
+            DATA_DIVIDIDO=data / "10.dividido",
             NOTEBOOKS=root / "notebooks",
             OUTPUT_MODELS=output / "models",
             OUTPUT_REPORTS=output / "reports",
