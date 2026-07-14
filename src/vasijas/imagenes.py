@@ -47,7 +47,7 @@ class ResultadoConversionCuadrados:
         ]
         if self.metadata_destino is not None:
             partes.append(f"Metadata copiada: {self.metadata_destino}")
-        return " | ".join(partes)
+        return "\n".join(partes)
 
 
 @dataclass(frozen=True)
@@ -55,6 +55,7 @@ class RegistroMitad:
     archivo_origen: str
     archivo_generado: str
     mitad: str
+    porcentaje_avance: float
 
 
 @dataclass(frozen=True)
@@ -62,7 +63,7 @@ class RegistroFraccion:
     archivo_origen: str
     archivo_generado: str
     mitad: str
-    porcentaje: float
+    porcentaje_avance: float
 
 
 RegistroCorte: TypeAlias = RegistroMitad | RegistroFraccion
@@ -96,13 +97,13 @@ class ResultadoCorte:
             [
                 (
                     {
-                        "id_perfil_completo": Path(registro.archivo_origen).stem,
                         "archivo_generado": registro.archivo_generado,
+                        "id_perfil_completo": Path(registro.archivo_origen).stem,
                         "borde_origen": registro.mitad,
                     }
                     | (
-                        {"porcentaje": registro.porcentaje}
-                        if hasattr(registro, "porcentaje")
+                        {"porcentaje_avance": registro.porcentaje_avance}
+                        if hasattr(registro, "porcentaje_avance")
                         else {}
                     )
                 )
@@ -170,7 +171,7 @@ class ResultadoCentrado:
         ]
         if self.metadata_destino is not None:
             partes.append(f"Metadata generada: {self.metadata_destino}")
-        return " | ".join(partes)
+        return "\n".join(partes)
 
 
 def leer_imagen_grises(ruta_imagen: Path) -> np.ndarray:
@@ -584,11 +585,13 @@ def cortar_perfil_en_mitades(
             archivo_origen=ruta_perfil.name,
             archivo_generado=ruta_tope.name,
             mitad="tope",
+            porcentaje_avance=50.0,
         ),
         RegistroMitad(
             archivo_origen=ruta_perfil.name,
             archivo_generado=ruta_base.name,
             mitad="base",
+            porcentaje_avance=50.0,
         ),
     ]
 
@@ -712,7 +715,7 @@ def cortar_perfil_en_fracciones(
                 archivo_origen=ruta_perfil.name,
                 archivo_generado=ruta_fraccion.name,
                 mitad=mitad,
-                porcentaje=porcentaje,
+                porcentaje_avance=porcentaje,
             )
         )
 

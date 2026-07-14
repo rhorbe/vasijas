@@ -6,13 +6,13 @@ from vasijas.archivos import copiar_archivo
 from vasijas.nombres import normalizar_nombre
 
 COLUMNA_IDENTIFICADOR = "Identificador"
-COLUMNAS_METADATA_DERIVADA = ["archivo_origen", "borde_origen", "porcentaje"]
+COLUMNAS_METADATA_DERIVADA = ["archivo_origen", "borde_origen", "porcentaje_avance"]
 COLUMNAS_REGISTRO_CENTRADO = ["archivo_origen", "archivo_generado"]
 COLUMNAS_REGISTRO_CORTE = [
     "id_perfil_completo",
     "archivo_generado",
     "borde_origen",
-    "porcentaje",
+    "porcentaje_avance",
 ]
 
 
@@ -69,14 +69,14 @@ def completar_metadata_cuadrados(
     df_metadata_referencia: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
     columnas_derivadas: list[str] | None = None,
-    porcentaje: float = 100.00,
+    porcentaje_avance: float = 100.00,
 ) -> pd.DataFrame:
     """
     Completa la metadata de imagenes cuadradas con las columnas derivadas.
 
     Las columnas adicionales se toman de la metadata de referencia para conservar el
     mismo orden. Para cuadrados, archivo_origen coincide con Identificador,
-    borde_origen queda vacio y porcentaje representa el 100% de la imagen.
+    borde_origen queda vacio y porcentaje_avance representa el 100% de la imagen.
     """
     columnas_adicionales = columnas_derivadas or get_columnas_adicionales_metadata(
         df_metadata_cuadrados,
@@ -87,7 +87,7 @@ def completar_metadata_cuadrados(
     valores_por_defecto = {
         "archivo_origen": df_resultado[columna_identificador],
         "borde_origen": "",
-        "porcentaje": porcentaje,
+        "porcentaje_avance": porcentaje_avance,
     }
 
     columnas_no_soportadas = [
@@ -112,16 +112,24 @@ def construir_metadata_cortes(
     registros_derivados: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
     how: str = "inner",
-    porcentaje_por_defecto: float | None = None,
+    porcentaje_avance_por_defecto: float | None = None,
 ) -> pd.DataFrame:
     registros = registros_derivados.copy()
     if "borde_origen" not in registros.columns and "mitad" in registros.columns:
         registros = registros.rename(columns={"mitad": "borde_origen"})
 
-    if "porcentaje" not in registros.columns:
-        if porcentaje_por_defecto is None:
-            raise ValueError("registros_derivados debe incluir la columna porcentaje")
-        registros["porcentaje"] = porcentaje_por_defecto
+    if (
+        "porcentaje_avance" not in registros.columns
+        and "porcentaje" in registros.columns
+    ):
+        registros = registros.rename(columns={"porcentaje": "porcentaje_avance"})
+
+    if "porcentaje_avance" not in registros.columns:
+        if porcentaje_avance_por_defecto is None:
+            raise ValueError(
+                "registros_derivados debe incluir la columna porcentaje_avance"
+            )
+        registros["porcentaje_avance"] = porcentaje_avance_por_defecto
 
     derivados = registros[COLUMNAS_REGISTRO_CORTE].copy()
     derivados["id_perfil_completo_stem"] = derivados["id_perfil_completo"].map(
@@ -142,7 +150,7 @@ def construir_metadata_cortes(
     columnas_finales = list(metadata_original.columns) + [
         "id_perfil_completo",
         "borde_origen",
-        "porcentaje",
+        "porcentaje_avance",
     ]
 
     return metadata_derivada[columnas_finales]
@@ -159,7 +167,7 @@ def construir_metadata_mitades(
         registros_derivados=registros_derivados,
         columna_identificador=columna_identificador,
         how=how,
-        porcentaje_por_defecto=50.0,
+        porcentaje_avance_por_defecto=50.0,
     )
 
 
