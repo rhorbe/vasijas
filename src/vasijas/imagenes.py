@@ -154,8 +154,8 @@ class ResultadoCentrado:
         return pd.DataFrame(
             [
                 {
-                    "archivo_origen": registro.archivo_origen,
                     "archivo_generado": registro.archivo_generado,
+                    "archivo_origen": registro.archivo_origen,
                 }
                 for registro in self.registros
             ],
@@ -171,7 +171,7 @@ class ResultadoCentrado:
         ]
         if self.metadata_destino is not None:
             partes.append(f"Metadata generada: {self.metadata_destino}")
-        return "\n".join(partes)
+        return " | ".join(partes)
 
 
 def leer_imagen_grises(ruta_imagen: Path) -> np.ndarray:
