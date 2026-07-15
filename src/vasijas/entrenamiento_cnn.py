@@ -4,14 +4,17 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import torch
 import torch.nn as nn
-from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, models
 from torchvision import transforms as tfs
 from torchvision.models import ResNet18_Weights, VGG16_Weights
+
+from vasijas.split_dataset import (
+    ConfiguracionSplitDataset,
+    generar_indices_split_estratificado,
+)
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
@@ -26,13 +29,6 @@ class ConfiguracionTransformacionesImagen:
     relleno_pixeles: tuple[int, int, int] = (255, 255, 255)
     media_normalizacion: Sequence[float] = field(default_factory=lambda: IMAGENET_MEAN)
     desvio_normalizacion: Sequence[float] = field(default_factory=lambda: IMAGENET_STD)
-
-
-@dataclass(frozen=True)
-class ConfiguracionSplitDataset:
-    proporcion_temporal: float = 0.30
-    proporcion_test_desde_temporal: float = 0.50
-    semilla: int = 42
 
 
 @dataclass(frozen=True)
@@ -181,29 +177,27 @@ def crear_datasets_imagen(
     configuracion_split: ConfiguracionSplitDataset,
 ) -> DatasetsImagen:
     dataset_completo = datasets.ImageFolder(data_dir)
-    indices = np.arange(len(dataset_completo))
-    etiquetas = np.array(dataset_completo.targets)
-
-    train_idx, temp_idx, _, etiquetas_temporales = train_test_split(
-        indices,
-        etiquetas,
-        test_size=configuracion_split.proporcion_temporal,
-        stratify=etiquetas,
-        random_state=configuracion_split.semilla,
-    )
-    val_idx, test_idx = train_test_split(
-        temp_idx,
-        test_size=configuracion_split.proporcion_test_desde_temporal,
-        stratify=etiquetas_temporales,
-        random_state=configuracion_split.semilla,
+    indices_split = generar_indices_split_estratificado(
+        etiquetas=dataset_completo.targets,
+        configuracion_split=configuracion_split,
     )
 
     return DatasetsImagen(
         train=TransformSubset(
-            dataset_completo, train_idx, transformacion_entrenamiento
+            dataset_completo,
+            indices_split.train,
+            transformacion_entrenamiento,
         ),
-        val=TransformSubset(dataset_completo, val_idx, transformacion_validacion),
-        test=TransformSubset(dataset_completo, test_idx, transformacion_test),
+        val=TransformSubset(
+            dataset_completo,
+            indices_split.val,
+            transformacion_validacion,
+        ),
+        test=TransformSubset(
+            dataset_completo,
+            indices_split.test,
+            transformacion_test,
+        ),
         class_names=dataset_completo.classes,
     )
 
