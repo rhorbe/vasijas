@@ -12,6 +12,7 @@ src/vasijas/nombres.py
 src/vasijas/paths.py
 src/vasijas/pipelines.py
 src/vasijas/reporting.py
+src/vasijas/split_dataset.py
 src/vasijas/transformaciones.py
 src/vasijas/ubicacion.py
 src/vasijas.egg-info/PKG-INFO

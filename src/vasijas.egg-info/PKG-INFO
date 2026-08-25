@@ -13,6 +13,7 @@ Requires-Dist: numpy>=2.4.2
 Requires-Dist: opencv-python>=4.13.0.92
 Requires-Dist: pandas>=3.0.1
 Requires-Dist: pandas-stubs~=3.0.1
+Requires-Dist: papermill>=2.7.0
 Requires-Dist: pyyaml>=6.0.3
 Requires-Dist: scikit-image>=0.26.0
 Requires-Dist: scikit-learn>=1.8.0
