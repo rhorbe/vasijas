@@ -19,4 +19,10 @@ format: html
 - [07. Corte en fracciones](notebooks/02.preparacion/07.Corte_en_fracciones.html)
 - [08. Centrado de fracciones](notebooks/02.preparacion/08.Centrado_de_fracciones.html)
 - [09. Prueba de transformaciones](notebooks/02.preparacion/09.Prueba_de_transformaciones.html)
-- [10. Unión de datasets](notebooks/02.preparacion/10.Union_de_datasets.html)
+- [10. División en train, val y test de perfiles completos](notebooks/02.preparacion/10.Division_en_train_val_y_test_perfiles_completos.html)
+- [11.
+
+
+## Experimentos
+
+- [ResNet18 · lr=1e-3 · bs=16 · base](output/experiments/experiment_resnet18_lr1e3_bs16_base.html)

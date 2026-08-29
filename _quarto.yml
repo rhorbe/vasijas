@@ -13,6 +13,8 @@ project:
     - notebooks/02.preparacion/08.Centrado_de_fracciones.ipynb
     - notebooks/02.preparacion/09.Prueba_de_transformaciones.ipynb
     - notebooks/02.preparacion/11.Union_de_datasets.ipynb
+    - notebooks/03.entrenamiento/13.Entrenamiento_resnet18.ipynb
+    - output/experiments/experiment_resnet18_lr1e3_bs16_base.ipynb
 
 author: Rafael Horacio Orbe
 

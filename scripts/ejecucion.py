@@ -4,7 +4,7 @@ import papermill as pm
 
 
 NOTEBOOK_ENTRADA = Path(
-    "notebooks/04.entrenamiento/entrenamiento_parametrizado.ipynb"
+    "notebooks/03.entrenamiento/13.Entrenamiento_resnet18.ipynb"
 )
 DIRECTORIO_SALIDA = Path("output/experiments")
 
@@ -35,7 +35,7 @@ PARAMETROS_BASE = {
     "NUM_WORKERS": 8,
     "USE_AMP": True,
     "USE_CHANNELS_LAST": True,
-    "ENABLE_MODEL_COMPILE": False,
+    "ENABLE_MODEL_COMPILE": False
 }
 
 
@@ -142,11 +142,11 @@ MATRIZ_EXPERIMENTOS = [
 
 def ejecutar_experimento(experimento: dict) -> None:
     parametros = PARAMETROS_BASE | experimento
+
     run_name = parametros["RUN_NAME"]
+    model_name = parametros["MODEL_NAME"]
 
-    parametros["OUTPUT_MODEL_NAME"] = f"{run_name}.pth"
-
-    notebook_salida = DIRECTORIO_SALIDA / f"{run_name}.ipynb"
+    notebook_salida = DIRECTORIO_SALIDA / f"experiment_{model_name}_{run_name}.ipynb"
 
     print(f"\nEjecutando: {run_name}")
     print(f"Notebook de salida: {notebook_salida}")
