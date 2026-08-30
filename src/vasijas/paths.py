@@ -40,7 +40,7 @@ class ProjectPaths:
             DATA_FRACCIONES=data / "07.fracciones",
             DATA_CENTRADOS=data / "08.centrados",
             DATA_UNIFICADO=data / "09.unificado",
-            DATA_DIVIDIDO=data / "10.dividido",
+            DATA_DIVIDIDO=data / "10.cuadrados_divididos_en_train_val_y_test",
             NOTEBOOKS=root / "notebooks",
             OUTPUT_MODELS=output / "models",
             OUTPUT_REPORTS=output / "reports",

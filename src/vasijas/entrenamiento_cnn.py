@@ -117,8 +117,8 @@ def seleccionar_dispositivo_procesamiento() -> torch.device:
 
 def describir_dispositivo(dispositivo: torch.device) -> str:
     if dispositivo.type == "cuda":
-        return f"Dispositivo seleccionado para procesamiento: CUDA - {torch.cuda.get_device_name(0)}"
-    return "Dispositivo seleccionado para procesamiento: CPU"
+        return f"Dispositivo utilizado para procesamiento: CUDA - {torch.cuda.get_device_name(0)}"
+    return "Dispositivo utilizado para procesamiento: CPU"
 
 
 def crear_transformaciones_imagen(

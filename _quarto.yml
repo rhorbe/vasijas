@@ -12,11 +12,16 @@ project:
     - notebooks/02.preparacion/07.Corte_en_fracciones.ipynb
     - notebooks/02.preparacion/08.Centrado_de_fracciones.ipynb
     - notebooks/02.preparacion/09.Prueba_de_transformaciones.ipynb
-    - notebooks/02.preparacion/11.Union_datasets.ipynb
+    - notebooks/02.preparacion/11.Union_datasets_fracciones_y_completos.ipynb
     - notebooks/03.entrenamiento/13.Entrenamiento_resnet18.ipynb
     - output/experiments/experiment_resnet18_lr1e3_bs16_base.ipynb
 
 author: Rafael Horacio Orbe
+author-title: "autor"
+
+toc: true
+toc-depth: 3
+toc-title: "Tabla de contenidos"
 
 preview:
   port: 5555
@@ -31,7 +36,5 @@ execute:
 
 format:
   html:
-    toc: true
-    toc-depth: 3
     number-sections: false
     theme: cosmo
