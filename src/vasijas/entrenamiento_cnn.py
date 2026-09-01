@@ -6,6 +6,7 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 import torch
 import torch.nn as nn
@@ -301,6 +302,123 @@ def crear_datasets_imagen(
     )
 
 
+def obtener_indices_split_desde_metadata(
+    dataset: datasets.ImageFolder,
+    data_dir: Path,
+    metadata_split: pd.DataFrame,
+) -> dict[str, list[int]]:
+    """Relaciona las muestras de ``ImageFolder`` con un split persistido.
+
+    La relación se realiza mediante ``ruta_relativa`` para no depender del
+    orden en que ``ImageFolder`` descubre los archivos.
+    """
+    columnas_requeridas = {"ruta_relativa", "clase_carpeta", "split"}
+    columnas_faltantes = columnas_requeridas - set(metadata_split.columns)
+    if columnas_faltantes:
+        raise ValueError(
+            f"Faltan columnas requeridas en la metadata: {sorted(columnas_faltantes)}"
+        )
+
+    columnas_con_nulos = [
+        columna
+        for columna in columnas_requeridas
+        if metadata_split[columna].isna().any()
+    ]
+    if columnas_con_nulos:
+        raise ValueError(
+            f"La metadata contiene valores nulos en: {sorted(columnas_con_nulos)}"
+        )
+
+    splits_validos = {"train", "val", "test"}
+    splits_encontrados = set(metadata_split["split"].dropna().astype(str))
+    splits_invalidos = splits_encontrados - splits_validos
+    if splits_invalidos:
+        raise ValueError(
+            f"La metadata contiene splits inválidos: {sorted(splits_invalidos)}"
+        )
+
+    rutas_metadata = (
+        metadata_split["ruta_relativa"]
+        .astype(str)
+        .map(lambda ruta: Path(ruta).as_posix())
+    )
+    rutas_duplicadas = rutas_metadata[rutas_metadata.duplicated()].unique().tolist()
+    if rutas_duplicadas:
+        raise ValueError(
+            f"La metadata contiene rutas duplicadas: {rutas_duplicadas[:10]}"
+        )
+
+    metadata_por_ruta = metadata_split.assign(
+        ruta_relativa_normalizada=rutas_metadata
+    ).set_index("ruta_relativa_normalizada")
+    data_dir_resuelto = data_dir.resolve()
+    indices_por_split: dict[str, list[int]] = {
+        "train": [],
+        "val": [],
+        "test": [],
+    }
+    rutas_dataset: set[str] = set()
+
+    for indice, (ruta_imagen, etiqueta) in enumerate(dataset.samples):
+        ruta_relativa = (
+            Path(ruta_imagen).resolve().relative_to(data_dir_resuelto).as_posix()
+        )
+        rutas_dataset.add(ruta_relativa)
+        if ruta_relativa not in metadata_por_ruta.index:
+            raise ValueError(
+                f"La imagen {ruta_relativa!r} no tiene un split asignado en la metadata"
+            )
+
+        registro = metadata_por_ruta.loc[ruta_relativa]
+        clase_dataset = dataset.classes[etiqueta]
+        if str(registro["clase_carpeta"]) != clase_dataset:
+            raise ValueError(
+                f"La clase de {ruta_relativa!r} no coincide: "
+                f"metadata={registro['clase_carpeta']!r}, dataset={clase_dataset!r}"
+            )
+        indices_por_split[str(registro["split"])].append(indice)
+
+    rutas_sin_imagen = sorted(set(metadata_por_ruta.index) - rutas_dataset)
+    if rutas_sin_imagen:
+        raise ValueError(
+            f"La metadata referencia imágenes inexistentes: {rutas_sin_imagen[:10]}"
+        )
+
+    splits_vacios = [
+        split for split, indices in indices_por_split.items() if not indices
+    ]
+    if splits_vacios:
+        raise ValueError(f"La metadata contiene splits vacíos: {splits_vacios}")
+
+    return indices_por_split
+
+
+def crear_datasets_imagen_desde_metadata(
+    data_dir: Path,
+    metadata_split: pd.DataFrame,
+    transformacion_entrenamiento: Callable,
+    transformacion_validacion: Callable,
+    transformacion_test: Callable,
+) -> DatasetsImagen:
+    """Crea datasets usando la división persistida en la metadata."""
+    dataset_completo = datasets.ImageFolder(data_dir)
+    indices = obtener_indices_split_desde_metadata(
+        dataset=dataset_completo,
+        data_dir=data_dir,
+        metadata_split=metadata_split,
+    )
+    return DatasetsImagen(
+        train=TransformSubset(
+            dataset_completo, indices["train"], transformacion_entrenamiento
+        ),
+        val=TransformSubset(
+            dataset_completo, indices["val"], transformacion_validacion
+        ),
+        test=TransformSubset(dataset_completo, indices["test"], transformacion_test),
+        class_names=dataset_completo.classes,
+    )
+
+
 # TODO 3.1
 def crear_dataloaders_imagen(
     data_dir: Path,
@@ -342,6 +460,36 @@ def crear_dataloaders_imagen(
         configuracion_split=configuracion_split,
     )
 
+    return DataLoadersImagen(
+        train=DataLoader(datasets_imagen.train, batch_size=batch_size, shuffle=True),
+        val=DataLoader(datasets_imagen.val, batch_size=batch_size, shuffle=False),
+        test=DataLoader(datasets_imagen.test, batch_size=batch_size, shuffle=False),
+        class_names=datasets_imagen.class_names,
+    )
+
+
+def crear_dataloaders_imagen_desde_metadata(
+    data_dir: Path,
+    metadata_split: pd.DataFrame,
+    batch_size: int,
+    configuracion_transformaciones: ConfiguracionTransformacionesImagen,
+) -> DataLoadersImagen:
+    """Crea dataloaders respetando una división persistida en metadata.
+
+    Las transformaciones aleatorias se aplican solamente al subconjunto
+    ``train``. La pertenencia de cada imagen a ``train``, ``val`` o ``test`` se
+    toma de la columna ``split`` y no se vuelve a calcular.
+    """
+    train_transform, val_transform, test_transform = crear_transformaciones_imagen(
+        configuracion_transformaciones
+    )
+    datasets_imagen = crear_datasets_imagen_desde_metadata(
+        data_dir=data_dir,
+        metadata_split=metadata_split,
+        transformacion_entrenamiento=train_transform,
+        transformacion_validacion=val_transform,
+        transformacion_test=test_transform,
+    )
     return DataLoadersImagen(
         train=DataLoader(datasets_imagen.train, batch_size=batch_size, shuffle=True),
         val=DataLoader(datasets_imagen.val, batch_size=batch_size, shuffle=False),
