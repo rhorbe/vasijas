@@ -13,6 +13,7 @@ from vasijas.metadata import COLUMNA_IDENTIFICADOR
 COLUMNAS_SPLIT_METADATA = ["archivo", "ruta_relativa", "clase_carpeta", "split"]
 
 
+# TODO 2.1
 @dataclass(frozen=True)
 class ConfiguracionSplitDataset:
     proporcion_temporal: float = 0.30

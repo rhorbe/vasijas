@@ -20,6 +20,7 @@ IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 
 
+# TODO 1.1
 @dataclass(frozen=True)
 class ConfiguracionTransformacionesImagen:
     tamano_imagen: int = 224
@@ -121,9 +122,24 @@ def describir_dispositivo(dispositivo: torch.device) -> str:
     return "Dispositivo utilizado para procesamiento: CPU"
 
 
+# TODO 3.2.1
 def crear_transformaciones_imagen(
     configuracion: ConfiguracionTransformacionesImagen,
 ) -> tuple[tfs.Compose, tfs.Compose, tfs.Compose]:
+    """Crea las transformaciones para entrenamiento, validación y prueba.
+
+    La transformación de entrenamiento aplica redimensionado, aumento de datos
+    mediante volteo horizontal, rotación y escalado aleatorios, conversión a
+    tensor y normalización.
+
+    Args:
+        configuracion: Parámetros de redimensionado, aumento de datos y
+            normalización que se aplicarán a las imágenes.
+
+    Returns:
+        Una tupla con las transformaciones de entrenamiento, validación y
+        prueba, respectivamente.
+    """
     transformacion_validacion = tfs.Compose(
         [
             tfs.Resize(
@@ -176,6 +192,29 @@ def crear_datasets_imagen(
     transformacion_test: Callable,
     configuracion_split: ConfiguracionSplitDataset,
 ) -> DatasetsImagen:
+    """Crea los datasets de entrenamiento, validación y prueba.
+
+    Carga las imágenes desde un directorio compatible con
+    :class:`torchvision.datasets.ImageFolder`, genera una división
+    estratificada y asigna a cada subconjunto su transformación correspondiente.
+    Los tres subconjuntos comparten el mismo dataset base, pero contienen índices
+    diferentes.
+
+    Args:
+        data_dir: Directorio raíz con una subcarpeta por clase.
+        transformacion_entrenamiento: Transformación aplicada a las imágenes del
+            subconjunto de entrenamiento.
+        transformacion_validacion: Transformación aplicada a las imágenes del
+            subconjunto de validación.
+        transformacion_test: Transformación aplicada a las imágenes del
+            subconjunto de prueba.
+        configuracion_split: Parámetros usados para generar la división
+            estratificada del dataset.
+
+    Returns:
+        Los datasets de entrenamiento, validación y prueba junto con los nombres
+        de las clases, en el orden asignado por ``ImageFolder``.
+    """
     dataset_completo = datasets.ImageFolder(data_dir)
     indices_split = generar_indices_split_estratificado(
         etiquetas=dataset_completo.targets,
@@ -202,15 +241,39 @@ def crear_datasets_imagen(
     )
 
 
+# TODO 3.1
 def crear_dataloaders_imagen(
     data_dir: Path,
     batch_size: int,
     configuracion_transformaciones: ConfiguracionTransformacionesImagen,
     configuracion_split: ConfiguracionSplitDataset,
 ) -> DataLoadersImagen:
+    """Crea los ``DataLoader`` para entrenamiento, validación y prueba.
+
+    Las imágenes se cargan desde un directorio compatible con
+    :class:`torchvision.datasets.ImageFolder`, se dividen de forma estratificada
+    según ``configuracion_split`` y reciben las transformaciones definidas en
+    ``configuracion_transformaciones``. El conjunto de entrenamiento se mezcla
+    en cada época; los conjuntos de validación y prueba conservan su orden.
+
+    Args:
+        data_dir: Directorio raíz con una subcarpeta por clase.
+        batch_size: Cantidad de imágenes incluidas en cada lote.
+        configuracion_transformaciones: Parámetros de aumento, redimensionado y
+            normalización de las imágenes.
+        configuracion_split: Parámetros usados para dividir el dataset en los
+            subconjuntos de entrenamiento, validación y prueba.
+
+    Returns:
+        Los tres ``DataLoader`` junto con los nombres de las clases, en el orden
+        asignado por ``ImageFolder``.
+    """
+    # TODO 3.2
     train_transform, val_transform, test_transform = crear_transformaciones_imagen(
         configuracion_transformaciones
     )
+
+    # TODO 3.3
     datasets_imagen = crear_datasets_imagen(
         data_dir=data_dir,
         transformacion_entrenamiento=train_transform,
@@ -232,6 +295,26 @@ def crear_modelo_transfer_learning(
     num_classes: int,
     dispositivo: torch.device,
 ) -> nn.Module:
+    """Crea un modelo preentrenado adaptado para clasificación de imágenes.
+
+    Construye una arquitectura ``resnet18`` o ``vgg16`` con pesos preentrenados
+    en ImageNet, congela sus parámetros originales y reemplaza la última capa
+    clasificadora por una capa entrenable con una salida por clase. Finalmente,
+    mueve el modelo al dispositivo indicado.
+
+    Args:
+        nombre_modelo: Nombre de la arquitectura; debe ser ``"resnet18"`` o
+            ``"vgg16"``.
+        num_classes: Cantidad de clases que deberá predecir el modelo.
+        dispositivo: Dispositivo al que se moverá el modelo creado.
+
+    Returns:
+        El modelo adaptado para la cantidad de clases solicitada.
+
+    Raises:
+        ValueError: Si ``nombre_modelo`` no corresponde a una arquitectura
+            soportada.
+    """
     if nombre_modelo == "resnet18":
         modelo = models.resnet18(weights=ResNet18_Weights.DEFAULT, progress=True)
         congelar_parametros(modelo)
@@ -336,6 +419,29 @@ def entrenar_modelo(
     epochs: int,
     al_finalizar_epoch: Callable[[MetricasEpoch], None] | None = None,
 ) -> HistorialEntrenamiento:
+    """Entrena y valida un modelo durante una cantidad determinada de épocas.
+
+    En cada época ejecuta una pasada completa sobre el conjunto de entrenamiento,
+    evalúa el modelo con el conjunto de validación y registra las pérdidas,
+    exactitudes y duración obtenidas. Si se proporciona un callback, se invoca
+    al finalizar cada época con sus métricas.
+
+    Args:
+        modelo: Modelo que se entrenará y validará.
+        train_loader: Lotes de imágenes y etiquetas usados para entrenamiento.
+        val_loader: Lotes de imágenes y etiquetas usados para validación.
+        criterio: Función de pérdida empleada en ambas etapas.
+        optimizador: Optimizador encargado de actualizar los parámetros del
+            modelo.
+        dispositivo: Dispositivo donde se ejecutarán el modelo y los tensores.
+        epochs: Cantidad de épocas completas que se ejecutarán.
+        al_finalizar_epoch: Función opcional que recibe las métricas de cada
+            época inmediatamente después de calcularlas.
+
+    Returns:
+        El historial con las métricas de entrenamiento y validación de todas las
+        épocas ejecutadas.
+    """
     metricas: list[MetricasEpoch] = []
 
     for epoch in range(1, epochs + 1):
