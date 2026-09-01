@@ -47,7 +47,7 @@ class ProjectPaths:
         )
 
     def ensure_outputs(self) -> None:
-        """Crea únicamente los directorios destinados a resultados generados."""
+        """Crea únicamente los directorios destinados a results generados."""
         self.OUTPUT_MODELS.mkdir(parents=True, exist_ok=True)
         self.OUTPUT_REPORTS.mkdir(parents=True, exist_ok=True)
 
