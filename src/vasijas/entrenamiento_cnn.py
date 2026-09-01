@@ -4,8 +4,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 import torch
 import torch.nn as nn
+from matplotlib.figure import Figure
+from sklearn.metrics import classification_report, confusion_matrix
 from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, models
 from torchvision import transforms as tfs
@@ -91,6 +96,12 @@ class HistorialEntrenamiento:
         return [metrica.val_accuracy for metrica in self.metricas]
 
 
+@dataclass(frozen=True)
+class ResultadoClasificacion:
+    reporte: str
+    matriz_confusion: np.ndarray
+
+
 class TransformSubset(Dataset):
     def __init__(
         self,
@@ -120,6 +131,55 @@ def describir_dispositivo(dispositivo: torch.device) -> str:
     if dispositivo.type == "cuda":
         return f"Dispositivo utilizado para procesamiento: CUDA - {torch.cuda.get_device_name(0)}"
     return "Dispositivo utilizado para procesamiento: CPU"
+
+
+def describir_metricas_epoch(
+    metrica: MetricasEpoch,
+    total_epochs: int,
+) -> str:
+    """Construye el texto mostrado al finalizar una época de entrenamiento."""
+    return "\n".join(
+        [
+            f"Epoch {metrica.epoch}/{total_epochs}",
+            (
+                f"Train Loss: {metrica.train_loss:.4f} | "
+                f"Train Acc: {metrica.train_accuracy:.4f}"
+            ),
+            f"Val Loss: {metrica.val_loss:.4f} | Val Acc: {metrica.val_accuracy:.4f}",
+            f"Tiempo de epoch: {metrica.duracion}",
+        ]
+    )
+
+
+def graficar_lote_imagenes(
+    loader: DataLoader,
+    nombres_clases: Sequence[str],
+    cantidad: int = 8,
+) -> Figure:
+    """Grafica una muestra del primer lote producido por un ``DataLoader``."""
+    if cantidad <= 0:
+        raise ValueError("cantidad debe ser mayor a cero")
+
+    imagenes, etiquetas = next(iter(loader))
+    cantidad_mostrada = min(cantidad, len(imagenes))
+    figura, ejes = plt.subplots(
+        1, cantidad_mostrada, figsize=(2 * cantidad_mostrada, 3)
+    )
+    ejes_array = np.atleast_1d(ejes)
+
+    for imagen, etiqueta, eje in zip(
+        imagenes[:cantidad_mostrada],
+        etiquetas[:cantidad_mostrada],
+        ejes_array,
+        strict=True,
+    ):
+        imagen_array = imagen.detach().cpu().permute(1, 2, 0).numpy()
+        eje.imshow(imagen_array.squeeze(), cmap="gray")
+        eje.set_title(nombres_clases[int(etiqueta)])
+        eje.axis("off")
+
+    figura.tight_layout()
+    return figura
 
 
 # TODO 3.2.1
@@ -344,6 +404,11 @@ def crear_optimizador_adam(
     return torch.optim.Adam(parametros_entrenables, lr=learning_rate)
 
 
+def crear_criterio_entropia_cruzada() -> nn.CrossEntropyLoss:
+    """Crea el criterio de clasificación multiclase usado por los modelos."""
+    return nn.CrossEntropyLoss()
+
+
 def entrenar_una_epoch(
     modelo: nn.Module,
     loader: DataLoader,
@@ -473,3 +538,74 @@ def entrenar_modelo(
             al_finalizar_epoch(metrica)
 
     return HistorialEntrenamiento(metricas=metricas)
+
+
+def graficar_historial_entrenamiento(
+    historial: HistorialEntrenamiento,
+) -> tuple[Figure, Figure]:
+    """Grafica las curvas de pérdida y exactitud de entrenamiento y validación."""
+    figura_loss, eje_loss = plt.subplots()
+    eje_loss.plot(historial.train_losses, label="Train Loss")
+    eje_loss.plot(historial.val_losses, label="Val Loss")
+    eje_loss.legend()
+    eje_loss.set_title("Loss")
+    figura_loss.tight_layout()
+
+    figura_accuracy, eje_accuracy = plt.subplots()
+    eje_accuracy.plot(historial.train_accuracies, label="Train Acc")
+    eje_accuracy.plot(historial.val_accuracies, label="Val Acc")
+    eje_accuracy.legend()
+    eje_accuracy.set_title("Accuracy")
+    figura_accuracy.tight_layout()
+
+    return figura_loss, figura_accuracy
+
+
+def calcular_resultado_clasificacion(
+    resultado: ResultadoEvaluacion,
+    nombres_clases: Sequence[str],
+) -> ResultadoClasificacion:
+    """Calcula el reporte y la matriz de confusión de una evaluación."""
+    ids_clases = list(range(len(nombres_clases)))
+    reporte = classification_report(
+        resultado.etiquetas,
+        resultado.predicciones,
+        labels=ids_clases,
+        target_names=list(nombres_clases),
+        zero_division=0,
+    )
+    matriz = confusion_matrix(
+        resultado.etiquetas,
+        resultado.predicciones,
+        labels=ids_clases,
+        normalize="true",
+    )
+    return ResultadoClasificacion(reporte=reporte, matriz_confusion=matriz)
+
+
+def graficar_matriz_confusion(
+    matriz: np.ndarray,
+    nombres_clases: Sequence[str],
+) -> Figure:
+    """Grafica una matriz de confusión normalizada con etiquetas de clase."""
+    figura, eje = plt.subplots(figsize=(10, 8))
+    sns.heatmap(
+        matriz,
+        annot=True,
+        fmt=".2f",
+        xticklabels=nombres_clases,
+        yticklabels=nombres_clases,
+        ax=eje,
+    )
+    eje.set_title("Confusion Matrix")
+    eje.set_xlabel("Predicción")
+    eje.set_ylabel("Clase real")
+    figura.tight_layout()
+    return figura
+
+
+def guardar_pesos_modelo(modelo: nn.Module, ruta_destino: Path) -> Path:
+    """Guarda el estado entrenado del modelo y devuelve su ruta."""
+    ruta_destino.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(modelo.state_dict(), ruta_destino)
+    return ruta_destino
