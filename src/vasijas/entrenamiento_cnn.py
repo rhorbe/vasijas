@@ -183,7 +183,6 @@ def graficar_lote_imagenes(
     return figura
 
 
-# TODO 3.2.1
 def crear_transformaciones_imagen(
     configuracion: ConfiguracionTransformacionesImagen,
 ) -> tuple[tfs.Compose, tfs.Compose, tfs.Compose]:
