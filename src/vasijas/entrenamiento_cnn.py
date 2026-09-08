@@ -156,8 +156,14 @@ def graficar_lote_imagenes(
     loader: DataLoader,
     nombres_clases: Sequence[str],
     cantidad: int = 8,
+    *,
+    media_normalizacion: Sequence[float] = IMAGENET_MEAN,
+    desvio_normalizacion: Sequence[float] = IMAGENET_STD,
 ) -> Figure:
-    """Grafica una muestra del primer lote producido por un ``DataLoader``."""
+    """Grafica un lote deshaciendo la normalización solo para visualizar.
+
+    La media y el desvío deben coincidir con los usados por el loader.
+    """
     if cantidad <= 0:
         raise ValueError("cantidad debe ser mayor a cero")
 
@@ -175,6 +181,10 @@ def graficar_lote_imagenes(
         strict=True,
     ):
         imagen_array = imagen.detach().cpu().permute(1, 2, 0).numpy()
+        imagen_array = imagen_array * np.asarray(desvio_normalizacion) + np.asarray(
+            media_normalizacion
+        )
+        imagen_array = np.clip(imagen_array, 0, 1)
         eje.imshow(imagen_array.squeeze(), cmap="gray")
         eje.set_title(nombres_clases[int(etiqueta)])
         eje.axis("off")
