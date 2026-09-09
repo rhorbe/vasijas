@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from shutil import copy2
 from typing import Any
 
 import numpy as np
@@ -13,7 +14,6 @@ from vasijas.metadata import COLUMNA_IDENTIFICADOR
 COLUMNAS_SPLIT_METADATA = ["archivo", "ruta_relativa", "clase_carpeta", "split"]
 
 
-# TODO 2.1
 @dataclass(frozen=True)
 class ConfiguracionSplitDataset:
     proporcion_temporal: float = 0.30
@@ -244,4 +244,87 @@ def preparar_metadata_split_perfiles_completos(
         clases_procesadas=clases_procesadas,
         conteos_split=conteos_split,
         ids_sin_metadata=ids_sin_metadata,
+    )
+
+
+def copiar_imagenes_split(
+    data_origen: Path,
+    data_destino: Path,
+    registros_split: pd.DataFrame,
+) -> int:
+    """Copia las imágenes procesadas conservando las carpetas y rutas relativas.
+
+    La partición train/val/test se conserva en la metadata, sin agregar carpetas
+    por split. Los archivos existentes con la misma ruta se sobrescriben.
+    """
+    data_origen = Path(data_origen).resolve()
+    data_destino = Path(data_destino).resolve()
+    if data_origen == data_destino:
+        raise ValueError("El destino debe ser distinto del origen")
+
+    for ruta in registros_split["ruta_relativa"]:
+        ruta_relativa = Path(ruta)
+        origen = data_origen / ruta_relativa
+        destino = data_destino / ruta_relativa
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        copy2(origen, destino)
+
+    return len(registros_split)
+
+
+def calcular_proporciones_split(
+    configuracion: ConfiguracionSplitDataset,
+) -> dict[str, float]:
+    proporcion_validacion = configuracion.proporcion_temporal * (
+        1 - configuracion.proporcion_test_desde_temporal
+    )
+    proporcion_test = (
+        configuracion.proporcion_temporal * configuracion.proporcion_test_desde_temporal
+    )
+
+    return {
+        "train": 1 - configuracion.proporcion_temporal,
+        "val": proporcion_validacion,
+        "test": proporcion_test,
+    }
+
+
+def describir_configuracion_split(configuracion: ConfiguracionSplitDataset) -> str:
+    proporciones = calcular_proporciones_split(configuracion)
+    return (
+        "Split configurado -> "
+        f"train: {proporciones['train']:.0%}, "
+        f"val: {proporciones['val']:.0%}, "
+        f"test: {proporciones['test']:.0%}, "
+        f"semilla: {configuracion.semilla}"
+    )
+
+
+def advertir_imagenes_sin_metadata(ids_sin_metadata: list[str]) -> None:
+    if not ids_sin_metadata:
+        return
+
+    print(
+        "Advertencia: hay imagenes sin registro en metadata. "
+        f"Cantidad: {len(ids_sin_metadata)}. "
+        f"Primeros casos: {ids_sin_metadata[:10]}"
+    )
+
+
+def mostrar_resumen_split(resultado) -> None:
+    conteos = resultado.conteos_split
+    print("Clases procesadas:", resultado.clases_procesadas)
+    print("Imagenes procesadas:", resultado.total_imagenes)
+    print(
+        f"Split -> train: {conteos['train']}, "
+        f"val: {conteos['val']}, "
+        f"test: {conteos['test']}"
+    )
+
+
+def construir_resumen_split(metadata_split: pd.DataFrame) -> pd.DataFrame:
+    return pd.crosstab(
+        metadata_split["clase_carpeta"],
+        metadata_split["split"],
+        margins=True,
     )
