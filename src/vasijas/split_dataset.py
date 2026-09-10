@@ -2,13 +2,14 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from shutil import copy2
-from typing import Any
+from typing import Any, Iterable
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from torchvision import datasets
 
+from vasijas.archivos import obtener_nombre_carpeta_clase
 from vasijas.metadata import COLUMNA_IDENTIFICADOR
 
 COLUMNAS_SPLIT_METADATA = ["archivo", "ruta_relativa", "clase_carpeta", "split"]
@@ -70,10 +71,12 @@ def validar_clases_seleccionadas(
     clases_disponibles: Sequence[str],
     clases_a_dividir: Sequence[str | int] | None,
 ) -> set[str]:
-    clases_normalizadas = normalizar_clases_seleccionadas(clases_a_dividir)
-    if clases_normalizadas is None:
+    if clases_a_dividir is None:
         return set(clases_disponibles)
 
+    clases_normalizadas = {
+        obtener_nombre_carpeta_clase(clase) for clase in clases_a_dividir
+    }
     clases_inexistentes = sorted(clases_normalizadas - set(clases_disponibles))
     if clases_inexistentes:
         raise ValueError(
@@ -100,7 +103,7 @@ def filtrar_muestras_por_clase(
     ]
 
     if not muestras_filtradas:
-        raise ValueError("No hay imagenes para las clases seleccionadas")
+        raise ValueError("No hay imágenes para las clases seleccionadas")
 
     clases_procesadas = [
         clase for clase in dataset.classes if clase in clases_a_procesar
@@ -164,7 +167,7 @@ def construir_dataframe_split_imagenes(
 def construir_split_perfiles_completos(
     data_origen: Path,
     configuracion_split: ConfiguracionSplitDataset,
-    clases_a_dividir: Sequence[str | int] | None = None,
+    clases_a_dividir: Iterable[int | str] | None = None,
 ) -> tuple[pd.DataFrame, list[str], dict[str, int]]:
     dataset = datasets.ImageFolder(data_origen)
     muestras_filtradas, clases_procesadas = filtrar_muestras_por_clase(
@@ -221,12 +224,13 @@ def construir_metadata_con_split(
     return df_metadata_split, ids_sin_metadata
 
 
-def preparar_metadata_split_perfiles_completos(
+def realizar_split_en_metadata_perfiles_completos(
     data_origen: Path,
     metadata_origen: pd.DataFrame,
     configuracion_split: ConfiguracionSplitDataset,
-    clases_a_dividir: Sequence[str | int] | None = None,
+    clases_a_dividir: Iterable[int | str] | None = None,
 ) -> ResultadoSplitPerfilesCompletos:
+
     df_split, clases_procesadas, conteos_split = construir_split_perfiles_completos(
         data_origen=data_origen,
         configuracion_split=configuracion_split,
@@ -304,7 +308,7 @@ def advertir_imagenes_sin_metadata(ids_sin_metadata: list[str]) -> None:
         return
 
     print(
-        "Advertencia: hay imagenes sin registro en metadata. "
+        "Advertencia: hay imágenes sin registro en metadata. "
         f"Cantidad: {len(ids_sin_metadata)}. "
         f"Primeros casos: {ids_sin_metadata[:10]}"
     )
@@ -313,7 +317,7 @@ def advertir_imagenes_sin_metadata(ids_sin_metadata: list[str]) -> None:
 def mostrar_resumen_split(resultado) -> None:
     conteos = resultado.conteos_split
     print("Clases procesadas:", resultado.clases_procesadas)
-    print("Imagenes procesadas:", resultado.total_imagenes)
+    print("Imágenes procesadas:", resultado.total_imagenes)
     print(
         f"Split -> train: {conteos['train']}, "
         f"val: {conteos['val']}, "
