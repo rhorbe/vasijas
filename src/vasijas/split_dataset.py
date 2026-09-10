@@ -215,8 +215,7 @@ def construir_metadata_con_split(
             df_metadata_split["split"].isna(), columna_identificador
         ].tolist()
         raise ValueError(
-            "Hay registros de metadata sin imagen procesada en DATA_CUADRADOS: "
-            f"{ids_faltantes[:10]}"
+            "Hay registros de metadata sin imagen procesada" f"{ids_faltantes[:10]}"
         )
 
     return df_metadata_split, ids_sin_metadata

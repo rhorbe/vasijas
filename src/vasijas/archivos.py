@@ -1,4 +1,6 @@
 import shutil
+from typing import Iterable
+
 import pandas as pd
 
 from dataclasses import dataclass
@@ -44,10 +46,10 @@ def obtener_o_crear_directorio(ruta_base: Path, nombre_directorio: str) -> Path:
 
 def obtener_nombre_carpeta_clase(valor_clase: str | int | float) -> str:
     """
-    Devuelve el nombre de la carpeta segun la clase.
+    Devuelve el nombre de la carpeta según la clase.
 
-    Si el valor contiene un numero, devuelve nombres como ``clase01`` o
-    ``clase11``. Si esta vacio o no puede interpretarse como numero, devuelve
+    Si el valor contiene un número, devuelve nombres como ``clase01`` o
+    ``clase11``. Si está vacío o no puede interpretarse como número, devuelve
     ``sin_clase``.
     """
     if pd.isna(valor_clase) or str(valor_clase).strip() == "":
@@ -205,3 +207,58 @@ def copiar_png_normalizados_por_ubicacion(
     return destinos
 
 
+def copiar_estructura_archivos(
+    ruta_origen: Path,
+    ruta_destino: Path,
+) -> int:
+    """
+    Copia todos los archivos de una estructura preservando rutas relativas.
+
+    Devuelve la cantidad de archivos copiados.
+    """
+    archivos_copiados = 0
+
+    for archivo in sorted(ruta_origen.rglob("*")):
+        if not archivo.is_file():
+            continue
+
+        ruta_relativa = archivo.relative_to(ruta_origen)
+        destino = ruta_destino / ruta_relativa
+        copiar_archivo(archivo, destino)
+        archivos_copiados += 1
+
+    return archivos_copiados
+
+
+def copiar_carpetas_de_clases(
+    ruta_origen: Path,
+    ruta_destino: Path,
+    clases: Iterable[int | str],
+) -> int:
+    """
+    Copia las carpetas de las clases especificadas desde la ruta de origen
+    hacia la ruta de destino.
+
+    Devuelve la cantidad de archivos copiados.
+    """
+    archivos_copiados = 0
+
+    for clase in clases:
+        nombre_carpeta = obtener_nombre_carpeta_clase(clase)
+        ruta_clase_origen = ruta_origen / nombre_carpeta
+        if not ruta_clase_origen.exists():
+            continue
+
+        ruta_clase_destino = ruta_destino / nombre_carpeta
+        ruta_clase_destino.mkdir(parents=True, exist_ok=True)
+
+        for archivo in sorted(ruta_clase_origen.rglob("*")):
+            if not archivo.is_file():
+                continue
+
+            ruta_relativa = archivo.relative_to(ruta_clase_origen)
+            destino = ruta_clase_destino / ruta_relativa
+            copiar_archivo(archivo, destino)
+            archivos_copiados += 1
+
+    return archivos_copiados

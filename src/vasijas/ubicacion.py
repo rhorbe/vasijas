@@ -1,5 +1,4 @@
 from pathlib import Path
-import shutil
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -33,30 +32,6 @@ def agregar_ubicacion(
         mensaje = "Todos los identificadores tienen ubicación asignada."
 
     return df_ubicado, mensaje
-
-
-def copiar_estructura_archivos(
-    ruta_origen: Path,
-    ruta_destino: Path,
-) -> int:
-    """
-    Copia todos los archivos de una estructura preservando rutas relativas.
-
-    Devuelve la cantidad de archivos copiados.
-    """
-    archivos_copiados = 0
-
-    for archivo in sorted(ruta_origen.rglob("*")):
-        if not archivo.is_file():
-            continue
-
-        ruta_relativa = archivo.relative_to(ruta_origen)
-        destino = ruta_destino / ruta_relativa
-        destino.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(archivo, destino)
-        archivos_copiados += 1
-
-    return archivos_copiados
 
 
 def mapear_archivos_a_ubicacion(
