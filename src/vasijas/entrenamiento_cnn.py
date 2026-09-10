@@ -1,3 +1,4 @@
+import os
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -26,7 +27,6 @@ IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 
 
-# TODO 1.1
 @dataclass(frozen=True)
 class ConfiguracionTransformacionesImagen:
     tamano_imagen: int = 224
@@ -144,10 +144,11 @@ def describir_metricas_epoch(
             f"Epoch {metrica.epoch}/{total_epochs}",
             (
                 f"Train Loss: {metrica.train_loss:.4f} | "
-                f"Train Acc: {metrica.train_accuracy:.4f}"
+                f"Train Acc: {metrica.train_accuracy:.4f} |"
+                f"Val Loss: {metrica.val_loss:.4f} |"
+                f"Val Acc: {metrica.val_accuracy:.4f}"
             ),
-            f"Val Loss: {metrica.val_loss:.4f} | Val Acc: {metrica.val_accuracy:.4f}",
-            f"Tiempo de epoch: {metrica.duracion}",
+            f"Tiempo de epoch: {metrica.duracion} \n",
         ]
     )
 
@@ -482,12 +483,18 @@ def crear_dataloaders_imagen_desde_metadata(
     metadata_split: pd.DataFrame,
     batch_size: int,
     configuracion_transformaciones: ConfiguracionTransformacionesImagen,
+    *,
+    num_workers: int | None = None,
+    pin_memory: bool | None = None,
 ) -> DataLoadersImagen:
     """Crea dataloaders respetando una división persistida en metadata.
 
     Las transformaciones aleatorias se aplican solamente al subconjunto
     ``train``. La pertenencia de cada imagen a ``train``, ``val`` o ``test`` se
     toma de la columna ``split`` y no se vuelve a calcular.
+
+    Por defecto prepara lotes en hasta ocho procesos y fija memoria si hay
+    CUDA. Usar ``num_workers=0`` permite desactivar la carga paralela.
     """
     train_transform, val_transform, test_transform = crear_transformaciones_imagen(
         configuracion_transformaciones
@@ -499,10 +506,21 @@ def crear_dataloaders_imagen_desde_metadata(
         transformacion_validacion=val_transform,
         transformacion_test=test_transform,
     )
+    if num_workers is None:
+        num_workers = min(8, os.cpu_count() or 1)
+    if pin_memory is None:
+        pin_memory = torch.cuda.is_available()
+    opciones = dict(
+        batch_size=batch_size,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=num_workers > 0,
+        prefetch_factor=4 if num_workers > 0 else None,
+    )
     return DataLoadersImagen(
-        train=DataLoader(datasets_imagen.train, batch_size=batch_size, shuffle=True),
-        val=DataLoader(datasets_imagen.val, batch_size=batch_size, shuffle=False),
-        test=DataLoader(datasets_imagen.test, batch_size=batch_size, shuffle=False),
+        train=DataLoader(datasets_imagen.train, shuffle=True, **opciones),
+        val=DataLoader(datasets_imagen.val, shuffle=False, **opciones),
+        test=DataLoader(datasets_imagen.test, shuffle=False, **opciones),
         class_names=datasets_imagen.class_names,
     )
 
@@ -572,20 +590,34 @@ def entrenar_una_epoch(
     criterio: nn.Module,
     optimizador: torch.optim.Optimizer,
     dispositivo: torch.device,
+    *,
+    usar_amp: bool | None = None,
+    scaler: torch.amp.GradScaler | None = None,
 ) -> tuple[float, float]:
+    usar_amp = dispositivo.type == "cuda" and usar_amp is not False
+    if scaler is None:
+        scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
     modelo.train()
     total_loss = 0.0
     correctas = 0
 
     for imagenes, etiquetas in loader:
-        imagenes = imagenes.to(dispositivo)
-        etiquetas = etiquetas.to(dispositivo)
+        imagenes = imagenes.to(
+            dispositivo, non_blocking=loader.pin_memory,
+            memory_format=(
+                torch.channels_last
+                if dispositivo.type == "cuda" else torch.contiguous_format
+            ),
+        )
+        etiquetas = etiquetas.to(dispositivo, non_blocking=loader.pin_memory)
 
-        optimizador.zero_grad()
-        outputs = modelo(imagenes)
-        loss = criterio(outputs, etiquetas)
-        loss.backward()
-        optimizador.step()
+        optimizador.zero_grad(set_to_none=True)
+        with torch.autocast(dispositivo.type, dtype=torch.float16, enabled=usar_amp):
+            outputs = modelo(imagenes)
+            loss = criterio(outputs, etiquetas)
+        scaler.scale(loss).backward()
+        scaler.step(optimizador)
+        scaler.update()
 
         total_loss += loss.item()
         _, predicciones = torch.max(outputs, 1)
@@ -600,7 +632,10 @@ def validar_modelo(
     loader: DataLoader,
     criterio: nn.Module,
     dispositivo: torch.device,
+    *,
+    usar_amp: bool | None = None,
 ) -> ResultadoEvaluacion:
+    usar_amp = dispositivo.type == "cuda" and usar_amp is not False
     modelo.eval()
     total_loss = 0.0
     correctas = 0
@@ -609,11 +644,18 @@ def validar_modelo(
 
     with torch.no_grad():
         for imagenes, etiquetas in loader:
-            imagenes = imagenes.to(dispositivo)
-            etiquetas = etiquetas.to(dispositivo)
+            imagenes = imagenes.to(
+                dispositivo, non_blocking=loader.pin_memory,
+                memory_format=(
+                    torch.channels_last
+                    if dispositivo.type == "cuda" else torch.contiguous_format
+                ),
+            )
+            etiquetas = etiquetas.to(dispositivo, non_blocking=loader.pin_memory)
 
-            outputs = modelo(imagenes)
-            loss = criterio(outputs, etiquetas)
+            with torch.autocast(dispositivo.type, dtype=torch.float16, enabled=usar_amp):
+                outputs = modelo(imagenes)
+                loss = criterio(outputs, etiquetas)
 
             total_loss += loss.item()
             _, predicciones = torch.max(outputs, 1)
@@ -640,6 +682,9 @@ def entrenar_modelo(
     dispositivo: torch.device,
     epochs: int,
     al_finalizar_epoch: Callable[[MetricasEpoch], None] | None = None,
+    *,
+    usar_amp: bool | None = None,
+    al_iniciar_epoch: Callable[[int], None] | None = None,
 ) -> HistorialEntrenamiento:
     """Entrena y valida un modelo durante una cantidad determinada de épocas.
 
@@ -659,14 +704,29 @@ def entrenar_modelo(
         epochs: Cantidad de épocas completas que se ejecutarán.
         al_finalizar_epoch: Función opcional que recibe las métricas de cada
             época inmediatamente después de calcularlas.
+        al_iniciar_epoch: Función opcional invocada antes de entrenar, con el
+            índice de época desde cero. Permite descongelar parámetros.
+        usar_amp: Activa precisión mixta en CUDA por defecto. ``False`` permite
+            comparar con FP32. En CPU permanece desactivada. El escalador se
+            conserva durante todas las épocas. En CUDA se utiliza además
+            channels_last y la selección de algoritmos de cuDNN para imágenes
+            de resolución fija.
 
     Returns:
         El historial con las métricas de entrenamiento y validación de todas las
         épocas ejecutadas.
     """
+    usar_amp = dispositivo.type == "cuda" and usar_amp is not False
+    scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
+    if dispositivo.type == "cuda":
+        modelo.to(memory_format=torch.channels_last)
+        # Los lotes de imágenes tienen resolución fija.
+        torch.backends.cudnn.benchmark = True
     metricas: list[MetricasEpoch] = []
 
     for epoch in range(1, epochs + 1):
+        if al_iniciar_epoch is not None:
+            al_iniciar_epoch(epoch - 1)
         momento_inicio = datetime.now()
         train_loss, train_accuracy = entrenar_una_epoch(
             modelo=modelo,
@@ -674,12 +734,15 @@ def entrenar_modelo(
             criterio=criterio,
             optimizador=optimizador,
             dispositivo=dispositivo,
+            usar_amp=usar_amp,
+            scaler=scaler,
         )
         validacion = validar_modelo(
             modelo=modelo,
             loader=val_loader,
             criterio=criterio,
             dispositivo=dispositivo,
+            usar_amp=usar_amp,
         )
         metrica = MetricasEpoch(
             epoch=epoch,
@@ -766,3 +829,28 @@ def guardar_pesos_modelo(modelo: nn.Module, ruta_destino: Path) -> Path:
     ruta_destino.parent.mkdir(parents=True, exist_ok=True)
     torch.save(modelo.state_dict(), ruta_destino)
     return ruta_destino
+
+
+def maybe_unfreeze_layer4(
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    epoch: int,
+    *,
+    model_name: str,
+    unfreeze_epoch: int,
+    backbone_lr: float,
+) -> bool:
+    """Descongela layer4 en la época indicada (índice desde cero), una sola vez."""
+    if model_name != "resnet18" or epoch != unfreeze_epoch or not hasattr(model, "layer4"):
+        return False
+
+    if any(group.get("name") == "layer4" for group in optimizer.param_groups):
+        return False
+
+    layer4_params = []
+    for param in model.layer4.parameters():
+        param.requires_grad = True
+        layer4_params.append(param)
+
+    optimizer.add_param_group({"params": layer4_params, "lr": backbone_lr, "name": "layer4"})
+    return True
