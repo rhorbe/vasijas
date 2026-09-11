@@ -713,6 +713,7 @@ def entrenar_modelo(
             print(
                 f"Epoch {epoch}: se descongela layer4 con lr={backbone_lr:.2e} "
                 f"(head lr={optimizador.param_groups[0]['lr']:.2e})"
+                f"\n"
             )
         momento_inicio = datetime.now()
         train_loss, train_accuracy = entrenar_una_epoch(
