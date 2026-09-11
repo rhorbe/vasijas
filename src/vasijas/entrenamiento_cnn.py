@@ -144,8 +144,8 @@ def describir_metricas_epoch(
             f"Epoch {metrica.epoch}/{total_epochs}",
             (
                 f"Train Loss: {metrica.train_loss:.4f} | "
-                f"Train Acc: {metrica.train_accuracy:.4f} |"
-                f"Val Loss: {metrica.val_loss:.4f} |"
+                f"Train Acc: {metrica.train_accuracy:.4f} | "
+                f"Val Loss: {metrica.val_loss:.4f} | "
                 f"Val Acc: {metrica.val_accuracy:.4f}"
             ),
             f"Tiempo de epoch: {metrica.duracion} \n",
@@ -684,38 +684,15 @@ def entrenar_modelo(
     al_finalizar_epoch: Callable[[MetricasEpoch], None] | None = None,
     *,
     usar_amp: bool | None = None,
-    al_iniciar_epoch: Callable[[int], None] | None = None,
+    model_name: str | None = None,
+    unfreeze_epoch: int | None = None,
+    backbone_lr: float | None = None,
 ) -> HistorialEntrenamiento:
-    """Entrena y valida un modelo durante una cantidad determinada de épocas.
-
-    En cada época ejecuta una pasada completa sobre el conjunto de entrenamiento,
-    evalúa el modelo con el conjunto de validación y registra las pérdidas,
-    exactitudes y duración obtenidas. Si se proporciona un callback, se invoca
-    al finalizar cada época con sus métricas.
-
-    Args:
-        modelo: Modelo que se entrenará y validará.
-        train_loader: Lotes de imágenes y etiquetas usados para entrenamiento.
-        val_loader: Lotes de imágenes y etiquetas usados para validación.
-        criterio: Función de pérdida empleada en ambas etapas.
-        optimizador: Optimizador encargado de actualizar los parámetros del
-            modelo.
-        dispositivo: Dispositivo donde se ejecutarán el modelo y los tensores.
-        epochs: Cantidad de épocas completas que se ejecutarán.
-        al_finalizar_epoch: Función opcional que recibe las métricas de cada
-            época inmediatamente después de calcularlas.
-        al_iniciar_epoch: Función opcional invocada antes de entrenar, con el
-            índice de época desde cero. Permite descongelar parámetros.
-        usar_amp: Activa precisión mixta en CUDA por defecto. ``False`` permite
-            comparar con FP32. En CPU permanece desactivada. El escalador se
-            conserva durante todas las épocas. En CUDA se utiliza además
-            channels_last y la selección de algoritmos de cuDNN para imágenes
-            de resolución fija.
-
-    Returns:
-        El historial con las métricas de entrenamiento y validación de todas las
-        épocas ejecutadas.
-    """
+    # unfreeze_epoch usa índice desde cero; None desactiva la descongelación.
+    if unfreeze_epoch is not None and (model_name is None or backbone_lr is None):
+        raise ValueError(
+            "La descongelación requiere model_name y backbone_lr"
+        )
     usar_amp = dispositivo.type == "cuda" and usar_amp is not False
     scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
     if dispositivo.type == "cuda":
@@ -725,8 +702,18 @@ def entrenar_modelo(
     metricas: list[MetricasEpoch] = []
 
     for epoch in range(1, epochs + 1):
-        if al_iniciar_epoch is not None:
-            al_iniciar_epoch(epoch - 1)
+        if unfreeze_epoch is not None and maybe_unfreeze_layer4(
+            modelo,
+            optimizador,
+            epoch - 1,
+            model_name=model_name,
+            unfreeze_epoch=unfreeze_epoch,
+            backbone_lr=backbone_lr,
+        ):
+            print(
+                f"Epoch {epoch}: se descongela layer4 con lr={backbone_lr:.2e} "
+                f"(head lr={optimizador.param_groups[0]['lr']:.2e})"
+            )
         momento_inicio = datetime.now()
         train_loss, train_accuracy = entrenar_una_epoch(
             modelo=modelo,
