@@ -1,20 +1,12 @@
 project:
-  type: default
+  type: website
   output-dir: output/reports
   render:
     - index.qmd
-    - notebooks/01.exploracion/01.EDA.ipynb
-    - notebooks/02.preparacion/02.Normalizacion_nombres.ipynb
-    - notebooks/02.preparacion/03.Agregado_de_ubicacion_a_dataset.ipynb
-    - notebooks/02.preparacion/04.Clasificacion_de_perfiles.ipynb
-    - notebooks/02.preparacion/05.Conversion_a_imagenes_cuadradas.ipynb
-    - notebooks/02.preparacion/06.Corte_en_mitades.ipynb
-    - notebooks/02.preparacion/07.Corte_en_fracciones.ipynb
-    - notebooks/02.preparacion/08.Centrado_de_fracciones.ipynb
-    - notebooks/02.preparacion/09.Prueba_de_transformaciones.ipynb
-    - notebooks/02.preparacion/11.Union_datasets_fracciones_y_completos.ipynb
-    - notebooks/03.entrenamiento/13.Entrenamiento_resnet18.ipynb
-    - output/experiments/experiment_resnet18_lr1e3_bs16_base.ipynb
+    - notebooks/01.exploracion/*.ipynb
+    - notebooks/02.preparacion/*.ipynb
+    - notebooks/03.entrenamiento/*.ipynb
+    - output/experiments/*.ipynb
 
 author: Rafael Horacio Orbe
 author-title: "autor"
