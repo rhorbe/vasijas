@@ -4,6 +4,21 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Self
 
+from vasijas.config import load_config
+
+
+def ruta_relativa(ruta_destino: str | Path) -> Path:
+    """Devuelve una ruta relativa a PROJECT_ROOT para mostrar en reportes.
+
+    Las rutas relativas se interpretan respecto de la raíz del proyecto.
+    Lanza ValueError si el destino queda fuera de esa raíz.
+    """
+    root = load_config(mount_colab_drive=False).project_root
+    destino = Path(ruta_destino).expanduser()
+    if not destino.is_absolute():
+        destino = root / destino
+    return destino.resolve().relative_to(root)
+
 
 @dataclass(frozen=True)
 class ProjectPaths:
@@ -52,4 +67,4 @@ class ProjectPaths:
         self.OUTPUT_REPORTS.mkdir(parents=True, exist_ok=True)
 
 
-__all__ = ["ProjectPaths"]
+__all__ = ["ProjectPaths", "ruta_relativa"]
