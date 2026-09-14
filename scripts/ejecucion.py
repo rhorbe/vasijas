@@ -38,26 +38,9 @@ PARAMETROS_BASE = {
 
 
 MATRIZ_EXPERIMENTOS = [
+
     {
-        "RUN_NAME": "lr1e3_bs16_base",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 1,
-        "LR": 1e-3,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": False,
-        "ENABLE_UNFREEZE": False,
-    },
-    {
-        "RUN_NAME": "lr1e3_bs16_base",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 30,
-        "LR": 1e-3,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": False,
-        "ENABLE_UNFREEZE": False,
-    },
-    {
-        "RUN_NAME": "lr1e3_bs32_base",
+        "RUN_NAME": "bs32_lr1e-3_flip05_base",
         "BATCH_SIZE": 32,
         "EPOCHS": 30,
         "LR": 1e-3,
@@ -66,7 +49,7 @@ MATRIZ_EXPERIMENTOS = [
         "ENABLE_UNFREEZE": False,
     },
     {
-        "RUN_NAME": "lr1e3_bs16_flip05_weighted",
+        "RUN_NAME": "bs16_lr1e-3_flip05_weighted",
         "BATCH_SIZE": 16,
         "EPOCHS": 30,
         "LR": 1e-3,
@@ -75,7 +58,7 @@ MATRIZ_EXPERIMENTOS = [
         "ENABLE_UNFREEZE": False,
     },
     {
-        "RUN_NAME": "lr1e3_bs32_flip05_weighted",
+        "RUN_NAME": "bs32_lr1e-3_flip05_weighted",
         "BATCH_SIZE": 32,
         "EPOCHS": 30,
         "LR": 1e-3,
@@ -84,7 +67,7 @@ MATRIZ_EXPERIMENTOS = [
         "ENABLE_UNFREEZE": False,
     },
     {
-        "RUN_NAME": "lr1e4_flip05_unfreeze",
+        "RUN_NAME": "bs16_lr1e-4_flip05_weighted_unfreeze",
         "BATCH_SIZE": 16,
         "EPOCHS": 300,
         "LR": 1e-4,
@@ -94,7 +77,7 @@ MATRIZ_EXPERIMENTOS = [
         "UNFREEZE_EPOCH": 10,
     },
     {
-        "RUN_NAME": "lr1e4_flip08_unfreeze",
+        "RUN_NAME": "bs16_lr1e-4_flip08_weighted_unfreeze",
         "BATCH_SIZE": 16,
         "EPOCHS": 300,
         "LR": 1e-4,
@@ -104,7 +87,7 @@ MATRIZ_EXPERIMENTOS = [
         "UNFREEZE_EPOCH": 10,
     },
     {
-        "RUN_NAME": "lr3e4_flip05",
+        "RUN_NAME": "bs16_lr3e-4_flip05_weighted_unfreeze",
         "BATCH_SIZE": 16,
         "EPOCHS": 300,
         "LR": 3e-4,
@@ -114,7 +97,7 @@ MATRIZ_EXPERIMENTOS = [
         "UNFREEZE_EPOCH": 10,
     },
     {
-        "RUN_NAME": "lr3e4_flip08",
+        "RUN_NAME": "bs16_lr3e-4_flip08_weighted_unfreeze",
         "BATCH_SIZE": 16,
         "EPOCHS": 300,
         "LR": 3e-4,
@@ -124,7 +107,7 @@ MATRIZ_EXPERIMENTOS = [
         "UNFREEZE_EPOCH": 10,
     },
     {
-        "RUN_NAME": "lr1e5_flip05",
+        "RUN_NAME": "bs16_lr3e-5_flip05_weighted_unfreeze",
         "BATCH_SIZE": 16,
         "EPOCHS": 300,
         "LR": 1e-5,
@@ -132,28 +115,17 @@ MATRIZ_EXPERIMENTOS = [
         "USE_CLASS_WEIGHTS": True,
         "ENABLE_UNFREEZE": True,
         "UNFREEZE_EPOCH": 10,
-    },
-    {
-        "RUN_NAME": "dataset_completo",
-        "DATASET_NAME": "unificado",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 75,
-        "LR": 1e-4,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": True,
-        "ENABLE_UNFREEZE": True,
-        "UNFREEZE_EPOCH": 10,
-    },
+    }
 ]
 
 
-def ejecutar_experimento(experimento: dict) -> None:
+def ejecutar_experimento(num_experimento: int | None, experimento: dict) -> None:
     parametros = PARAMETROS_BASE | experimento
 
     run_name = parametros["RUN_NAME"]
     model_name = parametros["MODEL_NAME"]
 
-    notebook_salida = DIRECTORIO_SALIDA / f"experiment_{model_name}_{run_name}.ipynb"
+    notebook_salida = DIRECTORIO_SALIDA / f"{num_experimento:02d}_exp_{model_name}_{run_name}.ipynb"
 
     print(f"\nEjecutando: {run_name}")
     print(f"Notebook de salida: {notebook_salida}")
@@ -176,13 +148,14 @@ def main() -> None:
 
     errores = []
 
-    for experimento in MATRIZ_EXPERIMENTOS:
+    for index, experimento in enumerate(MATRIZ_EXPERIMENTOS):
+        num_experimento = index + 1
         try:
-            ejecutar_experimento(experimento)
+            ejecutar_experimento(num_experimento, experimento)
         except Exception as error:
             run_name = experimento["RUN_NAME"]
             errores.append((run_name, error))
-            print(f"Falló el experimento {run_name}: {error}")
+            print(f"Falló el experimento {num_experimento} - {run_name}: {error}")
 
     if errores:
         nombres = ", ".join(nombre for nombre, _ in errores)
