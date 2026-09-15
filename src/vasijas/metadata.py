@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from typing import Iterable, Protocol
+from typing import Iterable, Protocol, Literal
 
 from vasijas.archivos import copiar_archivo
 from vasijas.nombres import normalizar_nombre
@@ -15,6 +15,7 @@ COLUMNAS_REGISTRO_CORTE = [
     "porcentaje_avance",
 ]
 
+TipoUnion = Literal["inner"]
 
 class RegistroCentradoLike(Protocol):
     archivo_origen: str
@@ -111,7 +112,7 @@ def construir_metadata_cortes(
     metadata_original: pd.DataFrame,
     registros_derivados: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
-    how: str = "inner",
+    how: TipoUnion = "inner",
     porcentaje_avance_por_defecto: float | None = None,
 ) -> pd.DataFrame:
     registros = registros_derivados.copy()
@@ -189,7 +190,7 @@ def construir_metadata_centrados(
     metadata_original: pd.DataFrame,
     registros_centrados: pd.DataFrame | Iterable[RegistroCentradoLike],
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
-    how: str = "inner",
+    how: TipoUnion = "inner",
 ) -> pd.DataFrame:
     """Replica la metadata original con identificadores de imagenes centradas."""
     if not isinstance(registros_centrados, pd.DataFrame):
