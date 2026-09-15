@@ -65,7 +65,7 @@ def get_columnas_adicionales_metadata(
 
 
 def completar_metadata_cuadrados(
-    df_metadata_cuadrados: pd.DataFrame,
+    df_metadata_completos: pd.DataFrame,
     df_metadata_referencia: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
     columnas_derivadas: list[str] | None = None,
@@ -79,13 +79,13 @@ def completar_metadata_cuadrados(
     borde_origen queda vacio y porcentaje_avance representa el 100% de la imagen.
     """
     columnas_adicionales = columnas_derivadas or get_columnas_adicionales_metadata(
-        df_metadata_cuadrados,
+        df_metadata_completos,
         df_metadata_referencia,
     )
 
-    df_resultado = df_metadata_cuadrados.copy()
+    df_resultado = df_metadata_completos.copy()
     valores_por_defecto = {
-        "archivo_origen": df_resultado[columna_identificador],
+        "id_perfil_completo": df_resultado[columna_identificador],
         "borde_origen": "",
         "porcentaje_avance": porcentaje_avance,
     }
@@ -104,7 +104,7 @@ def completar_metadata_cuadrados(
     for columna in columnas_adicionales:
         df_resultado[columna] = valores_por_defecto[columna]
 
-    return df_resultado[list(df_metadata_cuadrados.columns) + columnas_adicionales]
+    return df_resultado[list(df_metadata_completos.columns) + columnas_adicionales]
 
 
 def construir_metadata_cortes(

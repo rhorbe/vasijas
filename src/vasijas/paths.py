@@ -31,8 +31,9 @@ class ProjectPaths:
     DATA_MITADES: Path
     DATA_FRACCIONES: Path
     DATA_CENTRADOS: Path
+    DATA_CUADRADOS_DIVIDIDO: Path
     DATA_UNIFICADO: Path
-    DATA_DIVIDIDO: Path
+    DATA_UNIFICADOS_DIVIDIDO: Path
     NOTEBOOKS: Path
     OUTPUT_MODELS: Path
     OUTPUT_REPORTS: Path
@@ -54,8 +55,9 @@ class ProjectPaths:
             DATA_MITADES=data / "06.mitades",
             DATA_FRACCIONES=data / "07.fracciones",
             DATA_CENTRADOS=data / "08.centrados",
-            DATA_UNIFICADO=data / "09.unificado",
-            DATA_DIVIDIDO=data / "10.cuadrados_divididos_en_train_val_y_test",
+            DATA_CUADRADOS_DIVIDIDO=data / "10.cuadrados_divididos_en_train_val_y_test",
+            DATA_UNIFICADO=data / "11.unificado",
+            DATA_UNIFICADOS_DIVIDIDO=data / "12.unificado_divididos_en_train_val_y_test",
             NOTEBOOKS=root / "notebooks",
             OUTPUT_MODELS=output / "models",
             OUTPUT_REPORTS=output / "reports",
