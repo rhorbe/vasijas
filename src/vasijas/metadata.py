@@ -161,7 +161,7 @@ def construir_metadata_mitades(
     metadata_original: pd.DataFrame,
     registros_derivados: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
-    how: str = "inner",
+    how: TipoUnion = "inner",
 ) -> pd.DataFrame:
     return construir_metadata_cortes(
         metadata_original=metadata_original,
@@ -176,7 +176,7 @@ def construir_metadata_fracciones(
     metadata_original: pd.DataFrame,
     registros_derivados: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
-    how: str = "inner",
+    how: TipoUnion = "inner",
 ) -> pd.DataFrame:
     return construir_metadata_cortes(
         metadata_original=metadata_original,
@@ -235,7 +235,7 @@ def guardar_metadata_centrados(
     ruta_metadata_destino: Path,
     registros_centrados: pd.DataFrame | Iterable[RegistroCentradoLike],
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
-    how: str = "inner",
+    how: TipoUnion = "inner",
 ) -> Path:
     """Crea el CSV de metadata para imagenes ya centradas."""
     metadata_original = pd.read_csv(ruta_metadata_origen)
