@@ -3,14 +3,14 @@ from pathlib import Path
 import papermill as pm
 
 
-NOTEBOOK_ENTRADA = Path("notebooks/03.entrenamiento/13.Entrenamiento_resnet18.ipynb")
+NOTEBOOK_ENTRADA = Path("notebooks/03.entrenamiento/14.Entrenamiento_resnet18_unificado.ipynb")
 DIRECTORIO_SALIDA = Path("output/experiments")
 
 DIRECTORIO_SALIDA.mkdir(parents=True, exist_ok=True)
 
 
 PARAMETROS_BASE = {
-    "DATASET_NAME": "cuadrados",
+    "DATASET_NAME": "unificado",
     "MODEL_NAME": "resnet18",
     "BATCH_SIZE": 16,
     "EPOCHS": 30,
@@ -132,8 +132,9 @@ def ejecutar_experimento(num_experimento: int | None, experimento: dict) -> None
 
     run_name = parametros["RUN_NAME"]
     model_name = parametros["MODEL_NAME"]
+    dataset_name = parametros["DATASET_NAME"]
 
-    notebook_salida = DIRECTORIO_SALIDA / f"{num_experimento:02d}_exp_{model_name}_{run_name}.ipynb"
+    notebook_salida = DIRECTORIO_SALIDA / f"{num_experimento:02d}_exp_{model_name}_{dataset_name}_{run_name}.ipynb"
 
     print(f"\nEjecutando: {run_name}")
     print(f"Notebook de salida: {notebook_salida}")

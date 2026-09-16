@@ -250,6 +250,76 @@ def realizar_split_en_metadata_perfiles_completos(
     )
 
 
+def realizar_split_en_metadata_por_id_perfil_completo(
+    data_origen: Path,
+    metadata_origen: pd.DataFrame,
+    configuracion_split: ConfiguracionSplitDataset,
+    clases_a_dividir: Iterable[int | str] | None = None,
+) -> ResultadoSplitPerfilesCompletos:
+    """Divide perfiles únicos por clase y propaga el split a sus fracciones.
+
+    Las proporciones se aplican a perfiles, no a imágenes. Todas las imágenes
+    seleccionadas deben tener metadata e id_perfil_completo, y cada perfil
+    debe pertenecer a una sola clase.
+    """
+    columna_grupo = "id_perfil_completo"
+    dataset = datasets.ImageFolder(data_origen)
+    muestras, clases_procesadas = filtrar_muestras_por_clase(
+        dataset=dataset,
+        clases_a_dividir=clases_a_dividir,
+    )
+    df_split = construir_dataframe_split_imagenes(
+        data_origen=data_origen,
+        muestras=muestras,
+        clases=dataset.classes,
+        split_por_indice=dict.fromkeys(range(len(muestras)), ""),
+    )
+    grupos_imagenes = df_split[[COLUMNA_IDENTIFICADOR, "clase_carpeta"]].merge(
+        metadata_origen[[COLUMNA_IDENTIFICADOR, columna_grupo]],
+        on=COLUMNA_IDENTIFICADOR,
+        how="left",
+        validate="one_to_one",
+    )
+    sin_grupo = (
+        grupos_imagenes[columna_grupo].isna()
+        | grupos_imagenes[columna_grupo].astype(str).str.strip().eq("")
+    )
+    if sin_grupo.any():
+        ids_faltantes = grupos_imagenes.loc[sin_grupo, COLUMNA_IDENTIFICADOR].tolist()
+        raise ValueError(
+            "Hay imágenes sin metadata o sin id_perfil_completo: "
+            f"{ids_faltantes[:10]}"
+        )
+
+    clases_por_grupo = grupos_imagenes.groupby(columna_grupo)["clase_carpeta"].nunique()
+    if clases_por_grupo.gt(1).any():
+        raise ValueError("Hay perfiles con id_perfil_completo en más de una clase")
+
+    perfiles = grupos_imagenes.drop_duplicates(columna_grupo).reset_index(drop=True)
+    indices_split = generar_indices_split_estratificado(
+        etiquetas=perfiles["clase_carpeta"].map(dataset.class_to_idx).tolist(),
+        configuracion_split=configuracion_split,
+    )
+    split_por_perfil = dict(
+        zip(perfiles[columna_grupo], perfiles.index.map(indices_split.por_indice))
+    )
+    df_split["split"] = grupos_imagenes[columna_grupo].map(split_por_perfil)
+    metadata_split, ids_sin_metadata = construir_metadata_con_split(
+        metadata_origen=metadata_origen,
+        df_split=df_split,
+    )
+    return ResultadoSplitPerfilesCompletos(
+        metadata=metadata_split,
+        registros_split=df_split,
+        clases_procesadas=clases_procesadas,
+        conteos_split={
+            split: int(df_split["split"].eq(split).sum())
+            for split in ("train", "val", "test")
+        },
+        ids_sin_metadata=ids_sin_metadata,
+    )
+
+
 def copiar_imagenes_split(
     data_origen: Path,
     data_destino: Path,
