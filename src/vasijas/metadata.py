@@ -15,7 +15,10 @@ COLUMNAS_REGISTRO_CORTE = [
     "porcentaje_avance",
 ]
 
+BORDE_ORIGEN = "completo"
+
 TipoUnion = Literal["inner"]
+
 
 class RegistroCentradoLike(Protocol):
     archivo_origen: str
@@ -65,7 +68,7 @@ def get_columnas_adicionales_metadata(
     ]
 
 
-def completar_metadata_cuadrados(
+def completar_metadata_completos(
     df_metadata_completos: pd.DataFrame,
     df_metadata_referencia: pd.DataFrame,
     columna_identificador: str = COLUMNA_IDENTIFICADOR,
@@ -87,7 +90,7 @@ def completar_metadata_cuadrados(
     df_resultado = df_metadata_completos.copy()
     valores_por_defecto = {
         "id_perfil_completo": df_resultado[columna_identificador],
-        "borde_origen": "",
+        "borde_origen": "completo",
         "porcentaje_avance": porcentaje_avance,
     }
 
