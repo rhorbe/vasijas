@@ -33,7 +33,7 @@ class ProjectPaths:
     DATA_CENTRADOS: Path
     DATA_CUADRADOS_DIVIDIDO: Path
     DATA_UNIFICADO: Path
-    DATA_UNIFICADOS_DIVIDIDO: Path
+    DATA_UNIFICADO_DIVIDIDO: Path
     NOTEBOOKS: Path
     OUTPUT_MODELS: Path
     OUTPUT_REPORTS: Path
@@ -57,7 +57,7 @@ class ProjectPaths:
             DATA_CENTRADOS=data / "08.centrados",
             DATA_CUADRADOS_DIVIDIDO=data / "10.cuadrados_divididos_en_train_val_y_test",
             DATA_UNIFICADO=data / "11.unificado",
-            DATA_UNIFICADOS_DIVIDIDO=data / "12.unificado_divididos_en_train_val_y_test",
+            DATA_UNIFICADO_DIVIDIDO=data / "12.unificado_divididos_en_train_val_y_test",
             NOTEBOOKS=root / "notebooks",
             OUTPUT_MODELS=output / "models",
             OUTPUT_REPORTS=output / "reports",
