@@ -1,0 +1,2873 @@
+[
+  {
+    "path": "output/experiments/01_exp_resnet18_unificado_bs16_lr1e-3_flip05_base.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 27,
+      "train_loss": 0.4088,
+      "train_acc": 0.8503,
+      "val_loss": 0.5785,
+      "val_acc": 0.8097
+    },
+    "minloss": {
+      "epoch": 20,
+      "train_loss": 0.484,
+      "train_acc": 0.8255,
+      "val_loss": 0.5733,
+      "val_acc": 0.8071
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.3972,
+      "train_acc": 0.8548,
+      "val_loss": 0.6344,
+      "val_acc": 0.8025
+    },
+    "hours": 0.904736556111111,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "unificado",
+    "id": "01",
+    "accuracy": 0.7869,
+    "macro_f1": 0.69,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = False\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-3_flip05_base\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.95,
+        "recall": 0.68,
+        "f1": 0.79,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.47,
+        "recall": 0.23,
+        "f1": 0.31,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.88,
+        "recall": 0.6,
+        "f1": 0.71,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.79,
+        "recall": 0.86,
+        "f1": 0.82,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.79,
+        "recall": 0.51,
+        "f1": 0.62,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.93,
+        "recall": 0.75,
+        "f1": 0.83,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.74,
+        "recall": 0.95,
+        "f1": 0.83,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.44,
+        "recall": 0.44,
+        "f1": 0.44,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.88,
+        "recall": 0.88,
+        "f1": 0.88,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.67,
+        "recall": 0.66,
+        "f1": 0.67,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/02_exp_resnet18_unificado_bs32_lr1e-3_flip05_base.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 26,
+      "train_loss": 0.3881,
+      "train_acc": 0.8569,
+      "val_loss": 0.6661,
+      "val_acc": 0.8052
+    },
+    "minloss": {
+      "epoch": 23,
+      "train_loss": 0.4298,
+      "train_acc": 0.8399,
+      "val_loss": 0.5718,
+      "val_acc": 0.7983
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.3726,
+      "train_acc": 0.863,
+      "val_loss": 0.632,
+      "val_acc": 0.795
+    },
+    "hours": 0.8738924758333332,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "unificado",
+    "id": "02",
+    "accuracy": 0.8107,
+    "macro_f1": 0.71,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 32\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = False\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs32_lr1e-3_flip05_base\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.86,
+        "recall": 0.74,
+        "f1": 0.79,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.47,
+        "recall": 0.46,
+        "f1": 0.46,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.76,
+        "recall": 0.71,
+        "f1": 0.73,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.74,
+        "recall": 0.91,
+        "f1": 0.82,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.82,
+        "recall": 0.51,
+        "f1": 0.63,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.86,
+        "recall": 0.83,
+        "f1": 0.85,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.82,
+        "recall": 0.88,
+        "f1": 0.85,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.39,
+        "recall": 0.39,
+        "f1": 0.39,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.86,
+        "recall": 0.96,
+        "f1": 0.91,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.87,
+        "recall": 0.59,
+        "f1": 0.7,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/03_exp_resnet18_unificado_bs16_lr1e-3_flip05_weighted.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 20,
+      "train_loss": 0.4967,
+      "train_acc": 0.8234,
+      "val_loss": 0.5999,
+      "val_acc": 0.8166
+    },
+    "minloss": {
+      "epoch": 30,
+      "train_loss": 0.3849,
+      "train_acc": 0.8564,
+      "val_loss": 0.5524,
+      "val_acc": 0.815
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.3849,
+      "train_acc": 0.8564,
+      "val_loss": 0.5524,
+      "val_acc": 0.815
+    },
+    "hours": 0.9170105927777777,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "unificado",
+    "id": "03",
+    "accuracy": 0.796,
+    "macro_f1": 0.68,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-3_flip05_weighted\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.73,
+        "recall": 0.83,
+        "f1": 0.78,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.45,
+        "recall": 0.23,
+        "f1": 0.3,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.76,
+        "recall": 0.65,
+        "f1": 0.7,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.79,
+        "recall": 0.87,
+        "f1": 0.83,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.72,
+        "recall": 0.49,
+        "f1": 0.59,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.92,
+        "recall": 0.73,
+        "f1": 0.81,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.76,
+        "recall": 0.91,
+        "f1": 0.83,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.49,
+        "recall": 0.32,
+        "f1": 0.38,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.85,
+        "recall": 0.98,
+        "f1": 0.91,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.87,
+        "recall": 0.52,
+        "f1": 0.65,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/04_exp_resnet18_unificado_bs32_lr1e-3_flip05_weighted.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 27,
+      "train_loss": 0.3874,
+      "train_acc": 0.8536,
+      "val_loss": 0.5509,
+      "val_acc": 0.8202
+    },
+    "minloss": {
+      "epoch": 29,
+      "train_loss": 0.3714,
+      "train_acc": 0.8628,
+      "val_loss": 0.5487,
+      "val_acc": 0.8192
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.3711,
+      "train_acc": 0.8616,
+      "val_loss": 0.5667,
+      "val_acc": 0.8202
+    },
+    "hours": 0.8491205141666665,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "unificado",
+    "id": "04",
+    "accuracy": 0.8022,
+    "macro_f1": 0.7,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 32\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs32_lr1e-3_flip05_weighted\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.89,
+        "recall": 0.71,
+        "f1": 0.79,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.47,
+        "recall": 0.35,
+        "f1": 0.4,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.75,
+        "recall": 0.69,
+        "f1": 0.72,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.76,
+        "recall": 0.84,
+        "f1": 0.8,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.77,
+        "recall": 0.56,
+        "f1": 0.65,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.9,
+        "recall": 0.77,
+        "f1": 0.83,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.78,
+        "recall": 0.89,
+        "f1": 0.83,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.44,
+        "recall": 0.3,
+        "f1": 0.35,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.85,
+        "recall": 0.96,
+        "f1": 0.9,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.86,
+        "recall": 0.58,
+        "f1": 0.7,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/05_exp_resnet18_unificado_bs16_lr1e-4_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 149,
+      "train_loss": 0.1494,
+      "train_acc": 0.9413,
+      "val_loss": 0.6958,
+      "val_acc": 0.8379
+    },
+    "minloss": {
+      "epoch": 30,
+      "train_loss": 0.3635,
+      "train_acc": 0.8643,
+      "val_loss": 0.5193,
+      "val_acc": 0.814
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.1031,
+      "train_acc": 0.9602,
+      "val_loss": 0.9542,
+      "val_acc": 0.8195
+    },
+    "hours": 9.596554871111111,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-04)",
+    "series": "unificado",
+    "id": "05",
+    "accuracy": 0.8127,
+    "macro_f1": 0.72,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0001\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-4_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.76,
+        "recall": 0.84,
+        "f1": 0.8,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.55,
+        "recall": 0.36,
+        "f1": 0.43,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.77,
+        "recall": 0.69,
+        "f1": 0.73,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.76,
+        "recall": 0.86,
+        "f1": 0.8,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.79,
+        "recall": 0.53,
+        "f1": 0.64,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.88,
+        "recall": 0.91,
+        "f1": 0.9,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.79,
+        "recall": 0.89,
+        "f1": 0.84,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.45,
+        "recall": 0.33,
+        "f1": 0.38,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.89,
+        "recall": 0.93,
+        "f1": 0.91,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.79,
+        "recall": 0.68,
+        "f1": 0.73,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/06_exp_resnet18_unificado_bs16_lr1e-4_flip08_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 171,
+      "train_loss": 0.1225,
+      "train_acc": 0.953,
+      "val_loss": 0.6299,
+      "val_acc": 0.83
+    },
+    "minloss": {
+      "epoch": 49,
+      "train_loss": 0.2597,
+      "train_acc": 0.8998,
+      "val_loss": 0.5671,
+      "val_acc": 0.8146
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0883,
+      "train_acc": 0.9646,
+      "val_loss": 0.8174,
+      "val_acc": 0.8156
+    },
+    "hours": 9.616155216944447,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-04)",
+    "series": "unificado",
+    "id": "06",
+    "accuracy": 0.7898,
+    "macro_f1": 0.7,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0001\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.8\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-4_flip08_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.87,
+        "recall": 0.79,
+        "f1": 0.83,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.46,
+        "recall": 0.26,
+        "f1": 0.33,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.75,
+        "recall": 0.67,
+        "f1": 0.71,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.78,
+        "recall": 0.89,
+        "f1": 0.83,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.82,
+        "recall": 0.51,
+        "f1": 0.63,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.91,
+        "recall": 0.85,
+        "f1": 0.88,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.78,
+        "recall": 0.9,
+        "f1": 0.83,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.34,
+        "recall": 0.44,
+        "f1": 0.38,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.89,
+        "recall": 0.87,
+        "f1": 0.88,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.67,
+        "recall": 0.7,
+        "f1": 0.68,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/07_exp_resnet18_unificado_bs16_lr3e-4_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 94,
+      "train_loss": 0.2026,
+      "train_acc": 0.9207,
+      "val_loss": 0.6314,
+      "val_acc": 0.8339
+    },
+    "minloss": {
+      "epoch": 24,
+      "train_loss": 0.4231,
+      "train_acc": 0.8459,
+      "val_loss": 0.5431,
+      "val_acc": 0.8094
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0972,
+      "train_acc": 0.9616,
+      "val_loss": 1.0726,
+      "val_acc": 0.812
+    },
+    "hours": 9.692466670277778,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=3.00e-04)",
+    "series": "unificado",
+    "id": "07",
+    "accuracy": 0.795,
+    "macro_f1": 0.69,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0003\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-4_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.71,
+        "recall": 0.76,
+        "f1": 0.73,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.47,
+        "recall": 0.31,
+        "f1": 0.37,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.73,
+        "recall": 0.76,
+        "f1": 0.74,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.76,
+        "recall": 0.84,
+        "f1": 0.8,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.78,
+        "recall": 0.53,
+        "f1": 0.63,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.96,
+        "recall": 0.8,
+        "f1": 0.88,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.81,
+        "recall": 0.87,
+        "f1": 0.84,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.36,
+        "recall": 0.28,
+        "f1": 0.31,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.87,
+        "recall": 0.9,
+        "f1": 0.89,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.69,
+        "recall": 0.69,
+        "f1": 0.69,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/08_exp_resnet18_unificado_bs16_lr3e-4_flip08_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 174,
+      "train_loss": 0.123,
+      "train_acc": 0.9512,
+      "val_loss": 0.7526,
+      "val_acc": 0.832
+    },
+    "minloss": {
+      "epoch": 45,
+      "train_loss": 0.2866,
+      "train_acc": 0.8923,
+      "val_loss": 0.5555,
+      "val_acc": 0.8173
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0937,
+      "train_acc": 0.9631,
+      "val_loss": 1.015,
+      "val_acc": 0.8137
+    },
+    "hours": 9.593952194999996,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=3.00e-04)",
+    "series": "unificado",
+    "id": "08",
+    "accuracy": 0.7954,
+    "macro_f1": 0.68,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0003\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.8\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-4_flip08_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.83,
+        "recall": 0.58,
+        "f1": 0.68,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.39,
+        "recall": 0.25,
+        "f1": 0.3,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.75,
+        "recall": 0.67,
+        "f1": 0.71,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.74,
+        "recall": 0.92,
+        "f1": 0.82,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.71,
+        "recall": 0.52,
+        "f1": 0.6,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.74,
+        "recall": 0.92,
+        "f1": 0.82,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.79,
+        "recall": 0.87,
+        "f1": 0.83,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.48,
+        "recall": 0.35,
+        "f1": 0.4,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.87,
+        "recall": 0.94,
+        "f1": 0.9,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.84,
+        "recall": 0.61,
+        "f1": 0.71,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments/09_exp_resnet18_unificado_bs16_lr3e-5_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 96,
+      "train_loss": 0.1885,
+      "train_acc": 0.9255,
+      "val_loss": 0.5846,
+      "val_acc": 0.8392
+    },
+    "minloss": {
+      "epoch": 59,
+      "train_loss": 0.2534,
+      "train_acc": 0.9013,
+      "val_loss": 0.5196,
+      "val_acc": 0.8238
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0948,
+      "train_acc": 0.963,
+      "val_loss": 0.8563,
+      "val_acc": 0.8133
+    },
+    "hours": 9.58657441694444,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-05)",
+    "series": "unificado",
+    "id": "09",
+    "accuracy": 0.7872,
+    "macro_f1": 0.69,
+    "params": "# Parameters\nDATASET_NAME = \"unificado\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 1e-05\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-5_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.76,
+        "recall": 0.8,
+        "f1": 0.78,
+        "support": 76
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.39,
+        "recall": 0.23,
+        "f1": 0.29,
+        "support": 133
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.7,
+        "recall": 0.7,
+        "f1": 0.7,
+        "support": 209
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.78,
+        "recall": 0.86,
+        "f1": 0.82,
+        "support": 152
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.73,
+        "recall": 0.55,
+        "f1": 0.62,
+        "support": 152
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.91,
+        "recall": 0.88,
+        "f1": 0.9,
+        "support": 133
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.78,
+        "recall": 0.87,
+        "f1": 0.82,
+        "support": 798
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.43,
+        "recall": 0.35,
+        "f1": 0.39,
+        "support": 57
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.9,
+        "recall": 0.87,
+        "f1": 0.89,
+        "support": 1007
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.67,
+        "recall": 0.73,
+        "f1": 0.7,
+        "support": 342
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/01_exp_resnet18_bs16_lr1e-3_flip05_base.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 19,
+      "train_loss": 0.2519,
+      "train_acc": 0.9212,
+      "val_loss": 0.3148,
+      "val_acc": 0.9193
+    },
+    "minloss": {
+      "epoch": 28,
+      "train_loss": 0.2243,
+      "train_acc": 0.9239,
+      "val_loss": 0.1982,
+      "val_acc": 0.913
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.1731,
+      "train_acc": 0.9332,
+      "val_loss": 0.3187,
+      "val_acc": 0.8944
+    },
+    "hours": 0.05356960722222222,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "completos",
+    "id": "01",
+    "accuracy": 0.8882,
+    "macro_f1": 0.84,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = False\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-3_flip05_base\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.67,
+        "recall": 0.57,
+        "f1": 0.62,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 1,
+        "recall": 0.55,
+        "f1": 0.71,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.62,
+        "f1": 0.77,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.82,
+        "recall": 0.95,
+        "f1": 0.88,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.5,
+        "recall": 1,
+        "f1": 0.67,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.92,
+        "f1": 0.96,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.9,
+        "recall": 1,
+        "f1": 0.95,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/02_exp_resnet18_bs32_lr1e-3_flip05_base.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 24,
+      "train_loss": 0.1846,
+      "train_acc": 0.9426,
+      "val_loss": 0.3021,
+      "val_acc": 0.9441
+    },
+    "minloss": {
+      "epoch": 29,
+      "train_loss": 0.149,
+      "train_acc": 0.9453,
+      "val_loss": 0.2208,
+      "val_acc": 0.9255
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.1213,
+      "train_acc": 0.9666,
+      "val_loss": 0.785,
+      "val_acc": 0.8944
+    },
+    "hours": 0.05832696444444445,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "completos",
+    "id": "02",
+    "accuracy": 0.8696,
+    "macro_f1": 0.81,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 32\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = False\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs32_lr1e-3_flip05_base\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.67,
+        "recall": 0.29,
+        "f1": 0.4,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.9,
+        "recall": 0.82,
+        "f1": 0.86,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.5,
+        "f1": 0.67,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.84,
+        "recall": 0.98,
+        "f1": 0.9,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.75,
+        "recall": 1,
+        "f1": 0.86,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.88,
+        "recall": 0.98,
+        "f1": 0.93,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 0.61,
+        "f1": 0.76,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/03_exp_resnet18_bs16_lr1e-3_flip05_weighted.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 27,
+      "train_loss": 0.2065,
+      "train_acc": 0.9346,
+      "val_loss": 0.2371,
+      "val_acc": 0.9317
+    },
+    "minloss": {
+      "epoch": 29,
+      "train_loss": 0.166,
+      "train_acc": 0.9479,
+      "val_loss": 0.229,
+      "val_acc": 0.9193
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.1624,
+      "train_acc": 0.9453,
+      "val_loss": 0.2371,
+      "val_acc": 0.9193
+    },
+    "hours": 0.05395379333333335,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "completos",
+    "id": "03",
+    "accuracy": 0.8944,
+    "macro_f1": 0.81,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-3_flip05_weighted\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 0.5,
+        "f1": 0.67,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.55,
+        "recall": 0.86,
+        "f1": 0.67,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.89,
+        "recall": 0.73,
+        "f1": 0.8,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.83,
+        "recall": 0.62,
+        "f1": 0.71,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.71,
+        "f1": 0.83,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.84,
+        "recall": 0.9,
+        "f1": 0.87,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.67,
+        "recall": 0.67,
+        "f1": 0.67,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.98,
+        "f1": 0.99,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/04_exp_resnet18_bs32_lr1e-3_flip05_weighted.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 27,
+      "train_loss": 0.1953,
+      "train_acc": 0.9413,
+      "val_loss": 0.3138,
+      "val_acc": 0.913
+    },
+    "minloss": {
+      "epoch": 28,
+      "train_loss": 0.1485,
+      "train_acc": 0.9586,
+      "val_loss": 0.2555,
+      "val_acc": 0.9068
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.1784,
+      "train_acc": 0.9519,
+      "val_loss": 0.5725,
+      "val_acc": 0.8882
+    },
+    "hours": 0.05818975083333332,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "completos",
+    "id": "04",
+    "accuracy": 0.8944,
+    "macro_f1": 0.81,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 32\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs32_lr1e-3_flip05_weighted\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 1,
+        "recall": 0.82,
+        "f1": 0.9,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.73,
+        "recall": 1,
+        "f1": 0.84,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.62,
+        "f1": 0.77,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.8,
+        "recall": 0.98,
+        "f1": 0.88,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.75,
+        "recall": 1,
+        "f1": 0.86,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.96,
+        "recall": 0.98,
+        "f1": 0.97,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 0.89,
+        "f1": 0.94,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/05_exp_resnet18_bs16_lr1e-4_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 21,
+      "train_loss": 0.2345,
+      "train_acc": 0.9399,
+      "val_loss": 0.242,
+      "val_acc": 0.9379
+    },
+    "minloss": {
+      "epoch": 55,
+      "train_loss": 0.105,
+      "train_acc": 0.9693,
+      "val_loss": 0.1815,
+      "val_acc": 0.9379
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0251,
+      "train_acc": 0.992,
+      "val_loss": 0.3086,
+      "val_acc": 0.882
+    },
+    "hours": 0.5667722552777784,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-04)",
+    "series": "completos",
+    "id": "05",
+    "accuracy": 0.9255,
+    "macro_f1": 0.86,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0001\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-4_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.67,
+        "recall": 0.86,
+        "f1": 0.75,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.91,
+        "recall": 0.91,
+        "f1": 0.91,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.8,
+        "recall": 0.5,
+        "f1": 0.62,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.91,
+        "recall": 0.95,
+        "f1": 0.93,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.67,
+        "recall": 0.67,
+        "f1": 0.67,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.96,
+        "f1": 0.98,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.95,
+        "recall": 1,
+        "f1": 0.97,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/06_exp_resnet18_bs16_lr1e-4_flip08_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 96,
+      "train_loss": 0.0664,
+      "train_acc": 0.9773,
+      "val_loss": 0.1994,
+      "val_acc": 0.9503
+    },
+    "minloss": {
+      "epoch": 258,
+      "train_loss": 0.0138,
+      "train_acc": 0.996,
+      "val_loss": 0.1635,
+      "val_acc": 0.9379
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0221,
+      "train_acc": 0.9933,
+      "val_loss": 0.2207,
+      "val_acc": 0.9317
+    },
+    "hours": 0.5675756413888893,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-04)",
+    "series": "completos",
+    "id": "06",
+    "accuracy": 0.8944,
+    "macro_f1": 0.8,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0001\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.8\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-4_flip08_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.57,
+        "recall": 1,
+        "f1": 0.73,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.56,
+        "recall": 0.71,
+        "f1": 0.62,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.77,
+        "recall": 0.91,
+        "f1": 0.83,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.25,
+        "f1": 0.4,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.71,
+        "f1": 0.83,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1": 0.9,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 1,
+        "recall": 0.67,
+        "f1": 0.8,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.98,
+        "recall": 1,
+        "f1": 0.99,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 0.94,
+        "f1": 0.97,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/07_exp_resnet18_bs16_lr3e-4_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 50,
+      "train_loss": 0.1023,
+      "train_acc": 0.964,
+      "val_loss": 0.2221,
+      "val_acc": 0.9565
+    },
+    "minloss": {
+      "epoch": 71,
+      "train_loss": 0.0992,
+      "train_acc": 0.9626,
+      "val_loss": 0.1793,
+      "val_acc": 0.9441
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0297,
+      "train_acc": 0.9907,
+      "val_loss": 0.2965,
+      "val_acc": 0.9317
+    },
+    "hours": 0.5659293313888887,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=3.00e-04)",
+    "series": "completos",
+    "id": "07",
+    "accuracy": 0.9255,
+    "macro_f1": 0.87,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0003\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-4_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.71,
+        "recall": 0.71,
+        "f1": 0.71,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.91,
+        "recall": 0.91,
+        "f1": 0.91,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.62,
+        "f1": 0.77,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.91,
+        "recall": 0.98,
+        "f1": 0.94,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.67,
+        "recall": 0.67,
+        "f1": 0.67,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.96,
+        "recall": 0.98,
+        "f1": 0.97,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 0.89,
+        "f1": 0.94,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/08_exp_resnet18_bs16_lr3e-4_flip08_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 221,
+      "train_loss": 0.0395,
+      "train_acc": 0.9893,
+      "val_loss": 0.1958,
+      "val_acc": 0.9565
+    },
+    "minloss": {
+      "epoch": 109,
+      "train_loss": 0.0426,
+      "train_acc": 0.988,
+      "val_loss": 0.1434,
+      "val_acc": 0.9503
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0157,
+      "train_acc": 0.992,
+      "val_loss": 0.2841,
+      "val_acc": 0.913
+    },
+    "hours": 0.5673263886111112,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=3.00e-04)",
+    "series": "completos",
+    "id": "08",
+    "accuracy": 0.913,
+    "macro_f1": 0.88,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0003\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.8\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-4_flip08_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.6,
+        "recall": 0.86,
+        "f1": 0.71,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 1,
+        "recall": 0.91,
+        "f1": 0.95,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.62,
+        "f1": 0.77,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.88,
+        "recall": 1,
+        "f1": 0.93,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.92,
+        "recall": 0.86,
+        "f1": 0.89,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 1,
+        "recall": 0.67,
+        "f1": 0.8,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.93,
+        "recall": 1,
+        "f1": 0.96,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 0.89,
+        "f1": 0.94,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (completos)/09_exp_resnet18_bs16_lr3e-5_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 147,
+      "train_loss": 0.0413,
+      "train_acc": 0.9853,
+      "val_loss": 0.2347,
+      "val_acc": 0.9565
+    },
+    "minloss": {
+      "epoch": 51,
+      "train_loss": 0.1195,
+      "train_acc": 0.968,
+      "val_loss": 0.1696,
+      "val_acc": 0.9379
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.016,
+      "train_acc": 0.9947,
+      "val_loss": 0.2719,
+      "val_acc": 0.9068
+    },
+    "hours": 0.5671326936111108,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-05)",
+    "series": "completos",
+    "id": "09",
+    "accuracy": 0.9068,
+    "macro_f1": 0.86,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 1e-05\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-5_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.56,
+        "recall": 0.71,
+        "f1": 0.62,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.82,
+        "recall": 0.82,
+        "f1": 0.82,
+        "support": 11
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 8
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.62,
+        "f1": 0.77,
+        "support": 8
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.71,
+        "f1": 0.83,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.88,
+        "recall": 0.9,
+        "f1": 0.89,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.6,
+        "recall": 1,
+        "f1": 0.75,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.96,
+        "f1": 0.98,
+        "support": 53
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/01_exp_resnet18_bs16_lr1e-3_flip05_base.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 17,
+      "train_loss": 0.2862,
+      "train_acc": 0.914,
+      "val_loss": 0.4586,
+      "val_acc": 0.8827
+    },
+    "minloss": {
+      "epoch": 26,
+      "train_loss": 0.2109,
+      "train_acc": 0.9365,
+      "val_loss": 0.259,
+      "val_acc": 0.8827
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.2394,
+      "train_acc": 0.9392,
+      "val_loss": 0.3634,
+      "val_acc": 0.8765
+    },
+    "hours": 0.05893486444444446,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "con_clase4",
+    "id": "01",
+    "accuracy": 0.8957,
+    "macro_f1": 0.75,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = False\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = 15\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = (0.8, 1.0)\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-3_flip05_base\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 1,
+        "recall": 0.29,
+        "f1": 0.44,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.75,
+        "recall": 0.82,
+        "f1": 0.78,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.9,
+        "recall": 1,
+        "f1": 0.95,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.57,
+        "f1": 0.73,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.78,
+        "recall": 1,
+        "f1": 0.88,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.89,
+        "recall": 0.95,
+        "f1": 0.92,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.43,
+        "recall": 1,
+        "f1": 0.6,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.93,
+        "f1": 0.96,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.9,
+        "recall": 1,
+        "f1": 0.95,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/02_exp_resnet18_bs32_lr1e-3_flip05_base.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 29,
+      "train_loss": 0.1638,
+      "train_acc": 0.9444,
+      "val_loss": 0.2361,
+      "val_acc": 0.9198
+    },
+    "minloss": {
+      "epoch": 29,
+      "train_loss": 0.1638,
+      "train_acc": 0.9444,
+      "val_loss": 0.2361,
+      "val_acc": 0.9198
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.1573,
+      "train_acc": 0.9524,
+      "val_loss": 0.2482,
+      "val_acc": 0.9012
+    },
+    "hours": 0.05726532638888889,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "con_clase4",
+    "id": "02",
+    "accuracy": 0.9141,
+    "macro_f1": 0.88,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 32\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = False\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs32_lr1e-3_flip05_base\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 1,
+        "recall": 0.43,
+        "f1": 0.6,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.91,
+        "recall": 0.91,
+        "f1": 0.91,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.9,
+        "recall": 1,
+        "f1": 0.95,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.57,
+        "f1": 0.73,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.85,
+        "recall": 0.93,
+        "f1": 0.89,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.5,
+        "recall": 1,
+        "f1": 0.67,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.98,
+        "recall": 0.96,
+        "f1": 0.97,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.94,
+        "recall": 0.94,
+        "f1": 0.94,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/03_exp_resnet18_bs16_lr1e-3_flip05_weighted.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 28,
+      "train_loss": 0.2477,
+      "train_acc": 0.9206,
+      "val_loss": 0.2851,
+      "val_acc": 0.9074
+    },
+    "minloss": {
+      "epoch": 28,
+      "train_loss": 0.2477,
+      "train_acc": 0.9206,
+      "val_loss": 0.2851,
+      "val_acc": 0.9074
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.1861,
+      "train_acc": 0.9471,
+      "val_loss": 0.2945,
+      "val_acc": 0.8951
+    },
+    "hours": 0.053799858611111105,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "con_clase4",
+    "id": "03",
+    "accuracy": 0.8773,
+    "macro_f1": 0.83,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-3_flip05_weighted\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 1,
+        "recall": 0.29,
+        "f1": 0.44,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.82,
+        "recall": 0.82,
+        "f1": 0.82,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.89,
+        "recall": 0.89,
+        "f1": 0.89,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.67,
+        "recall": 0.57,
+        "f1": 0.62,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.82,
+        "recall": 0.95,
+        "f1": 0.88,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.6,
+        "recall": 1,
+        "f1": 0.75,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.94,
+        "recall": 0.94,
+        "f1": 0.94,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.94,
+        "recall": 0.83,
+        "f1": 0.88,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/04_exp_resnet18_bs32_lr1e-3_flip05_weighted.ipynb",
+    "count": 30,
+    "best": {
+      "epoch": 16,
+      "train_loss": 0.3127,
+      "train_acc": 0.9008,
+      "val_loss": 0.3237,
+      "val_acc": 0.9074
+    },
+    "minloss": {
+      "epoch": 16,
+      "train_loss": 0.3127,
+      "train_acc": 0.9008,
+      "val_loss": 0.3237,
+      "val_acc": 0.9074
+    },
+    "last": {
+      "epoch": 30,
+      "train_loss": 0.15,
+      "train_acc": 0.9577,
+      "val_loss": 0.6331,
+      "val_acc": 0.8457
+    },
+    "hours": 0.05766069777777778,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-03)",
+    "series": "con_clase4",
+    "id": "04",
+    "accuracy": 0.865,
+    "macro_f1": 0.82,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 32\nEPOCHS = 30\nLR = 0.001\nENABLE_UNFREEZE = False\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs32_lr1e-3_flip05_weighted\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 1,
+        "recall": 0.29,
+        "f1": 0.44,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 1,
+        "recall": 0.64,
+        "f1": 0.78,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.9,
+        "recall": 1,
+        "f1": 0.95,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.57,
+        "f1": 0.73,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.88,
+        "recall": 1,
+        "f1": 0.93,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.8,
+        "recall": 0.95,
+        "f1": 0.87,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.43,
+        "recall": 1,
+        "f1": 0.6,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.91,
+        "recall": 0.94,
+        "f1": 0.93,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.93,
+        "recall": 0.72,
+        "f1": 0.81,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/05_exp_resnet18_bs16_lr1e-4_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 300,
+      "train_loss": 0.0239,
+      "train_acc": 0.9934,
+      "val_loss": 0.2664,
+      "val_acc": 0.9444
+    },
+    "minloss": {
+      "epoch": 89,
+      "train_loss": 0.0796,
+      "train_acc": 0.9802,
+      "val_loss": 0.2254,
+      "val_acc": 0.9074
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0239,
+      "train_acc": 0.9934,
+      "val_loss": 0.2664,
+      "val_acc": 0.9444
+    },
+    "hours": 0.572372732222222,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-04)",
+    "series": "con_clase4",
+    "id": "05",
+    "accuracy": 0.9202,
+    "macro_f1": 0.89,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0001\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-4_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.83,
+        "recall": 0.71,
+        "f1": 0.77,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 1,
+        "recall": 0.82,
+        "f1": 0.9,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.89,
+        "recall": 0.89,
+        "f1": 0.89,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.67,
+        "recall": 0.57,
+        "f1": 0.62,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.83,
+        "recall": 0.95,
+        "f1": 0.89,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 1,
+        "recall": 0.67,
+        "f1": 0.8,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.98,
+        "f1": 0.99,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.95,
+        "recall": 1,
+        "f1": 0.97,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/06_exp_resnet18_bs16_lr1e-4_flip08_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 265,
+      "train_loss": 0.0341,
+      "train_acc": 0.9881,
+      "val_loss": 0.3526,
+      "val_acc": 0.9383
+    },
+    "minloss": {
+      "epoch": 118,
+      "train_loss": 0.054,
+      "train_acc": 0.9854,
+      "val_loss": 0.2705,
+      "val_acc": 0.9136
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0134,
+      "train_acc": 0.996,
+      "val_loss": 0.4157,
+      "val_acc": 0.9259
+    },
+    "hours": 0.5754834469444444,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-04)",
+    "series": "con_clase4",
+    "id": "06",
+    "accuracy": 0.8896,
+    "macro_f1": 0.85,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0001\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.8\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr1e-4_flip08_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.89,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 1,
+        "recall": 0.57,
+        "f1": 0.73,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.9,
+        "recall": 0.82,
+        "f1": 0.86,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.89,
+        "recall": 0.89,
+        "f1": 0.89,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.8,
+        "recall": 0.57,
+        "f1": 0.67,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 0.88,
+        "recall": 1,
+        "f1": 0.93,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.84,
+        "recall": 0.86,
+        "f1": 0.85,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.43,
+        "recall": 1,
+        "f1": 0.6,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.94,
+        "f1": 0.97,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.9,
+        "recall": 1,
+        "f1": 0.95,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/07_exp_resnet18_bs16_lr3e-4_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 263,
+      "train_loss": 0.022,
+      "train_acc": 0.9934,
+      "val_loss": 0.3673,
+      "val_acc": 0.9383
+    },
+    "minloss": {
+      "epoch": 46,
+      "train_loss": 0.1296,
+      "train_acc": 0.9577,
+      "val_loss": 0.2187,
+      "val_acc": 0.9012
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0367,
+      "train_acc": 0.9854,
+      "val_loss": 0.4145,
+      "val_acc": 0.8951
+    },
+    "hours": 0.575246671111111,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=3.00e-04)",
+    "series": "con_clase4",
+    "id": "07",
+    "accuracy": 0.9387,
+    "macro_f1": 0.9,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0003\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-4_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.86,
+        "recall": 0.86,
+        "f1": 0.86,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.85,
+        "recall": 1,
+        "f1": 0.92,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.89,
+        "recall": 0.89,
+        "f1": 0.89,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.67,
+        "recall": 0.57,
+        "f1": 0.62,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.93,
+        "recall": 0.93,
+        "f1": 0.93,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.67,
+        "recall": 0.67,
+        "f1": 0.67,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 1,
+        "recall": 0.98,
+        "f1": 0.99,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/08_exp_resnet18_bs16_lr3e-4_flip08_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 229,
+      "train_loss": 0.0295,
+      "train_acc": 0.9934,
+      "val_loss": 0.3486,
+      "val_acc": 0.9383
+    },
+    "minloss": {
+      "epoch": 124,
+      "train_loss": 0.0491,
+      "train_acc": 0.9854,
+      "val_loss": 0.2598,
+      "val_acc": 0.9198
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.0144,
+      "train_acc": 0.9921,
+      "val_loss": 0.366,
+      "val_acc": 0.8827
+    },
+    "hours": 0.5976787374999999,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=3.00e-04)",
+    "series": "con_clase4",
+    "id": "08",
+    "accuracy": 0.8957,
+    "macro_f1": 0.85,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 0.0003\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.8\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-4_flip08_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.83,
+        "recall": 0.71,
+        "f1": 0.77,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.9,
+        "recall": 0.82,
+        "f1": 0.86,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.8,
+        "recall": 0.89,
+        "f1": 0.84,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 0.67,
+        "recall": 0.57,
+        "f1": 0.62,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 0.86,
+        "f1": 0.92,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.89,
+        "recall": 0.95,
+        "f1": 0.92,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.67,
+        "recall": 0.67,
+        "f1": 0.67,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.93,
+        "recall": 0.98,
+        "f1": 0.95,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.93,
+        "recall": 0.78,
+        "f1": 0.85,
+        "support": 18
+      }
+    ]
+  },
+  {
+    "path": "output/experiments (con_clase4)/09_exp_resnet18_bs16_lr3e-5_flip05_weighted_unfreeze.ipynb",
+    "count": 300,
+    "best": {
+      "epoch": 282,
+      "train_loss": 0.0191,
+      "train_acc": 0.9947,
+      "val_loss": 0.2513,
+      "val_acc": 0.9259
+    },
+    "minloss": {
+      "epoch": 282,
+      "train_loss": 0.0191,
+      "train_acc": 0.9947,
+      "val_loss": 0.2513,
+      "val_acc": 0.9259
+    },
+    "last": {
+      "epoch": 300,
+      "train_loss": 0.026,
+      "train_acc": 0.9921,
+      "val_loss": 0.3357,
+      "val_acc": 0.8951
+    },
+    "hours": 0.617461464166667,
+    "unfreeze": "Epoch 11: se descongela layer4 con lr=1.00e-04 (head lr=1.00e-05)",
+    "series": "con_clase4",
+    "id": "09",
+    "accuracy": 0.9325,
+    "macro_f1": 0.82,
+    "params": "# Parameters\nDATASET_NAME = \"cuadrados\"\nMODEL_NAME = \"resnet18\"\nBATCH_SIZE = 16\nEPOCHS = 300\nLR = 1e-05\nENABLE_UNFREEZE = True\nUNFREEZE_EPOCH = 10\nBACKBONE_LR_FACTOR = 0.1\nUSE_CLASS_WEIGHTS = True\nENABLE_HORIZONTAL_FLIP = True\nFLIP_PROBABILITY = 0.5\nENABLE_ROTATION = True\nROTATION_DEGREES = [-15, 15]\nENABLE_SCALING = True\nSCALING_FACTOR_INTERVAL = [0.8, 1.0]\nIMG_SIZE = 224\nPIXEL_FILL = [255, 255, 255]\nSEED = 42\nTEST_VAL_FRACTION = 0.3\nTEST_FRACTION_OF_TEMP = 0.5\nNUM_WORKERS = 8\nUSE_AMP = True\nUSE_CHANNELS_LAST = True\nENABLE_MODEL_COMPILE = False\nRUN_NAME = \"bs16_lr3e-5_flip05_weighted_unfreeze\"\n",
+    "classes": [
+      {
+        "clase": "clase01",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 4
+      },
+      {
+        "clase": "clase02",
+        "precision": 0.83,
+        "recall": 0.71,
+        "f1": 0.77,
+        "support": 7
+      },
+      {
+        "clase": "clase03",
+        "precision": 0.91,
+        "recall": 0.91,
+        "f1": 0.91,
+        "support": 11
+      },
+      {
+        "clase": "clase04",
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "support": 1
+      },
+      {
+        "clase": "clase05",
+        "precision": 0.9,
+        "recall": 1,
+        "f1": 0.95,
+        "support": 9
+      },
+      {
+        "clase": "clase06",
+        "precision": 1,
+        "recall": 0.57,
+        "f1": 0.73,
+        "support": 7
+      },
+      {
+        "clase": "clase07",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 7
+      },
+      {
+        "clase": "clase08",
+        "precision": 0.88,
+        "recall": 0.9,
+        "f1": 0.89,
+        "support": 42
+      },
+      {
+        "clase": "clase09",
+        "precision": 0.75,
+        "recall": 1,
+        "f1": 0.86,
+        "support": 3
+      },
+      {
+        "clase": "clase10",
+        "precision": 0.98,
+        "recall": 1,
+        "f1": 0.99,
+        "support": 54
+      },
+      {
+        "clase": "clase11",
+        "precision": 0.95,
+        "recall": 1,
+        "f1": 0.97,
+        "support": 18
+      }
+    ]
+  }
+]
