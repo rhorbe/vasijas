@@ -20,22 +20,16 @@ PARAMETROS_BASE = {
     "UNFREEZE_EPOCH": None,
     "BACKBONE_LR_FACTOR": 0.1,
     "USE_CLASS_WEIGHTS": False,
-    "ENABLE_HORIZONTAL_FLIP": True,
     "FLIP_PROBABILITY": 0.5,
-    "ENABLE_ROTATION": True,
     "ROTATION_DEGREES": [-15, 15],
-    "ENABLE_SCALING": True,
     "SCALING_FACTOR_INTERVAL": [0.8, 1.0],
     "IMG_SIZE": 224,
     "IMAGENET_MEAN": [0.485, 0.456, 0.406],
     "IMAGENET_STD": [0.229, 0.224, 0.225],
     "PIXEL_FILL": [255, 255, 255],
-    "TEST_VAL_FRACTION": 0.30,
-    "TEST_FRACTION_OF_TEMP": 0.50,
     "NUM_WORKERS": 8,
     "USE_AMP": True,
     "USE_CHANNELS_LAST": True,
-    "ENABLE_MODEL_COMPILE": False,
 }
 
 MATRIZ_EXPERIMENTOS = [
@@ -136,7 +130,8 @@ def ejecutar_experimento(num_experimento: int | None, experimento: dict) -> None
 
     run_name = parametros["RUN_NAME"]
     model_name = parametros["MODEL_NAME"]
-    dataset_name = parametros["DATASET_NAME"]
+    # Se usa para nombrar la salida; el notebook no consume este parámetro.
+    dataset_name = parametros.pop("DATASET_NAME")
 
     notebook_salida = (
         DIRECTORIO_SALIDA
