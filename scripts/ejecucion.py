@@ -14,6 +14,7 @@ DIRECTORIO_SALIDA.mkdir(parents=True, exist_ok=True)
 PARAMETROS_BASE = {
     "DATASET_NAME": "unificado",
     "MODEL_NAME": "resnet18",
+    "RUN_NAME": "default",
     "BATCH_SIZE": 16,
     "EPOCHS": 300,
     "LR": 1e-3,
@@ -27,8 +28,13 @@ PARAMETROS_BASE = {
     "ENABLE_SCALING": True,
     "SCALING_FACTOR_INTERVAL": [0.8, 1.0],
     "IMG_SIZE": 224,
+    "IMAGENET_MEAN": [0.485, 0.456, 0.406],
+    "IMAGENET_STD": [0.229, 0.224, 0.225],
     "PIXEL_FILL": [255, 255, 255],
-    "SEED": 42,
+    "DATA_DIR": str(
+        Path(__file__).resolve().parents[1]
+        / "data/10.cuadrados_divididos_en_train_val_y_test"
+    ),
     "TEST_VAL_FRACTION": 0.30,
     "TEST_FRACTION_OF_TEMP": 0.50,
     "NUM_WORKERS": 8,
@@ -44,7 +50,7 @@ MATRIZ_EXPERIMENTOS = [
         "EPOCHS": 10,
         "LR": 1e-3,
         "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": True,
+        "USE_CLASS_WEIGHTS": False,
         "UNFREEZE_EPOCH": None,
     }
 ]
