@@ -9,7 +9,7 @@ DIRECTORIO_SALIDA = Path("output/experiments")
 DIRECTORIO_SALIDA.mkdir(parents=True, exist_ok=True)
 
 PARAMETROS_BASE = {
-    "DATASET_NAME": "unificado",
+    "DATASET_NAME": "completos",
     "MODEL_NAME": "resnet18",
     "RUN_NAME": "default",
     "BATCH_SIZE": 16,
@@ -130,8 +130,8 @@ def ejecutar_experimento(num_experimento: int | None, experimento: dict) -> None
 
     run_name = parametros["RUN_NAME"]
     model_name = parametros["MODEL_NAME"]
-    # Se usa para nombrar la salida; el notebook no consume este parámetro.
-    dataset_name = parametros.pop("DATASET_NAME")
+    # La plantilla usa el mismo nombre para seleccionar los datos de entrada.
+    dataset_name = parametros["DATASET_NAME"]
 
     notebook_salida = (
         DIRECTORIO_SALIDA
