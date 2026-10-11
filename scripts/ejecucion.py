@@ -17,8 +17,7 @@ PARAMETROS_BASE = {
     "BATCH_SIZE": 16,
     "EPOCHS": 300,
     "LR": 1e-3,
-    "ENABLE_UNFREEZE": False,
-    "UNFREEZE_EPOCH": 10,
+    "UNFREEZE_EPOCH": None,
     "BACKBONE_LR_FACTOR": 0.1,
     "USE_CLASS_WEIGHTS": False,
     "ENABLE_HORIZONTAL_FLIP": True,
@@ -46,7 +45,6 @@ MATRIZ_EXPERIMENTOS = [
         "LR": 1e-3,
         "FLIP_PROBABILITY": 0.5,
         "USE_CLASS_WEIGHTS": False,
-        "ENABLE_UNFREEZE": True,
         "UNFREEZE_EPOCH": 4,
     }
 ]
@@ -58,7 +56,8 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 1e-3,
 #         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": False,
-#         "ENABLE_UNFREEZE": False,
+#         "UNFREEZE_EPOCH": None,
+
 #
 #     },
 #     {
@@ -67,7 +66,8 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 1e-3,
 #         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": False,
-#         "ENABLE_UNFREEZE": False,
+#         "UNFREEZE_EPOCH": None,
+
 #     },
 #     {
 #         "RUN_NAME": "bs16_lr1e-3_flip05_weighted",
@@ -75,7 +75,8 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 1e-3,
 #         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": True,
-#         "ENABLE_UNFREEZE": False,
+#         "UNFREEZE_EPOCH": None,
+
 #     },
 #     {
 #         "RUN_NAME": "bs32_lr1e-3_flip05_weighted",
@@ -83,7 +84,8 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 1e-3,
 #         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": True,
-#         "ENABLE_UNFREEZE": False,
+#         "UNFREEZE_EPOCH": None,
+
 #     },
 #     {
 #         "RUN_NAME": "bs16_lr1e-4_flip05_weighted_unfreeze",
@@ -91,7 +93,6 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 1e-4,
 #         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": True,
-#         "ENABLE_UNFREEZE": True,
 #         "UNFREEZE_EPOCH": 10,
 #     },
 #     {
@@ -100,7 +101,6 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 1e-4,
 #         "FLIP_PROBABILITY": 0.8,
 #         "USE_CLASS_WEIGHTS": True,
-#         "ENABLE_UNFREEZE": True,
 #         "UNFREEZE_EPOCH": 10,
 #     },
 #     {
@@ -109,7 +109,6 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 3e-4,
 #         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": True,
-#         "ENABLE_UNFREEZE": True,
 #         "UNFREEZE_EPOCH": 10,
 #     },
 #     {
@@ -118,7 +117,6 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 3e-4,
 #         "FLIP_PROBABILITY": 0.8,
 #         "USE_CLASS_WEIGHTS": True,
-#         "ENABLE_UNFREEZE": True,
 #         "UNFREEZE_EPOCH": 10,
 #     },
 #     {
@@ -127,7 +125,6 @@ MATRIZ_EXPERIMENTOS = [
 #         "LR": 1e-5,
 #         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": True,
-#         "ENABLE_UNFREEZE": True,
 #         "UNFREEZE_EPOCH": 10,
 #     }
 # ]
