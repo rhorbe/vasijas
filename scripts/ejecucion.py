@@ -3,7 +3,9 @@ from pathlib import Path
 import papermill as pm
 
 
-NOTEBOOK_ENTRADA = Path("notebooks/03.entrenamiento/14.Entrenamiento_resnet18_unificado.ipynb")
+NOTEBOOK_ENTRADA = Path(
+    "notebooks/03.entrenamiento/13.Entrenamiento_resnet18_completos.ipynb"
+)
 DIRECTORIO_SALIDA = Path("output/experiments")
 
 DIRECTORIO_SALIDA.mkdir(parents=True, exist_ok=True)
@@ -13,7 +15,7 @@ PARAMETROS_BASE = {
     "DATASET_NAME": "unificado",
     "MODEL_NAME": "resnet18",
     "BATCH_SIZE": 16,
-    "EPOCHS": 30,
+    "EPOCHS": 300,
     "LR": 1e-3,
     "ENABLE_UNFREEZE": False,
     "UNFREEZE_EPOCH": 10,
@@ -36,95 +38,99 @@ PARAMETROS_BASE = {
     "ENABLE_MODEL_COMPILE": False,
 }
 
-
 MATRIZ_EXPERIMENTOS = [
     {
-        "RUN_NAME": "bs16_lr1e-3_flip05_base",
+        "RUN_NAME": "prueba_experimento",
         "BATCH_SIZE": 16,
-        "EPOCHS": 30,
+        "EPOCHS": 10,
         "LR": 1e-3,
         "FLIP_PROBABILITY": 0.5,
         "USE_CLASS_WEIGHTS": False,
-        "ENABLE_UNFREEZE": False,
-    },
-    {
-        "RUN_NAME": "bs32_lr1e-3_flip05_base",
-        "BATCH_SIZE": 32,
-        "EPOCHS": 30,
-        "LR": 1e-3,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": False,
-        "ENABLE_UNFREEZE": False,
-    },
-    {
-        "RUN_NAME": "bs16_lr1e-3_flip05_weighted",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 30,
-        "LR": 1e-3,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": True,
-        "ENABLE_UNFREEZE": False,
-    },
-    {
-        "RUN_NAME": "bs32_lr1e-3_flip05_weighted",
-        "BATCH_SIZE": 32,
-        "EPOCHS": 30,
-        "LR": 1e-3,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": True,
-        "ENABLE_UNFREEZE": False,
-    },
-    {
-        "RUN_NAME": "bs16_lr1e-4_flip05_weighted_unfreeze",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 300,
-        "LR": 1e-4,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": True,
         "ENABLE_UNFREEZE": True,
-        "UNFREEZE_EPOCH": 10,
-    },
-    {
-        "RUN_NAME": "bs16_lr1e-4_flip08_weighted_unfreeze",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 300,
-        "LR": 1e-4,
-        "FLIP_PROBABILITY": 0.8,
-        "USE_CLASS_WEIGHTS": True,
-        "ENABLE_UNFREEZE": True,
-        "UNFREEZE_EPOCH": 10,
-    },
-    {
-        "RUN_NAME": "bs16_lr3e-4_flip05_weighted_unfreeze",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 300,
-        "LR": 3e-4,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": True,
-        "ENABLE_UNFREEZE": True,
-        "UNFREEZE_EPOCH": 10,
-    },
-    {
-        "RUN_NAME": "bs16_lr3e-4_flip08_weighted_unfreeze",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 300,
-        "LR": 3e-4,
-        "FLIP_PROBABILITY": 0.8,
-        "USE_CLASS_WEIGHTS": True,
-        "ENABLE_UNFREEZE": True,
-        "UNFREEZE_EPOCH": 10,
-    },
-    {
-        "RUN_NAME": "bs16_lr3e-5_flip05_weighted_unfreeze",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 300,
-        "LR": 1e-5,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": True,
-        "ENABLE_UNFREEZE": True,
-        "UNFREEZE_EPOCH": 10,
+        "UNFREEZE_EPOCH": 4,
     }
 ]
+#
+# MATRIZ_EXPERIMENTOS = [
+#     {
+#         "RUN_NAME": "bs16_lr1e-3_flip05_base",
+#         "BATCH_SIZE": 16,
+#         "LR": 1e-3,
+#         "FLIP_PROBABILITY": 0.5,
+#         "USE_CLASS_WEIGHTS": False,
+#         "ENABLE_UNFREEZE": False,
+#
+#     },
+#     {
+#         "RUN_NAME": "bs32_lr1e-3_flip05_base",
+#         "BATCH_SIZE": 32,
+#         "LR": 1e-3,
+#         "FLIP_PROBABILITY": 0.5,
+#         "USE_CLASS_WEIGHTS": False,
+#         "ENABLE_UNFREEZE": False,
+#     },
+#     {
+#         "RUN_NAME": "bs16_lr1e-3_flip05_weighted",
+#         "BATCH_SIZE": 16,
+#         "LR": 1e-3,
+#         "FLIP_PROBABILITY": 0.5,
+#         "USE_CLASS_WEIGHTS": True,
+#         "ENABLE_UNFREEZE": False,
+#     },
+#     {
+#         "RUN_NAME": "bs32_lr1e-3_flip05_weighted",
+#         "BATCH_SIZE": 32,
+#         "LR": 1e-3,
+#         "FLIP_PROBABILITY": 0.5,
+#         "USE_CLASS_WEIGHTS": True,
+#         "ENABLE_UNFREEZE": False,
+#     },
+#     {
+#         "RUN_NAME": "bs16_lr1e-4_flip05_weighted_unfreeze",
+#         "BATCH_SIZE": 16,
+#         "LR": 1e-4,
+#         "FLIP_PROBABILITY": 0.5,
+#         "USE_CLASS_WEIGHTS": True,
+#         "ENABLE_UNFREEZE": True,
+#         "UNFREEZE_EPOCH": 10,
+#     },
+#     {
+#         "RUN_NAME": "bs16_lr1e-4_flip08_weighted_unfreeze",
+#         "BATCH_SIZE": 16,
+#         "LR": 1e-4,
+#         "FLIP_PROBABILITY": 0.8,
+#         "USE_CLASS_WEIGHTS": True,
+#         "ENABLE_UNFREEZE": True,
+#         "UNFREEZE_EPOCH": 10,
+#     },
+#     {
+#         "RUN_NAME": "bs16_lr3e-4_flip05_weighted_unfreeze",
+#         "BATCH_SIZE": 16,
+#         "LR": 3e-4,
+#         "FLIP_PROBABILITY": 0.5,
+#         "USE_CLASS_WEIGHTS": True,
+#         "ENABLE_UNFREEZE": True,
+#         "UNFREEZE_EPOCH": 10,
+#     },
+#     {
+#         "RUN_NAME": "bs16_lr3e-4_flip08_weighted_unfreeze",
+#         "BATCH_SIZE": 16,
+#         "LR": 3e-4,
+#         "FLIP_PROBABILITY": 0.8,
+#         "USE_CLASS_WEIGHTS": True,
+#         "ENABLE_UNFREEZE": True,
+#         "UNFREEZE_EPOCH": 10,
+#     },
+#     {
+#         "RUN_NAME": "bs16_lr1e-5_flip05_weighted_unfreeze",
+#         "BATCH_SIZE": 16,
+#         "LR": 1e-5,
+#         "FLIP_PROBABILITY": 0.5,
+#         "USE_CLASS_WEIGHTS": True,
+#         "ENABLE_UNFREEZE": True,
+#         "UNFREEZE_EPOCH": 10,
+#     }
+# ]
 
 
 def ejecutar_experimento(num_experimento: int | None, experimento: dict) -> None:
@@ -134,7 +140,10 @@ def ejecutar_experimento(num_experimento: int | None, experimento: dict) -> None
     model_name = parametros["MODEL_NAME"]
     dataset_name = parametros["DATASET_NAME"]
 
-    notebook_salida = DIRECTORIO_SALIDA / f"{num_experimento:02d}_exp_{model_name}_{dataset_name}_{run_name}.ipynb"
+    notebook_salida = (
+        DIRECTORIO_SALIDA
+        / f"{num_experimento:02d}_exp_{model_name}_{dataset_name}_{run_name}.ipynb"
+    )
 
     print(f"\nEjecutando: {run_name}")
     print(f"Notebook de salida: {notebook_salida}")
