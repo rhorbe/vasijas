@@ -2,14 +2,11 @@ from pathlib import Path
 
 import papermill as pm
 
-
 NOTEBOOK_ENTRADA = Path(
     "notebooks/03.entrenamiento/13.Entrenamiento_resnet18_completos.ipynb"
 )
 DIRECTORIO_SALIDA = Path("output/experiments")
-
 DIRECTORIO_SALIDA.mkdir(parents=True, exist_ok=True)
-
 
 PARAMETROS_BASE = {
     "DATASET_NAME": "unificado",
@@ -31,10 +28,6 @@ PARAMETROS_BASE = {
     "IMAGENET_MEAN": [0.485, 0.456, 0.406],
     "IMAGENET_STD": [0.229, 0.224, 0.225],
     "PIXEL_FILL": [255, 255, 255],
-    "DATA_DIR": str(
-        Path(__file__).resolve().parents[1]
-        / "data/10.cuadrados_divididos_en_train_val_y_test"
-    ),
     "TEST_VAL_FRACTION": 0.30,
     "TEST_FRACTION_OF_TEMP": 0.50,
     "NUM_WORKERS": 8,

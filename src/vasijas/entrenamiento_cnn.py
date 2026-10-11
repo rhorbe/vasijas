@@ -621,10 +621,12 @@ def entrenar_una_epoch(
     optimizador: torch.optim.Optimizer,
     dispositivo: torch.device,
     *,
-    usar_amp: bool | None = None,
+    usar_amp: bool = False,
     scaler: torch.amp.GradScaler | None = None,
+    usar_channels_last: bool = False,
 ) -> tuple[float, float]:
-    usar_amp = dispositivo.type == "cuda" and usar_amp is not False
+    usar_amp = dispositivo.type == "cuda" and usar_amp is True
+    usar_channels_last = dispositivo.type == "cuda" and usar_channels_last is True
     if scaler is None:
         scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
     modelo.train()
@@ -636,9 +638,7 @@ def entrenar_una_epoch(
             dispositivo,
             non_blocking=loader.pin_memory,
             memory_format=(
-                torch.channels_last
-                if dispositivo.type == "cuda"
-                else torch.contiguous_format
+                torch.channels_last if usar_channels_last else torch.contiguous_format
             ),
         )
         etiquetas = etiquetas.to(dispositivo, non_blocking=loader.pin_memory)
@@ -665,9 +665,11 @@ def validar_modelo(
     criterio: nn.Module,
     dispositivo: torch.device,
     *,
-    usar_amp: bool | None = None,
+    usar_amp: bool = False,
+    usar_channels_last: bool = False,
 ) -> ResultadoEvaluacion:
-    usar_amp = dispositivo.type == "cuda" and usar_amp is not False
+    usar_amp = dispositivo.type == "cuda" and usar_amp is True
+    usar_channels_last = dispositivo.type == "cuda" and usar_channels_last is True
     modelo.eval()
     total_loss = 0.0
     correctas = 0
@@ -681,7 +683,7 @@ def validar_modelo(
                 non_blocking=loader.pin_memory,
                 memory_format=(
                     torch.channels_last
-                    if dispositivo.type == "cuda"
+                    if usar_channels_last
                     else torch.contiguous_format
                 ),
             )
@@ -719,18 +721,25 @@ def entrenar_modelo(
     epochs: int,
     al_finalizar_epoch: Callable[[MetricasEpoch], None] | None = None,
     *,
-    usar_amp: bool | None = None,
+    usar_amp: bool = False,
+    usar_channels_last: bool = False,
     model_name: str | None = None,
     unfreeze_epoch: int | None = None,
     backbone_lr: float | None = None,
 ) -> HistorialEntrenamiento:
+    """Entrena con AMP y channels-last solo si se solicitan y hay CUDA."""
     # unfreeze_epoch usa índice desde cero; None desactiva la descongelación.
     if unfreeze_epoch is not None and (model_name is None or backbone_lr is None):
         raise ValueError("La descongelación requiere model_name y backbone_lr")
-    usar_amp = dispositivo.type == "cuda" and usar_amp is not False
+    usar_amp = dispositivo.type == "cuda" and usar_amp is True
+    usar_channels_last = dispositivo.type == "cuda" and usar_channels_last is True
     scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
+    modelo.to(
+        memory_format=(
+            torch.channels_last if usar_channels_last else torch.contiguous_format
+        )
+    )
     if dispositivo.type == "cuda":
-        modelo.to(memory_format=torch.channels_last)
         # Los lotes de imágenes tienen resolución fija.
         torch.backends.cudnn.benchmark = True
     metricas: list[MetricasEpoch] = []
@@ -758,6 +767,7 @@ def entrenar_modelo(
             dispositivo=dispositivo,
             usar_amp=usar_amp,
             scaler=scaler,
+            usar_channels_last=usar_channels_last,
         )
         validacion = validar_modelo(
             modelo=modelo,
@@ -765,6 +775,7 @@ def entrenar_modelo(
             criterio=criterio,
             dispositivo=dispositivo,
             usar_amp=usar_amp,
+            usar_channels_last=usar_channels_last,
         )
         metrica = MetricasEpoch(
             epoch=epoch,
