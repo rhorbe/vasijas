@@ -39,13 +39,13 @@ PARAMETROS_BASE = {
 
 MATRIZ_EXPERIMENTOS = [
     {
-        "RUN_NAME": "prueba_experimento",
+        "RUN_NAME": "prueba_experimento2",
         "BATCH_SIZE": 16,
         "EPOCHS": 10,
         "LR": 1e-3,
         "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": False,
-        "UNFREEZE_EPOCH": 4,
+        "USE_CLASS_WEIGHTS": True,
+        "UNFREEZE_EPOCH": None,
     }
 ]
 #
