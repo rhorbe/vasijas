@@ -6,7 +6,7 @@ project:
     - notebooks/01.exploracion/*.ipynb
     - notebooks/02.preparacion/*.ipynb
     - notebooks/03.entrenamiento/*.ipynb
-    - output/experiments/*.ipynb
+    - output/experiments_01/*.ipynb
 
 author: Rafael Horacio Orbe
 author-title: "autor"

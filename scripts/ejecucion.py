@@ -2,9 +2,7 @@ from pathlib import Path
 
 import papermill as pm
 
-NOTEBOOK_ENTRADA = Path(
-    "notebooks/03.entrenamiento/13.Entrenamiento_resnet18_completos.ipynb"
-)
+NOTEBOOK_ENTRADA = Path("notebooks/03.entrenamiento/13.Entrenamiento_resnet18.ipynb")
 DIRECTORIO_SALIDA = Path("output/experiments")
 DIRECTORIO_SALIDA.mkdir(parents=True, exist_ok=True)
 
