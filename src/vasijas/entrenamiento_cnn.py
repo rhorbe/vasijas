@@ -813,28 +813,43 @@ def _entrenar_y_validar_epoch(
 
 
 @dataclass
+class _MejorEstadoValidacion:
+    """Conserva los pesos con menor val_loss, independientemente de la parada."""
+
+    mejor_loss: float = float("inf")
+    mejor_estado: dict[str, Any] | None = None
+    mejor_epoch: int | None = None
+
+    def actualizar(self, modelo: nn.Module, metrica: MetricasEpoch) -> None:
+        if np.isfinite(metrica.val_loss) and metrica.val_loss < self.mejor_loss:
+            self.mejor_loss = metrica.val_loss
+            self.mejor_estado = deepcopy(modelo.state_dict())
+            self.mejor_epoch = metrica.epoch
+
+    def restaurar(self, modelo: nn.Module) -> None:
+        if self.mejor_estado is None:
+            raise ValueError("No se registró una pérdida de validación finita")
+        modelo.load_state_dict(self.mejor_estado)
+        print(
+            f"Se restauran los pesos de epoch {self.mejor_epoch} (val_loss={self.mejor_loss:.4f})."
+        )
+
+
+@dataclass
 class _ControlParadaAnticipada:
-    """Conserva el mejor modelo y controla la paciencia de validación."""
+    """Controla únicamente la paciencia de validación."""
 
     paciencia: int
     min_delta: float
-    mejor_loss: float = float("inf")
     loss_referencia: float = float("inf")
-    mejor_estado: dict[str, Any] | None = None
-    mejor_epoch: int | None = None
     epochs_sin_mejora: int = 0
 
     def actualizar(
         self,
-        modelo: nn.Module,
         metrica: MetricasEpoch,
         unfreeze_epoch: int | None,
     ) -> bool:
         epoch = metrica.epoch
-        if np.isfinite(metrica.val_loss) and metrica.val_loss < self.mejor_loss:
-            self.mejor_loss = metrica.val_loss
-            self.mejor_estado = deepcopy(modelo.state_dict())
-            self.mejor_epoch = epoch
 
         if unfreeze_epoch is not None and epoch - 1 < unfreeze_epoch:
             return False
@@ -859,14 +874,6 @@ class _ControlParadaAnticipada:
 
         return False
 
-    def restaurar(self, modelo: nn.Module) -> None:
-        if self.mejor_estado is None:
-            raise ValueError("No se registró una pérdida de validación finita")
-        modelo.load_state_dict(self.mejor_estado)
-        print(
-            f"Se restauran los pesos de epoch {self.mejor_epoch} (val_loss={self.mejor_loss:.4f})."
-        )
-
 
 def entrenar_modelo(
     modelo: nn.Module,
@@ -886,11 +893,13 @@ def entrenar_modelo(
     early_stopping_patience: int | None = None,
     early_stopping_min_delta: float = 0.001,
 ) -> HistorialEntrenamiento:
-    """Entrena y, si hay parada anticipada, restaura el mejor estado de val.
+    """Entrena y restaura siempre los pesos con menor pérdida de validación.
 
     La paciencia cuenta épocas sin mejora suficiente de val_loss. Si hay
     descongelación programada, comienza a contar desde esa época.
-    ``early_stopping_patience=None`` conserva el entrenamiento sin parada.
+    ``early_stopping_patience=None`` ejecuta todas las épocas y restaura el
+    mejor estado igualmente. ``early_stopping_min_delta`` solo controla la
+    paciencia; cualquier reducción de val_loss actualiza los mejores pesos.
     """
     _validar_configuracion_entrenamiento(
         early_stopping_patience,
@@ -905,6 +914,7 @@ def entrenar_modelo(
         usar_amp,
         usar_channels_last,
     )
+    mejor_estado = _MejorEstadoValidacion()
     parada = (
         _ControlParadaAnticipada(early_stopping_patience, early_stopping_min_delta)
         if early_stopping_patience is not None
@@ -934,13 +944,13 @@ def entrenar_modelo(
             scaler,
         )
         metricas.append(metrica)
+        mejor_estado.actualizar(modelo, metrica)
         if al_finalizar_epoch is not None:
             al_finalizar_epoch(metrica)
-        if parada is not None and parada.actualizar(modelo, metrica, unfreeze_epoch):
+        if parada is not None and parada.actualizar(metrica, unfreeze_epoch):
             break
 
-    if parada is not None:
-        parada.restaurar(modelo)
+    mejor_estado.restaurar(modelo)
     return HistorialEntrenamiento(metricas=metricas)
 
 
