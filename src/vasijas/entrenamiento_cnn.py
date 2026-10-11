@@ -712,6 +712,162 @@ def validar_modelo(
     )
 
 
+def _validar_configuracion_entrenamiento(
+    early_stopping_patience: int | None,
+    early_stopping_min_delta: float,
+    unfreeze_epoch: int | None,
+    model_name: str | None,
+    backbone_lr: float | None,
+) -> None:
+    if early_stopping_patience is not None and early_stopping_patience <= 0:
+        raise ValueError("early_stopping_patience debe ser mayor a cero o None")
+    if not np.isfinite(early_stopping_min_delta) or early_stopping_min_delta < 0:
+        raise ValueError("early_stopping_min_delta debe ser finito y no negativo")
+    # unfreeze_epoch usa índice desde cero; None desactiva la descongelación.
+    if unfreeze_epoch is not None and (model_name is None or backbone_lr is None):
+        raise ValueError("La descongelación requiere model_name y backbone_lr")
+
+
+def _preparar_ejecucion_entrenamiento(
+    modelo: nn.Module,
+    dispositivo: torch.device,
+    usar_amp: bool,
+    usar_channels_last: bool,
+) -> tuple[bool, bool, torch.amp.GradScaler]:
+    usar_amp = dispositivo.type == "cuda" and usar_amp is True
+    usar_channels_last = dispositivo.type == "cuda" and usar_channels_last is True
+    scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
+    modelo.to(
+        memory_format=(
+            torch.channels_last if usar_channels_last else torch.contiguous_format
+        )
+    )
+    if dispositivo.type == "cuda":
+        # Los lotes de imágenes tienen resolución fija.
+        torch.backends.cudnn.benchmark = True
+    return usar_amp, usar_channels_last, scaler
+
+
+def _aplicar_descongelacion_programada(
+    modelo: nn.Module,
+    optimizador: torch.optim.Optimizer,
+    epoch: int,
+    model_name: str | None,
+    unfreeze_epoch: int | None,
+    backbone_lr: float | None,
+) -> None:
+    if unfreeze_epoch is not None and maybe_unfreeze_layer4(
+        modelo,
+        optimizador,
+        epoch - 1,
+        model_name=model_name,
+        unfreeze_epoch=unfreeze_epoch,
+        backbone_lr=backbone_lr,
+    ):
+        print(
+            f"Epoch {epoch}: se descongela layer4 con lr={backbone_lr:.2e} "
+            f"(head lr={optimizador.param_groups[0]['lr']:.2e})"
+            f"\n"
+        )
+
+
+def _entrenar_y_validar_epoch(
+    modelo: nn.Module,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    criterio: nn.Module,
+    optimizador: torch.optim.Optimizer,
+    dispositivo: torch.device,
+    epoch: int,
+    usar_amp: bool,
+    usar_channels_last: bool,
+    scaler: torch.amp.GradScaler,
+) -> MetricasEpoch:
+    momento_inicio = datetime.now()
+    train_loss, train_accuracy = entrenar_una_epoch(
+        modelo=modelo,
+        loader=train_loader,
+        criterio=criterio,
+        optimizador=optimizador,
+        dispositivo=dispositivo,
+        usar_amp=usar_amp,
+        scaler=scaler,
+        usar_channels_last=usar_channels_last,
+    )
+    validacion = validar_modelo(
+        modelo=modelo,
+        loader=val_loader,
+        criterio=criterio,
+        dispositivo=dispositivo,
+        usar_amp=usar_amp,
+        usar_channels_last=usar_channels_last,
+    )
+    return MetricasEpoch(
+        epoch=epoch,
+        train_loss=train_loss,
+        train_accuracy=train_accuracy,
+        val_loss=validacion.loss,
+        val_accuracy=validacion.accuracy,
+        duracion=datetime.now() - momento_inicio,
+    )
+
+
+@dataclass
+class _ControlParadaAnticipada:
+    """Conserva el mejor modelo y controla la paciencia de validación."""
+
+    paciencia: int
+    min_delta: float
+    mejor_loss: float = float("inf")
+    loss_referencia: float = float("inf")
+    mejor_estado: dict[str, Any] | None = None
+    mejor_epoch: int | None = None
+    epochs_sin_mejora: int = 0
+
+    def actualizar(
+        self,
+        modelo: nn.Module,
+        metrica: MetricasEpoch,
+        unfreeze_epoch: int | None,
+    ) -> bool:
+        epoch = metrica.epoch
+        if np.isfinite(metrica.val_loss) and metrica.val_loss < self.mejor_loss:
+            self.mejor_loss = metrica.val_loss
+            self.mejor_estado = deepcopy(modelo.state_dict())
+            self.mejor_epoch = epoch
+
+        if unfreeze_epoch is not None and epoch - 1 < unfreeze_epoch:
+            return False
+        if unfreeze_epoch is not None and epoch - 1 == unfreeze_epoch:
+            self.loss_referencia = float("inf")
+            self.epochs_sin_mejora = 0
+
+        if np.isfinite(metrica.val_loss) and (
+            metrica.val_loss < self.loss_referencia - self.min_delta
+        ):
+            self.loss_referencia = metrica.val_loss
+            self.epochs_sin_mejora = 0
+        else:
+            self.epochs_sin_mejora += 1
+
+        if self.epochs_sin_mejora >= self.paciencia:
+            print(
+                f"Parada anticipada en epoch {epoch}: "
+                f"{self.epochs_sin_mejora} épocas sin mejora suficiente de val_loss."
+            )
+            return True
+
+        return False
+
+    def restaurar(self, modelo: nn.Module) -> None:
+        if self.mejor_estado is None:
+            raise ValueError("No se registró una pérdida de validación finita")
+        modelo.load_state_dict(self.mejor_estado)
+        print(
+            f"Se restauran los pesos de epoch {self.mejor_epoch} (val_loss={self.mejor_loss:.4f})."
+        )
+
+
 def entrenar_modelo(
     modelo: nn.Module,
     train_loader: DataLoader,
@@ -736,112 +892,55 @@ def entrenar_modelo(
     descongelación programada, comienza a contar desde esa época.
     ``early_stopping_patience=None`` conserva el entrenamiento sin parada.
     """
-    if early_stopping_patience is not None and early_stopping_patience <= 0:
-        raise ValueError("early_stopping_patience debe ser mayor a cero o None")
-    if not np.isfinite(early_stopping_min_delta) or early_stopping_min_delta < 0:
-        raise ValueError("early_stopping_min_delta debe ser finito y no negativo")
-    # unfreeze_epoch usa índice desde cero; None desactiva la descongelación.
-    if unfreeze_epoch is not None and (model_name is None or backbone_lr is None):
-        raise ValueError("La descongelación requiere model_name y backbone_lr")
-    usar_amp = dispositivo.type == "cuda" and usar_amp is True
-    usar_channels_last = dispositivo.type == "cuda" and usar_channels_last is True
-    scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
-    modelo.to(
-        memory_format=(
-            torch.channels_last if usar_channels_last else torch.contiguous_format
-        )
+    _validar_configuracion_entrenamiento(
+        early_stopping_patience,
+        early_stopping_min_delta,
+        unfreeze_epoch,
+        model_name,
+        backbone_lr,
     )
-    if dispositivo.type == "cuda":
-        # Los lotes de imágenes tienen resolución fija.
-        torch.backends.cudnn.benchmark = True
+    usar_amp, usar_channels_last, scaler = _preparar_ejecucion_entrenamiento(
+        modelo,
+        dispositivo,
+        usar_amp,
+        usar_channels_last,
+    )
+    parada = (
+        _ControlParadaAnticipada(early_stopping_patience, early_stopping_min_delta)
+        if early_stopping_patience is not None
+        else None
+    )
     metricas: list[MetricasEpoch] = []
-    mejor_loss = float("inf")
-    loss_referencia = float("inf")
-    mejor_estado = None
-    mejor_epoch = None
-    epochs_sin_mejora = 0
 
     for epoch in range(1, epochs + 1):
-        if unfreeze_epoch is not None and maybe_unfreeze_layer4(
+        _aplicar_descongelacion_programada(
             modelo,
             optimizador,
-            epoch - 1,
-            model_name=model_name,
-            unfreeze_epoch=unfreeze_epoch,
-            backbone_lr=backbone_lr,
-        ):
-            print(
-                f"Epoch {epoch}: se descongela layer4 con lr={backbone_lr:.2e} "
-                f"(head lr={optimizador.param_groups[0]['lr']:.2e})"
-                f"\n"
-            )
-        momento_inicio = datetime.now()
-        train_loss, train_accuracy = entrenar_una_epoch(
-            modelo=modelo,
-            loader=train_loader,
-            criterio=criterio,
-            optimizador=optimizador,
-            dispositivo=dispositivo,
-            usar_amp=usar_amp,
-            scaler=scaler,
-            usar_channels_last=usar_channels_last,
+            epoch,
+            model_name,
+            unfreeze_epoch,
+            backbone_lr,
         )
-        validacion = validar_modelo(
-            modelo=modelo,
-            loader=val_loader,
-            criterio=criterio,
-            dispositivo=dispositivo,
-            usar_amp=usar_amp,
-            usar_channels_last=usar_channels_last,
-        )
-        metrica = MetricasEpoch(
-            epoch=epoch,
-            train_loss=train_loss,
-            train_accuracy=train_accuracy,
-            val_loss=validacion.loss,
-            val_accuracy=validacion.accuracy,
-            duracion=datetime.now() - momento_inicio,
+        metrica = _entrenar_y_validar_epoch(
+            modelo,
+            train_loader,
+            val_loader,
+            criterio,
+            optimizador,
+            dispositivo,
+            epoch,
+            usar_amp,
+            usar_channels_last,
+            scaler,
         )
         metricas.append(metrica)
-
         if al_finalizar_epoch is not None:
             al_finalizar_epoch(metrica)
+        if parada is not None and parada.actualizar(modelo, metrica, unfreeze_epoch):
+            break
 
-        if early_stopping_patience is not None:
-            if np.isfinite(validacion.loss) and validacion.loss < mejor_loss:
-                mejor_loss = validacion.loss
-                mejor_estado = deepcopy(modelo.state_dict())
-                mejor_epoch = epoch
-
-            if unfreeze_epoch is not None and epoch - 1 < unfreeze_epoch:
-                continue
-            if unfreeze_epoch is not None and epoch - 1 == unfreeze_epoch:
-                loss_referencia = float("inf")
-                epochs_sin_mejora = 0
-
-            if np.isfinite(validacion.loss) and (
-                validacion.loss < loss_referencia - early_stopping_min_delta
-            ):
-                loss_referencia = validacion.loss
-                epochs_sin_mejora = 0
-            else:
-                epochs_sin_mejora += 1
-
-            if epochs_sin_mejora >= early_stopping_patience:
-                print(
-                    f"Parada anticipada en epoch {epoch}: "
-                    f"{epochs_sin_mejora} épocas sin mejora suficiente de val_loss."
-                )
-                break
-
-    if early_stopping_patience is not None:
-        if mejor_estado is None:
-            raise ValueError("No se registró una pérdida de validación finita")
-        modelo.load_state_dict(mejor_estado)
-        print(
-            f"Se restauran los pesos de epoch {mejor_epoch} (val_loss={mejor_loss:.4f})."
-        )
-
+    if parada is not None:
+        parada.restaurar(modelo)
     return HistorialEntrenamiento(metricas=metricas)
 
 
