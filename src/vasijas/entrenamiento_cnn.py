@@ -579,9 +579,39 @@ def crear_optimizador_adam(
     return torch.optim.Adam(parametros_entrenables, lr=learning_rate)
 
 
-def crear_criterio_entropia_cruzada() -> nn.CrossEntropyLoss:
-    """Crea el criterio de clasificación multiclase usado por los modelos."""
-    return nn.CrossEntropyLoss()
+def crear_criterio_entropia_cruzada(
+    *,
+    usar_pesos_clases: bool = False,
+    train_loader: DataLoader | None = None,
+    num_classes: int | None = None,
+    dispositivo: torch.device | None = None,
+) -> nn.CrossEntropyLoss:
+    """Crea el criterio, opcionalmente ponderado por las frecuencias de train.
+
+    La ponderación requiere un loader cuyo dataset sea ``TransformSubset``
+    sobre ``ImageFolder``. No carga imágenes ni usa etiquetas de val o test.
+    """
+    if not usar_pesos_clases:
+        return nn.CrossEntropyLoss()
+
+    if train_loader is None or num_classes is None or dispositivo is None:
+        raise ValueError(
+            "La ponderación requiere train_loader, num_classes y dispositivo"
+        )
+
+    train_dataset = train_loader.dataset
+    train_labels = np.asarray(train_dataset.dataset.targets)[train_dataset.indices]
+    train_class_counts = np.bincount(train_labels, minlength=num_classes)
+    class_weights = train_class_counts.sum() / (
+        num_classes * np.maximum(train_class_counts, 1)
+    )
+    class_weights_tensor = torch.tensor(
+        class_weights, dtype=torch.float32, device=dispositivo
+    )
+
+    print("Conteo train por clase:", train_class_counts.tolist())
+    print("Pesos de clase:", class_weights.round(3).tolist())
+    return nn.CrossEntropyLoss(weight=class_weights_tensor)
 
 
 def entrenar_una_epoch(
@@ -603,10 +633,12 @@ def entrenar_una_epoch(
 
     for imagenes, etiquetas in loader:
         imagenes = imagenes.to(
-            dispositivo, non_blocking=loader.pin_memory,
+            dispositivo,
+            non_blocking=loader.pin_memory,
             memory_format=(
                 torch.channels_last
-                if dispositivo.type == "cuda" else torch.contiguous_format
+                if dispositivo.type == "cuda"
+                else torch.contiguous_format
             ),
         )
         etiquetas = etiquetas.to(dispositivo, non_blocking=loader.pin_memory)
@@ -645,15 +677,19 @@ def validar_modelo(
     with torch.no_grad():
         for imagenes, etiquetas in loader:
             imagenes = imagenes.to(
-                dispositivo, non_blocking=loader.pin_memory,
+                dispositivo,
+                non_blocking=loader.pin_memory,
                 memory_format=(
                     torch.channels_last
-                    if dispositivo.type == "cuda" else torch.contiguous_format
+                    if dispositivo.type == "cuda"
+                    else torch.contiguous_format
                 ),
             )
             etiquetas = etiquetas.to(dispositivo, non_blocking=loader.pin_memory)
 
-            with torch.autocast(dispositivo.type, dtype=torch.float16, enabled=usar_amp):
+            with torch.autocast(
+                dispositivo.type, dtype=torch.float16, enabled=usar_amp
+            ):
                 outputs = modelo(imagenes)
                 loss = criterio(outputs, etiquetas)
 
@@ -690,9 +726,7 @@ def entrenar_modelo(
 ) -> HistorialEntrenamiento:
     # unfreeze_epoch usa índice desde cero; None desactiva la descongelación.
     if unfreeze_epoch is not None and (model_name is None or backbone_lr is None):
-        raise ValueError(
-            "La descongelación requiere model_name y backbone_lr"
-        )
+        raise ValueError("La descongelación requiere model_name y backbone_lr")
     usar_amp = dispositivo.type == "cuda" and usar_amp is not False
     scaler = torch.amp.GradScaler(dispositivo.type, enabled=usar_amp)
     if dispositivo.type == "cuda":
@@ -829,7 +863,11 @@ def maybe_unfreeze_layer4(
     backbone_lr: float,
 ) -> bool:
     """Descongela layer4 en la época indicada (índice desde cero), una sola vez."""
-    if model_name != "resnet18" or epoch != unfreeze_epoch or not hasattr(model, "layer4"):
+    if (
+        model_name != "resnet18"
+        or epoch != unfreeze_epoch
+        or not hasattr(model, "layer4")
+    ):
         return False
 
     if any(group.get("name") == "layer4" for group in optimizer.param_groups):
@@ -840,5 +878,7 @@ def maybe_unfreeze_layer4(
         param.requires_grad = True
         layer4_params.append(param)
 
-    optimizer.add_param_group({"params": layer4_params, "lr": backbone_lr, "name": "layer4"})
+    optimizer.add_param_group(
+        {"params": layer4_params, "lr": backbone_lr, "name": "layer4"}
+    )
     return True
