@@ -921,6 +921,7 @@ def entrenar_modelo(
         else None
     )
     metricas: list[MetricasEpoch] = []
+    momento_inicio_entrenamiento = datetime.now()
 
     for epoch in range(1, epochs + 1):
         _aplicar_descongelacion_programada(
@@ -951,6 +952,9 @@ def entrenar_modelo(
             break
 
     mejor_estado.restaurar(modelo)
+    print(
+        f"Tiempo total de entrenamiento: {datetime.now() - momento_inicio_entrenamiento}"
+    )
     return HistorialEntrenamiento(metricas=metricas)
 
 
