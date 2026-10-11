@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -726,8 +727,19 @@ def entrenar_modelo(
     model_name: str | None = None,
     unfreeze_epoch: int | None = None,
     backbone_lr: float | None = None,
+    early_stopping_patience: int | None = None,
+    early_stopping_min_delta: float = 0.001,
 ) -> HistorialEntrenamiento:
-    """Entrena con AMP y channels-last solo si se solicitan y hay CUDA."""
+    """Entrena y, si hay parada anticipada, restaura el mejor estado de val.
+
+    La paciencia cuenta épocas sin mejora suficiente de val_loss. Si hay
+    descongelación programada, comienza a contar desde esa época.
+    ``early_stopping_patience=None`` conserva el entrenamiento sin parada.
+    """
+    if early_stopping_patience is not None and early_stopping_patience <= 0:
+        raise ValueError("early_stopping_patience debe ser mayor a cero o None")
+    if not np.isfinite(early_stopping_min_delta) or early_stopping_min_delta < 0:
+        raise ValueError("early_stopping_min_delta debe ser finito y no negativo")
     # unfreeze_epoch usa índice desde cero; None desactiva la descongelación.
     if unfreeze_epoch is not None and (model_name is None or backbone_lr is None):
         raise ValueError("La descongelación requiere model_name y backbone_lr")
@@ -743,6 +755,11 @@ def entrenar_modelo(
         # Los lotes de imágenes tienen resolución fija.
         torch.backends.cudnn.benchmark = True
     metricas: list[MetricasEpoch] = []
+    mejor_loss = float("inf")
+    loss_referencia = float("inf")
+    mejor_estado = None
+    mejor_epoch = None
+    epochs_sin_mejora = 0
 
     for epoch in range(1, epochs + 1):
         if unfreeze_epoch is not None and maybe_unfreeze_layer4(
@@ -789,6 +806,41 @@ def entrenar_modelo(
 
         if al_finalizar_epoch is not None:
             al_finalizar_epoch(metrica)
+
+        if early_stopping_patience is not None:
+            if np.isfinite(validacion.loss) and validacion.loss < mejor_loss:
+                mejor_loss = validacion.loss
+                mejor_estado = deepcopy(modelo.state_dict())
+                mejor_epoch = epoch
+
+            if unfreeze_epoch is not None and epoch - 1 < unfreeze_epoch:
+                continue
+            if unfreeze_epoch is not None and epoch - 1 == unfreeze_epoch:
+                loss_referencia = float("inf")
+                epochs_sin_mejora = 0
+
+            if np.isfinite(validacion.loss) and (
+                validacion.loss < loss_referencia - early_stopping_min_delta
+            ):
+                loss_referencia = validacion.loss
+                epochs_sin_mejora = 0
+            else:
+                epochs_sin_mejora += 1
+
+            if epochs_sin_mejora >= early_stopping_patience:
+                print(
+                    f"Parada anticipada en epoch {epoch}: "
+                    f"{epochs_sin_mejora} épocas sin mejora suficiente de val_loss."
+                )
+                break
+
+    if early_stopping_patience is not None:
+        if mejor_estado is None:
+            raise ValueError("No se registró una pérdida de validación finita")
+        modelo.load_state_dict(mejor_estado)
+        print(
+            f"Se restauran los pesos de epoch {mejor_epoch} (val_loss={mejor_loss:.4f})."
+        )
 
     return HistorialEntrenamiento(metricas=metricas)
 

@@ -14,6 +14,8 @@ PARAMETROS_BASE = {
     "RUN_NAME": "default",
     "BATCH_SIZE": 16,
     "EPOCHS": 300,
+    "EARLY_STOPPING_PATIENCE": 15,
+    "EARLY_STOPPING_MIN_DELTA": 0.001,
     "LR": 1e-3,
     "UNFREEZE_EPOCH": None,
     "BACKBONE_LR_FACTOR": 0.1,
