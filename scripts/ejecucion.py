@@ -7,12 +7,12 @@ DIRECTORIO_SALIDA = Path("output/experiments")
 DIRECTORIO_SALIDA.mkdir(parents=True, exist_ok=True)
 
 PARAMETROS_BASE = {
-    "DATASET_NAME": "completos",
+    "DATASET_NAME": "unificado",
     "MODEL_NAME": "resnet18",
     "RUN_NAME": "default",
     "BATCH_SIZE": 16,
     "EPOCHS": 300,
-    "EARLY_STOPPING_PATIENCE": 15,
+    "EARLY_STOPPING_PATIENCE": 30,
     "EARLY_STOPPING_MIN_DELTA": 0.001,
     "LR": 1e-3,
     "UNFREEZE_EPOCH": None,
@@ -30,97 +30,76 @@ PARAMETROS_BASE = {
     "USE_CHANNELS_LAST": True,
 }
 
-MATRIZ_EXPERIMENTOS = [
-    {
-        "RUN_NAME": "prueba_experimento2",
-        "BATCH_SIZE": 16,
-        "EPOCHS": 10,
-        "LR": 1e-3,
-        "FLIP_PROBABILITY": 0.5,
-        "USE_CLASS_WEIGHTS": False,
-        "UNFREEZE_EPOCH": None,
-    }
-]
-#
 # MATRIZ_EXPERIMENTOS = [
 #     {
-#         "RUN_NAME": "bs16_lr1e-3_flip05_base",
+#         "RUN_NAME": "prueba_experimento",
 #         "BATCH_SIZE": 16,
+#         "EPOCHS": 300,
 #         "LR": 1e-3,
-#         "FLIP_PROBABILITY": 0.5,
-#         "USE_CLASS_WEIGHTS": False,
-#         "UNFREEZE_EPOCH": None,
-
-#
-#     },
-#     {
-#         "RUN_NAME": "bs32_lr1e-3_flip05_base",
-#         "BATCH_SIZE": 32,
-#         "LR": 1e-3,
-#         "FLIP_PROBABILITY": 0.5,
-#         "USE_CLASS_WEIGHTS": False,
-#         "UNFREEZE_EPOCH": None,
-
-#     },
-#     {
-#         "RUN_NAME": "bs16_lr1e-3_flip05_weighted",
-#         "BATCH_SIZE": 16,
-#         "LR": 1e-3,
-#         "FLIP_PROBABILITY": 0.5,
-#         "USE_CLASS_WEIGHTS": True,
-#         "UNFREEZE_EPOCH": None,
-
-#     },
-#     {
-#         "RUN_NAME": "bs32_lr1e-3_flip05_weighted",
-#         "BATCH_SIZE": 32,
-#         "LR": 1e-3,
-#         "FLIP_PROBABILITY": 0.5,
-#         "USE_CLASS_WEIGHTS": True,
-#         "UNFREEZE_EPOCH": None,
-
-#     },
-#     {
-#         "RUN_NAME": "bs16_lr1e-4_flip05_weighted_unfreeze",
-#         "BATCH_SIZE": 16,
-#         "LR": 1e-4,
-#         "FLIP_PROBABILITY": 0.5,
-#         "USE_CLASS_WEIGHTS": True,
-#         "UNFREEZE_EPOCH": 10,
-#     },
-#     {
-#         "RUN_NAME": "bs16_lr1e-4_flip08_weighted_unfreeze",
-#         "BATCH_SIZE": 16,
-#         "LR": 1e-4,
-#         "FLIP_PROBABILITY": 0.8,
-#         "USE_CLASS_WEIGHTS": True,
-#         "UNFREEZE_EPOCH": 10,
-#     },
-#     {
-#         "RUN_NAME": "bs16_lr3e-4_flip05_weighted_unfreeze",
-#         "BATCH_SIZE": 16,
-#         "LR": 3e-4,
-#         "FLIP_PROBABILITY": 0.5,
-#         "USE_CLASS_WEIGHTS": True,
-#         "UNFREEZE_EPOCH": 10,
-#     },
-#     {
-#         "RUN_NAME": "bs16_lr3e-4_flip08_weighted_unfreeze",
-#         "BATCH_SIZE": 16,
-#         "LR": 3e-4,
-#         "FLIP_PROBABILITY": 0.8,
-#         "USE_CLASS_WEIGHTS": True,
-#         "UNFREEZE_EPOCH": 10,
-#     },
-#     {
-#         "RUN_NAME": "bs16_lr1e-5_flip05_weighted_unfreeze",
-#         "BATCH_SIZE": 16,
-#         "LR": 1e-5,
-#         "FLIP_PROBABILITY": 0.5,
 #         "USE_CLASS_WEIGHTS": True,
 #         "UNFREEZE_EPOCH": 10,
 #     }
 # ]
+#
+MATRIZ_EXPERIMENTOS = [
+    # {
+    #     "RUN_NAME": "bs16_lr1e-3_base",
+    #     "BATCH_SIZE": 16,
+    #     "LR": 1e-3,
+    #     "USE_CLASS_WEIGHTS": False,
+    #     "UNFREEZE_EPOCH": None,
+    #
+    # },
+    # {
+    #     "RUN_NAME": "bs32_lr1e-3_base",
+    #     "BATCH_SIZE": 32,
+    #     "LR": 1e-3,
+    #     "USE_CLASS_WEIGHTS": False,
+    #     "UNFREEZE_EPOCH": None,
+    # },
+    # {
+    #     "RUN_NAME": "bs16_lr1e-3_weighted",
+    #     "BATCH_SIZE": 16,
+    #     "LR": 1e-3,
+    #     "USE_CLASS_WEIGHTS": True,
+    #     "UNFREEZE_EPOCH": None,
+    # },
+    # {
+    #     "RUN_NAME": "bs32_lr1e-3_weighted",
+    #     "BATCH_SIZE": 32,
+    #     "LR": 1e-3,
+    #     "USE_CLASS_WEIGHTS": True,
+    #     "UNFREEZE_EPOCH": None,
+    # },
+    # {
+    #     "RUN_NAME": "bs16_lr1e-3_weighted_unfreeze",
+    #     "BATCH_SIZE": 16,
+    #     "LR": 1e-3,
+    #     "USE_CLASS_WEIGHTS": True,
+    #     "UNFREEZE_EPOCH": 10,
+    # },
+    {
+        "RUN_NAME": "bs16_lr1e-4_weighted_unfreeze",
+        "BATCH_SIZE": 16,
+        "LR": 1e-4,
+        "USE_CLASS_WEIGHTS": True,
+        "UNFREEZE_EPOCH": 10,
+    },
+    {
+        "RUN_NAME": "bs16_lr3e-4_weighted_unfreeze",
+        "BATCH_SIZE": 16,
+        "LR": 3e-4,
+        "USE_CLASS_WEIGHTS": True,
+        "UNFREEZE_EPOCH": 10,
+    },
+    {
+        "RUN_NAME": "bs16_lr1e-5_weighted_unfreeze",
+        "BATCH_SIZE": 16,
+        "LR": 1e-5,
+        "USE_CLASS_WEIGHTS": True,
+        "UNFREEZE_EPOCH": 10,
+    },
+]
 
 
 def ejecutar_experimento(num_experimento: int | None, experimento: dict) -> None:
