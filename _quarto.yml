@@ -6,6 +6,7 @@ project:
     - notebooks/01.exploracion/*.ipynb
     - notebooks/02.preparacion/*.ipynb
     - notebooks/03.entrenamiento/*.ipynb
+    - notebooks/04.evaluacion/14.Umap.ipynb
     - notebooks/04.evaluacion/15.Predicciones_usando_split_test.ipynb
     - notebooks/04.evaluacion/16.Predicciones_usando_sin_clase.ipynb
     - output/experiments_01/*.ipynb

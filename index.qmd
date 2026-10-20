@@ -28,6 +28,7 @@ listing:
     filter-ui: false
   - id: evaluacion
     contents:
+      - "notebooks/04.evaluacion/14.Umap.ipynb"
       - "notebooks/04.evaluacion/15.Predicciones_usando_split_test.ipynb"
       - "notebooks/04.evaluacion/16.Predicciones_usando_sin_clase.ipynb"
     type: default
