@@ -37,6 +37,7 @@ class ProjectPaths:
     NOTEBOOKS: Path
     OUTPUT_MODELS: Path
     OUTPUT_REPORTS: Path
+    OUTPUT_PREDICTIONS: Path
 
     @classmethod
     def from_root(cls, root: Path) -> Self:
@@ -61,12 +62,14 @@ class ProjectPaths:
             NOTEBOOKS=root / "notebooks",
             OUTPUT_MODELS=output / "models",
             OUTPUT_REPORTS=output / "reports",
+            OUTPUT_PREDICTIONS=output / "predictions",
         )
 
     def ensure_outputs(self) -> None:
         """Crea únicamente los directorios destinados a results generados."""
         self.OUTPUT_MODELS.mkdir(parents=True, exist_ok=True)
         self.OUTPUT_REPORTS.mkdir(parents=True, exist_ok=True)
+        self.OUTPUT_PREDICTIONS.mkdir(parents=True, exist_ok=True)
 
 
 __all__ = ["ProjectPaths", "ruta_relativa"]
