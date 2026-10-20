@@ -1,8 +1,13 @@
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Literal
 
 import pandas as pd
-from torch.utils.data import Dataset
+import torch
+from torch import nn
+from torch.utils.data import DataLoader, Dataset
+from torchvision import models
+from torchvision.datasets.folder import IMG_EXTENSIONS, default_loader
 
 
 def validar_identificadores_metadata(metadata_unificado: pd.DataFrame) -> None:
@@ -70,3 +75,306 @@ class DatasetTestConRuta(Dataset):
         ruta, _ = self.subset.dataset.samples[self.subset.indices[indice]]
         ruta_relativa = Path(ruta).resolve().relative_to(self.data_dir).as_posix()
         return imagen, etiqueta, ruta_relativa
+
+
+def crear_loader_test_con_ruta(
+    subset: Dataset,
+    data_dir: Path,
+    metadata_split: pd.DataFrame,
+    batch_size: int,
+    dispositivo: torch.device,
+) -> DataLoader:
+    """Carga todo el test persistido, conservando la ruta y el último lote."""
+    cantidad_test = contar_imagenes_segun_conjunto(metadata_split, "test")
+    if len(subset) != cantidad_test:
+        raise ValueError("El dataset de prueba no coincide con el tamaño del split test.")
+    return DataLoader(
+        DatasetTestConRuta(subset, data_dir),
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False,
+        num_workers=0,
+        pin_memory=dispositivo.type == "cuda",
+    )
+
+
+def cargar_modelo_resnet18_evaluacion(
+    ruta_modelo: Path,
+    nombres_clases: Sequence[str],
+    dispositivo: torch.device,
+) -> nn.Module:
+    """Reconstruye ResNet18 desde un state_dict local, sin descargar pesos.
+
+    Las clases deben conservar el orden usado durante el entrenamiento. El
+    state_dict permite comprobar su cantidad, pero no contiene sus nombres.
+    """
+    state_dict = torch.load(ruta_modelo, map_location="cpu", weights_only=True)
+    num_classes = state_dict["fc.weight"].shape[0]
+    if num_classes != len(nombres_clases):
+        raise ValueError(
+            f"El modelo tiene {num_classes} salidas y el dataset "
+            f"{len(nombres_clases)} clases."
+        )
+    modelo = models.resnet18(weights=None)
+    modelo.fc = nn.Linear(modelo.fc.in_features, num_classes)
+    modelo.load_state_dict(state_dict, strict=True)
+    modelo = modelo.to(dispositivo)
+    modelo.eval()
+    return modelo
+
+
+def predecir_test_con_rutas(
+    modelo: nn.Module,
+    test_loader: DataLoader,
+    metadata_por_ruta: pd.DataFrame,
+    nombres_clases: Sequence[str],
+    dispositivo: torch.device,
+    informar_progreso: Callable[[int, int], None] | None = None,
+    intervalo_progreso: int = 25,
+) -> pd.DataFrame:
+    """Predice por lotes y relaciona cada resultado con su ruta e identificador.
+
+    El callback opcional recibe las cantidades procesada y total. La función
+    no imprime ni exporta, para que el notebook decida cómo mostrar el avance.
+    """
+    if intervalo_progreso < 1:
+        raise ValueError("El intervalo de progreso debe ser mayor que cero.")
+    filas = []
+    modelo.eval()
+    with torch.inference_mode():
+        for numero_lote, (imagenes, etiquetas, rutas) in enumerate(test_loader, start=1):
+            salidas = modelo(
+                imagenes.to(dispositivo, non_blocking=dispositivo.type == "cuda")
+            )
+            predicciones = salidas.argmax(dim=1).cpu().tolist()
+            for ruta, real, predicha in zip(
+                rutas, etiquetas.tolist(), predicciones, strict=True
+            ):
+                filas.append(
+                    {
+                        "Identificador": metadata_por_ruta.at[ruta, "Identificador"],
+                        "ruta_relativa": ruta,
+                        "clase_real": nombres_clases[real],
+                        "clase_predicha": nombres_clases[predicha],
+                        "acierto": real == predicha,
+                    }
+                )
+            if informar_progreso is not None and (
+                numero_lote % intervalo_progreso == 0 or numero_lote == len(test_loader)
+            ):
+                informar_progreso(len(filas), len(test_loader.dataset))
+    return pd.DataFrame(
+        filas,
+        columns=[
+            "Identificador", "ruta_relativa", "clase_real", "clase_predicha", "acierto"
+        ],
+    )
+
+
+def validar_predicciones_test(
+    predicciones: pd.DataFrame, metadata_split: pd.DataFrame
+) -> None:
+    """Exige una predicción completa por imagen de test y aciertos coherentes."""
+    columnas = {
+        "Identificador", "ruta_relativa", "clase_real", "clase_predicha", "acierto"
+    }
+    if not columnas.issubset(predicciones.columns):
+        raise ValueError("Faltan columnas requeridas en las predicciones.")
+    if predicciones[list(columnas)].isna().any().any():
+        raise ValueError("Las predicciones contienen valores nulos.")
+    metadata_test = metadata_split.loc[metadata_split["split"].eq("test")]
+    rutas_test = set(metadata_test["ruta_relativa"].map(lambda ruta: Path(ruta).as_posix()))
+    if (
+        len(predicciones) != len(metadata_test)
+        or not predicciones["ruta_relativa"].is_unique
+        or set(predicciones["ruta_relativa"]) != rutas_test
+    ):
+        raise ValueError("Debe existir exactamente una predicción por imagen de test.")
+    identificadores_esperados = predicciones["ruta_relativa"].map(
+        indexar_metadata_por_ruta(metadata_test)["Identificador"]
+    )
+    if not predicciones["Identificador"].equals(identificadores_esperados):
+        raise ValueError("Los identificadores de las predicciones no coinciden con sus rutas.")
+    if not predicciones["acierto"].equals(
+        predicciones["clase_real"].eq(predicciones["clase_predicha"])
+    ):
+        raise ValueError("Los aciertos no coinciden con las clases reales y predichas.")
+
+
+def crear_tabla_predicciones_con_metadata(
+    predicciones: pd.DataFrame,
+    metadata_original: pd.DataFrame,
+    columnas_prediccion: Sequence[str] = ("clase_predicha", "acierto"),
+) -> pd.DataFrame:
+    """Une por identificador, preservando columnas, nulos y orden de predicciones."""
+    validar_identificadores_metadata(metadata_original)
+    validar_identificadores_split(predicciones)
+    validar_identificadores_test(predicciones["Identificador"], metadata_original)
+    if predicciones.empty:
+        tabla = metadata_original.iloc[:0].copy().reset_index(drop=True)
+        for columna in columnas_prediccion:
+            tabla[columna] = predicciones[columna].reset_index(drop=True)
+        return tabla
+    tabla = predicciones[["Identificador", *columnas_prediccion]].merge(
+        metadata_original,
+        on="Identificador",
+        how="left",
+        sort=False,
+        validate="one_to_one",
+        indicator=True,
+    )
+    if not tabla["_merge"].eq("both").all():
+        raise ValueError("Hay predicciones sin metadata original.")
+    tabla = tabla[list(metadata_original.columns) + list(columnas_prediccion)]
+    pd.testing.assert_frame_equal(
+        tabla[list(metadata_original.columns)].reset_index(drop=True),
+        metadata_original.set_index("Identificador", drop=False)
+        .loc[tabla["Identificador"]]
+        .reset_index(drop=True),
+    )
+    return tabla
+
+
+def guardar_tabla_predicciones(tabla: pd.DataFrame, ruta_destino: Path) -> Path:
+    """Exporta la tabla completa en CSV UTF-8 con BOM, sin índice."""
+    ruta_destino.parent.mkdir(parents=True, exist_ok=True)
+    tabla.to_csv(ruta_destino, index=False, encoding="utf-8-sig")
+    return ruta_destino
+
+
+def seleccionar_metadata_sin_clase(metadata: pd.DataFrame) -> pd.DataFrame:
+    """Selecciona clases nulas, vacías o con espacios sin alterar la metadata."""
+    validar_identificadores_metadata(metadata)
+    if "Clase Ana" not in metadata:
+        raise ValueError("La metadata no incluye la columna Clase Ana.")
+    clase = metadata["Clase Ana"]
+    sin_clase = clase.isna() | clase.astype("string").str.strip().eq("").fillna(False)
+    return metadata.loc[sin_clase].copy()
+
+
+class DatasetImagenesSinClase(Dataset):
+    """Busca imágenes por identificador, sin asignarles una etiqueta ficticia.
+
+    Exige un único archivo por registro seleccionado en cualquier subcarpeta
+    de data_dir. Mantiene el orden de la metadata y carga RGB como ImageFolder.
+    """
+
+    def __init__(self, metadata: pd.DataFrame, data_dir: Path, transformacion: Callable):
+        if len(seleccionar_metadata_sin_clase(metadata)) != len(metadata):
+            raise ValueError("El dataset de inferencia debe contener solo perfiles sin clase.")
+        self.data_dir = data_dir.resolve()
+        self.transformacion = transformacion
+        identificadores = metadata["Identificador"].tolist()
+        rutas_por_id = {}
+        buscados = set(map(str, identificadores))
+        for ruta in self.data_dir.rglob("*"):
+            if (
+                ruta.is_file()
+                and ruta.suffix.lower() in IMG_EXTENSIONS
+                and ruta.stem in buscados
+            ):
+                if ruta.stem in rutas_por_id:
+                    raise ValueError(f"Hay varias imágenes para el identificador {ruta.stem!r}.")
+                rutas_por_id[ruta.stem] = ruta
+        faltantes = buscados - set(rutas_por_id)
+        if faltantes:
+            raise FileNotFoundError(
+                f"Faltan imágenes para estos identificadores: {sorted(faltantes)[:10]}"
+            )
+        self.registros = [
+            (identificador, rutas_por_id[str(identificador)])
+            for identificador in identificadores
+        ]
+
+    def __len__(self):
+        return len(self.registros)
+
+    def __getitem__(self, indice):
+        identificador, ruta = self.registros[indice]
+        imagen = self.transformacion(default_loader(str(ruta)))
+        return imagen, identificador, ruta.relative_to(self.data_dir).as_posix()
+
+
+def crear_loader_imagenes_sin_clase(
+    metadata: pd.DataFrame,
+    data_dir: Path,
+    transformacion: Callable,
+    batch_size: int,
+    dispositivo: torch.device,
+) -> DataLoader:
+    """Prepara todas las imágenes seleccionadas, sin mezclar ni descartar filas."""
+    return DataLoader(
+        DatasetImagenesSinClase(metadata, data_dir, transformacion),
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False,
+        num_workers=0,
+        pin_memory=dispositivo.type == "cuda",
+    )
+
+
+def predecir_imagenes_sin_clase(
+    modelo: nn.Module,
+    loader: DataLoader,
+    nombres_clases: Sequence[str],
+    dispositivo: torch.device,
+) -> pd.DataFrame:
+    """Devuelve clase y softmax máximo; no calcula aciertos sin referencia."""
+    filas = []
+    modelo.eval()
+    with torch.inference_mode():
+        for imagenes, identificadores, rutas in loader:
+            salidas = modelo(
+                imagenes.to(dispositivo, non_blocking=dispositivo.type == "cuda")
+            )
+            if salidas.ndim != 2 or salidas.shape[1] != len(nombres_clases):
+                raise ValueError("Las salidas del modelo no coinciden con las clases indicadas.")
+            confianza, indices = salidas.softmax(dim=1).max(dim=1)
+            if isinstance(identificadores, torch.Tensor):
+                identificadores = identificadores.tolist()
+            for identificador, ruta, indice, valor in zip(
+                identificadores,
+                rutas,
+                indices.cpu().tolist(),
+                confianza.cpu().tolist(),
+                strict=True,
+            ):
+                filas.append(
+                    {
+                        "Identificador": identificador,
+                        "ruta_relativa": ruta,
+                        "clase_predicha": nombres_clases[indice],
+                        "confianza": valor,
+                    }
+                )
+    return pd.DataFrame(
+        filas, columns=["Identificador", "ruta_relativa", "clase_predicha", "confianza"]
+    )
+
+
+def validar_predicciones_sin_clase(
+    predicciones: pd.DataFrame,
+    metadata_sin_clase: pd.DataFrame,
+    nombres_clases: Sequence[str],
+) -> None:
+    """Comprueba cobertura, identidad y resultados válidos de la inferencia."""
+    columnas = ["Identificador", "ruta_relativa", "clase_predicha", "confianza"]
+    if not set(columnas).issubset(predicciones.columns):
+        raise ValueError("Faltan columnas requeridas en las predicciones sin clase.")
+    if predicciones[columnas].isna().any().any():
+        raise ValueError("Las predicciones sin clase contienen valores nulos.")
+    if (
+        len(predicciones) != len(metadata_sin_clase)
+        or not predicciones["Identificador"].is_unique
+        or not predicciones["ruta_relativa"].is_unique
+        or set(predicciones["Identificador"]) != set(metadata_sin_clase["Identificador"])
+    ):
+        raise ValueError("Debe existir exactamente una predicción por perfil sin clase.")
+    if not predicciones["ruta_relativa"].map(lambda ruta: Path(ruta).stem).eq(
+        predicciones["Identificador"].astype(str)
+    ).all():
+        raise ValueError("Las rutas no corresponden a los identificadores predichos.")
+    if not predicciones["clase_predicha"].isin(nombres_clases).all():
+        raise ValueError("Hay clases predichas que no pertenecen al modelo.")
+    if not predicciones["confianza"].between(0, 1).all():
+        raise ValueError("La confianza softmax debe estar entre cero y uno.")

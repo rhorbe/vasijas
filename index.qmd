@@ -26,6 +26,14 @@ listing:
     fields: [title]
     sort-ui: false
     filter-ui: false
+  - id: evaluacion
+    contents:
+      - "notebooks/04.evaluacion/15.Predicciones_usando_split_test.ipynb"
+      - "notebooks/04.evaluacion/16.Predicciones_usando_sin_clase.ipynb"
+    type: default
+    fields: [title]
+    sort-ui: false
+    filter-ui: false
 ---
 
 Índice de reportes generados por el proyecto.
@@ -48,4 +56,9 @@ listing:
 ## Experimentos
 
 ::: {#experimentos}
+:::
+
+## Evaluación
+
+::: {#evaluacion}
 :::
