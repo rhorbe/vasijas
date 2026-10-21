@@ -73,6 +73,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/informes/2026-10-08_entrenamiento/metricas_experimentos.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/output/experiments/resultados_completos.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/output/predictions/predicciones_sin_clase_model_resnet18_completos_bs16_lr1e-3_weighted_unfreeze.csv">
           <value>
             <Attribute>
@@ -87,7 +101,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/output/reports/predicciones_test_model_resnet18_unificado_bs16_lr1e-3_weighted_unfreeze.csv">
+        <entry key="/output/umap/umap_test_model_resnet18_unificado_bs16_lr1e-3_weighted_unfreeze.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/output/umap/umap_unificado_model_resnet18_unificado_bs16_lr1e-3_weighted_unfreeze.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

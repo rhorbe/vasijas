@@ -38,6 +38,8 @@ class ProjectPaths:
     OUTPUT_MODELS: Path
     OUTPUT_REPORTS: Path
     OUTPUT_PREDICTIONS: Path
+    OUTPUT_UMAP: Path
+
 
     @classmethod
     def from_root(cls, root: Path) -> Self:
@@ -63,6 +65,7 @@ class ProjectPaths:
             OUTPUT_MODELS=output / "models",
             OUTPUT_REPORTS=output / "reports",
             OUTPUT_PREDICTIONS=output / "predictions",
+            OUTPUT_UMAP=output / "umap",
         )
 
     def ensure_outputs(self) -> None:
