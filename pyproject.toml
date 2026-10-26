@@ -7,6 +7,7 @@ description = "Proyecto de Tesis - Vasijas"
 requires-python = ">=3.11"
 dependencies = [
     "ipykernel>=7.2.0",
+    "ipywidgets>=8.1.9",
     "load-dotenv>=0.1.0",
     "matplotlib>=3.10.8",
     "nbconvert>=7.16.6",

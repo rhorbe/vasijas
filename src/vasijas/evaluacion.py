@@ -2,12 +2,168 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Literal
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from matplotlib.ticker import PercentFormatter
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from torchvision import models
 from torchvision.datasets.folder import IMG_EXTENSIONS, default_loader
+
+
+def graficar_error_por_grupo(
+    tabla_predicciones: pd.DataFrame,
+    columna: str,
+    etiqueta: str,
+    tipo_grafico: Literal["lineas", "barras"] = "lineas",
+) -> pd.DataFrame:
+    """Grafica el porcentaje de error por grupo y devuelve sus recuentos.
+
+    Incluye los grupos sin dato y conserva intacta la tabla de predicciones.
+    ``tipo_grafico`` permite elegir entre "lineas" (línea con puntos,
+    predeterminado) y "barras". Las etiquetas indican el porcentaje de errores
+    y la cantidad de imágenes. Rechaza tipos de gráfico no admitidos.
+    """
+    if tipo_grafico not in ("lineas", "barras"):
+        raise ValueError('tipo_grafico debe ser "lineas" o "barras".')
+
+    datos = tabla_predicciones[[columna, "acierto"]].copy()
+    datos["error"] = ~datos["acierto"]
+    resumen = (
+        datos.groupby(columna, dropna=False, observed=True, sort=True)["error"]
+        .agg(errores="sum", imagenes="size")
+        .reset_index()
+    )
+    resumen["porcentaje_error"] = 100 * resumen["errores"] / resumen["imagenes"]
+    etiquetas = [
+        "Sin dato" if pd.isna(valor) else str(valor) for valor in resumen[columna]
+    ]
+
+    fig, ax = plt.subplots(figsize=(max(8, len(resumen) * 0.65), 5))
+    if tipo_grafico == "lineas":
+        ax.plot(
+            etiquetas,
+            resumen["porcentaje_error"],
+            marker="o",
+            linestyle="-",
+            color="#307ae3",
+        )
+    else:
+        ax.bar(etiquetas, resumen["porcentaje_error"], color="#307ae3")
+    for posicion, (porcentaje, cantidad) in enumerate(
+        zip(resumen["porcentaje_error"], resumen["imagenes"])
+    ):
+        ax.annotate(
+            f"{porcentaje:.1f}%\n(n={cantidad})",
+            xy=(posicion, porcentaje),
+            xytext=(0, 6),
+            textcoords="offset points",
+            ha="center",
+            fontsize=9,
+        )
+    ax.set(
+        title=f"Porcentaje de error por {etiqueta}",
+        xlabel=etiqueta,
+        ylabel="Predicciones incorrectas",
+    )
+    ax.set_ylim(0, 115)
+    ax.set_yticks(range(0, 101, 20))
+    ax.yaxis.set_major_formatter(PercentFormatter(xmax=100))
+    ax.tick_params(axis="x", rotation=45)
+    ax.set_axisbelow(True)
+    ax.grid(axis="y", alpha=0.25)
+    fig.tight_layout()
+    plt.show()
+    return resumen
+
+
+def graficar_error_por_avance_y_origen(
+    tabla_predicciones: pd.DataFrame,
+    tipo_grafico: Literal["lineas", "barras"] = "lineas",
+) -> pd.DataFrame:
+    """Compara el error por avance y origen con los perfiles completos.
+
+    Calcula errores / imágenes para cada par (avance, origen). Los perfiles
+    completos se representan como una referencia horizontal con su error real.
+    Devuelve los recuentos y porcentajes, sin modificar la tabla original.
+    """
+    if tipo_grafico not in ("lineas", "barras"):
+        raise ValueError('tipo_grafico debe ser "lineas" o "barras".')
+
+    datos = tabla_predicciones[["porcentaje_avance", "borde_origen", "acierto"]].copy()
+    datos["error"] = ~datos["acierto"]
+    resumen = (
+        datos.groupby(
+            ["porcentaje_avance", "borde_origen"],
+            dropna=False,
+            observed=True,
+            sort=True,
+        )["error"]
+        .agg(errores="sum", imagenes="size")
+        .reset_index()
+    )
+    resumen["porcentaje_error"] = 100 * resumen["errores"] / resumen["imagenes"]
+    completos = resumen.loc[resumen["borde_origen"].eq("completo")]
+    cortes = resumen.loc[
+        ~resumen["borde_origen"].eq("completo") & resumen["porcentaje_avance"].notna()
+    ].copy()
+    cortes["borde_origen"] = cortes["borde_origen"].fillna("Sin dato")
+    origenes = sorted(
+        cortes["borde_origen"].unique(),
+        key=lambda origen: (origen != "tope", origen),
+    )
+    avances = sorted(cortes["porcentaje_avance"].unique())
+    colores = {"tope": "#1684b5", "base": "#ee7a19"}
+    marcadores = {"tope": "o", "base": "s"}
+    fig, ax = plt.subplots(figsize=(9, 5))
+    for indice, origen in enumerate(origenes):
+        serie = cortes.loc[cortes["borde_origen"].eq(origen)]
+        if tipo_grafico == "lineas":
+            ax.plot(
+                serie["porcentaje_avance"],
+                serie["porcentaje_error"],
+                label=origen.capitalize(),
+                color=colores.get(origen),
+                marker=marcadores.get(origen, "o"),
+            )
+        else:
+            # Barras contiguas en cada avance; los grupos ausentes no se rellenan.
+            paso = min((b - a for a, b in zip(avances, avances[1:])), default=10)
+            ancho = paso * 0.8 / len(origenes)
+            desplazamiento = (indice - (len(origenes) - 1) / 2) * ancho
+            ax.bar(
+                serie["porcentaje_avance"] + desplazamiento,
+                serie["porcentaje_error"],
+                width=ancho,
+                label=origen.capitalize(),
+                color=colores.get(origen),
+            )
+    if not completos.empty:
+        error_completos = 100 * completos["errores"].sum() / completos["imagenes"].sum()
+        ax.axhline(
+            error_completos,
+            color="#7c8797",
+            linestyle="--",
+            label=f"Perfiles completos: {error_completos:.1f} %",
+        )
+    ax.set(
+        title="Error según avance del corte y borde de origen",
+        xlabel="Avance del corte (%)",
+        ylabel="Error (%)",
+        ylim=(0, 100),
+    )
+    if avances:
+        ax.set_xticks(avances)
+    ax.set_yticks(range(0, 101, 20))
+    ax.set_axisbelow(True)
+    ax.grid(axis="y", alpha=0.2)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    plt.show()
+    return resumen
 
 
 def validar_identificadores_metadata(metadata_unificado: pd.DataFrame) -> None:
@@ -22,7 +178,10 @@ def validar_identificadores_metadata(metadata_unificado: pd.DataFrame) -> None:
 
 def validar_identificadores_split(metadata_split: pd.DataFrame) -> None:
     """Verifica que cada imagen del split tenga un identificador no nulo."""
-    if "Identificador" not in metadata_split or metadata_split["Identificador"].isna().any():
+    if (
+        "Identificador" not in metadata_split
+        or metadata_split["Identificador"].isna().any()
+    ):
         raise ValueError("La metadata debe incluir un Identificador para cada imagen.")
 
 
@@ -38,7 +197,9 @@ def contar_imagenes_segun_conjunto(
 def indexar_metadata_por_ruta(metadata_split: pd.DataFrame) -> pd.DataFrame:
     """Devuelve la metadata indexada por rutas POSIX sin modificar el original."""
     return metadata_split.assign(
-        ruta_relativa=metadata_split["ruta_relativa"].map(lambda ruta: Path(ruta).as_posix())
+        ruta_relativa=metadata_split["ruta_relativa"].map(
+            lambda ruta: Path(ruta).as_posix()
+        )
     ).set_index("ruta_relativa")
 
 
@@ -87,7 +248,9 @@ def crear_loader_test_con_ruta(
     """Carga todo el test persistido, conservando la ruta y el último lote."""
     cantidad_test = contar_imagenes_segun_conjunto(metadata_split, "test")
     if len(subset) != cantidad_test:
-        raise ValueError("El dataset de prueba no coincide con el tamaño del split test.")
+        raise ValueError(
+            "El dataset de prueba no coincide con el tamaño del split test."
+        )
     return DataLoader(
         DatasetTestConRuta(subset, data_dir),
         batch_size=batch_size,
@@ -142,7 +305,9 @@ def predecir_test_con_rutas(
     filas = []
     modelo.eval()
     with torch.inference_mode():
-        for numero_lote, (imagenes, etiquetas, rutas) in enumerate(test_loader, start=1):
+        for numero_lote, (imagenes, etiquetas, rutas) in enumerate(
+            test_loader, start=1
+        ):
             salidas = modelo(
                 imagenes.to(dispositivo, non_blocking=dispositivo.type == "cuda")
             )
@@ -166,7 +331,11 @@ def predecir_test_con_rutas(
     return pd.DataFrame(
         filas,
         columns=[
-            "Identificador", "ruta_relativa", "clase_real", "clase_predicha", "acierto"
+            "Identificador",
+            "ruta_relativa",
+            "clase_real",
+            "clase_predicha",
+            "acierto",
         ],
     )
 
@@ -176,14 +345,20 @@ def validar_predicciones_test(
 ) -> None:
     """Exige una predicción completa por imagen de test y aciertos coherentes."""
     columnas = {
-        "Identificador", "ruta_relativa", "clase_real", "clase_predicha", "acierto"
+        "Identificador",
+        "ruta_relativa",
+        "clase_real",
+        "clase_predicha",
+        "acierto",
     }
     if not columnas.issubset(predicciones.columns):
         raise ValueError("Faltan columnas requeridas en las predicciones.")
     if predicciones[list(columnas)].isna().any().any():
         raise ValueError("Las predicciones contienen valores nulos.")
     metadata_test = metadata_split.loc[metadata_split["split"].eq("test")]
-    rutas_test = set(metadata_test["ruta_relativa"].map(lambda ruta: Path(ruta).as_posix()))
+    rutas_test = set(
+        metadata_test["ruta_relativa"].map(lambda ruta: Path(ruta).as_posix())
+    )
     if (
         len(predicciones) != len(metadata_test)
         or not predicciones["ruta_relativa"].is_unique
@@ -194,7 +369,9 @@ def validar_predicciones_test(
         indexar_metadata_por_ruta(metadata_test)["Identificador"]
     )
     if not predicciones["Identificador"].equals(identificadores_esperados):
-        raise ValueError("Los identificadores de las predicciones no coinciden con sus rutas.")
+        raise ValueError(
+            "Los identificadores de las predicciones no coinciden con sus rutas."
+        )
     if not predicciones["acierto"].equals(
         predicciones["clase_real"].eq(predicciones["clase_predicha"])
     ):
@@ -235,6 +412,43 @@ def crear_tabla_predicciones_con_metadata(
     return tabla
 
 
+def convertir_clases_a_enteros(tabla_predicciones: pd.DataFrame) -> pd.DataFrame:
+    """Devuelve una copia con Clase Ana y clase_predicha convertidas a enteros.
+
+    Elimina el texto ``clase`` de las etiquetas predichas antes de convertirlas.
+    """
+    tabla_predicciones_enteros = tabla_predicciones.copy()
+    tabla_predicciones_enteros["Clase Ana"] = tabla_predicciones_enteros[
+        "Clase Ana"
+    ].apply(int)
+    tabla_predicciones_enteros["clase_predicha"] = tabla_predicciones_enteros[
+        "clase_predicha"
+    ].apply(lambda x: int(x.replace("clase", "")))
+    return tabla_predicciones_enteros
+
+
+def seleccionar_predicciones_por_borde_origen(
+    tabla_predicciones: pd.DataFrame,
+    borde_origen: Literal["base", "tope", "completo"],
+) -> pd.DataFrame:
+    """Devuelve una copia de las predicciones del borde de origen indicado."""
+    if borde_origen not in ("base", "tope", "completo"):
+        raise ValueError('borde_origen debe ser "base", "tope" o "completo".')
+    return tabla_predicciones.loc[
+        tabla_predicciones["borde_origen"].eq(borde_origen)
+    ].copy()
+
+
+def obtener_clases_reales_y_predichas(
+    tabla_predicciones: pd.DataFrame,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Devuelve (y_true, y_pred) como arrays, conservando el orden de las filas."""
+    return (
+        tabla_predicciones["Clase Ana"].to_numpy(),
+        tabla_predicciones["clase_predicha"].to_numpy(),
+    )
+
+
 def guardar_tabla_predicciones(tabla: pd.DataFrame, ruta_destino: Path) -> Path:
     """Exporta la tabla completa en CSV UTF-8 con BOM, sin índice."""
     ruta_destino.parent.mkdir(parents=True, exist_ok=True)
@@ -259,9 +473,13 @@ class DatasetImagenesSinClase(Dataset):
     de data_dir. Mantiene el orden de la metadata y carga RGB como ImageFolder.
     """
 
-    def __init__(self, metadata: pd.DataFrame, data_dir: Path, transformacion: Callable):
+    def __init__(
+        self, metadata: pd.DataFrame, data_dir: Path, transformacion: Callable
+    ):
         if len(seleccionar_metadata_sin_clase(metadata)) != len(metadata):
-            raise ValueError("El dataset de inferencia debe contener solo perfiles sin clase.")
+            raise ValueError(
+                "El dataset de inferencia debe contener solo perfiles sin clase."
+            )
         self.data_dir = data_dir.resolve()
         self.transformacion = transformacion
         identificadores = metadata["Identificador"].tolist()
@@ -274,7 +492,9 @@ class DatasetImagenesSinClase(Dataset):
                 and ruta.stem in buscados
             ):
                 if ruta.stem in rutas_por_id:
-                    raise ValueError(f"Hay varias imágenes para el identificador {ruta.stem!r}.")
+                    raise ValueError(
+                        f"Hay varias imágenes para el identificador {ruta.stem!r}."
+                    )
                 rutas_por_id[ruta.stem] = ruta
         faltantes = buscados - set(rutas_por_id)
         if faltantes:
@@ -328,7 +548,9 @@ def predecir_imagenes_sin_clase(
                 imagenes.to(dispositivo, non_blocking=dispositivo.type == "cuda")
             )
             if salidas.ndim != 2 or salidas.shape[1] != len(nombres_clases):
-                raise ValueError("Las salidas del modelo no coinciden con las clases indicadas.")
+                raise ValueError(
+                    "Las salidas del modelo no coinciden con las clases indicadas."
+                )
             confianza, indices = salidas.softmax(dim=1).max(dim=1)
             if isinstance(identificadores, torch.Tensor):
                 identificadores = identificadores.tolist()
@@ -367,12 +589,18 @@ def validar_predicciones_sin_clase(
         len(predicciones) != len(metadata_sin_clase)
         or not predicciones["Identificador"].is_unique
         or not predicciones["ruta_relativa"].is_unique
-        or set(predicciones["Identificador"]) != set(metadata_sin_clase["Identificador"])
+        or set(predicciones["Identificador"])
+        != set(metadata_sin_clase["Identificador"])
     ):
-        raise ValueError("Debe existir exactamente una predicción por perfil sin clase.")
-    if not predicciones["ruta_relativa"].map(lambda ruta: Path(ruta).stem).eq(
-        predicciones["Identificador"].astype(str)
-    ).all():
+        raise ValueError(
+            "Debe existir exactamente una predicción por perfil sin clase."
+        )
+    if (
+        not predicciones["ruta_relativa"]
+        .map(lambda ruta: Path(ruta).stem)
+        .eq(predicciones["Identificador"].astype(str))
+        .all()
+    ):
         raise ValueError("Las rutas no corresponden a los identificadores predichos.")
     if not predicciones["clase_predicha"].isin(nombres_clases).all():
         raise ValueError("Hay clases predichas que no pertenecen al modelo.")
