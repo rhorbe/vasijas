@@ -64,7 +64,7 @@ def graficar_error_por_grupo(
             fontsize=9,
         )
     ax.set(
-        title=f"Porcentaje de error por {etiqueta}",
+        title=f"{etiqueta}",
         xlabel=etiqueta,
         ylabel="Predicciones incorrectas",
     )
