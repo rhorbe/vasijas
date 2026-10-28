@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.ticker import PercentFormatter
+from sklearn.metrics import f1_score
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
@@ -13,30 +14,44 @@ from torchvision import models
 from torchvision.datasets.folder import IMG_EXTENSIONS, default_loader
 
 
-def graficar_error_por_grupo(
+def calcular_exactitud_por_grupo(
+    tabla_predicciones: pd.DataFrame,
+    columna: str,
+) -> pd.DataFrame:
+    """Resume imágenes, aciertos, errores y exactitud porcentual por grupo.
+
+    Incluye los grupos sin dato, ordena por la columna de agrupación y no
+    modifica la tabla original. Devuelve la exactitud sin redondear.
+    """
+    resumen = (
+        tabla_predicciones.groupby(columna, dropna=False, observed=True, sort=True)[
+            "acierto"
+        ]
+        .agg(imagenes="size", aciertos="sum")
+        .reset_index()
+    )
+    resumen["errores"] = resumen["imagenes"] - resumen["aciertos"]
+    resumen["exactitud_porcentual"] = 100 * resumen["aciertos"] / resumen["imagenes"]
+    return resumen
+
+
+def graficar_exactitud_por_grupo(
     tabla_predicciones: pd.DataFrame,
     columna: str,
     etiqueta: str,
     tipo_grafico: Literal["lineas", "barras"] = "lineas",
 ) -> pd.DataFrame:
-    """Grafica el porcentaje de error por grupo y devuelve sus recuentos.
+    """Grafica la exactitud porcentual por grupo y devuelve sus recuentos.
 
     Incluye los grupos sin dato y conserva intacta la tabla de predicciones.
     ``tipo_grafico`` permite elegir entre "lineas" (línea con puntos,
-    predeterminado) y "barras". Las etiquetas indican el porcentaje de errores
+    predeterminado) y "barras". Las etiquetas indican el porcentaje de aciertos
     y la cantidad de imágenes. Rechaza tipos de gráfico no admitidos.
     """
     if tipo_grafico not in ("lineas", "barras"):
         raise ValueError('tipo_grafico debe ser "lineas" o "barras".')
 
-    datos = tabla_predicciones[[columna, "acierto"]].copy()
-    datos["error"] = ~datos["acierto"]
-    resumen = (
-        datos.groupby(columna, dropna=False, observed=True, sort=True)["error"]
-        .agg(errores="sum", imagenes="size")
-        .reset_index()
-    )
-    resumen["porcentaje_error"] = 100 * resumen["errores"] / resumen["imagenes"]
+    resumen = calcular_exactitud_por_grupo(tabla_predicciones, columna)
     etiquetas = [
         "Sin dato" if pd.isna(valor) else str(valor) for valor in resumen[columna]
     ]
@@ -45,15 +60,15 @@ def graficar_error_por_grupo(
     if tipo_grafico == "lineas":
         ax.plot(
             etiquetas,
-            resumen["porcentaje_error"],
+            resumen["exactitud_porcentual"],
             marker="o",
             linestyle="-",
             color="#307ae3",
         )
     else:
-        ax.bar(etiquetas, resumen["porcentaje_error"], color="#307ae3")
+        ax.bar(etiquetas, resumen["exactitud_porcentual"], color="#307ae3")
     for posicion, (porcentaje, cantidad) in enumerate(
-        zip(resumen["porcentaje_error"], resumen["imagenes"])
+        zip(resumen["exactitud_porcentual"], resumen["imagenes"])
     ):
         ax.annotate(
             f"{porcentaje:.1f}%\n(n={cantidad})",
@@ -66,7 +81,7 @@ def graficar_error_por_grupo(
     ax.set(
         title=f"{etiqueta}",
         xlabel=etiqueta,
-        ylabel="Predicciones incorrectas",
+        ylabel="Exactitud de las predicciones",
     )
     ax.set_ylim(0, 115)
     ax.set_yticks(range(0, 101, 20))
@@ -79,33 +94,65 @@ def graficar_error_por_grupo(
     return resumen
 
 
-def graficar_error_por_avance_y_origen(
-    tabla_predicciones: pd.DataFrame,
-    tipo_grafico: Literal["lineas", "barras"] = "lineas",
+def graficar_metrica_por_avance_y_origen(
+    tabla_predicciones: pd.DataFrame, metrica: Literal["exactitud", "f1_macro"]
 ) -> pd.DataFrame:
-    """Compara el error por avance y origen con los perfiles completos.
+    """Compara exactitud o F1 macro por avance y origen en escala 0–100.
 
-    Calcula errores / imágenes para cada par (avance, origen). Los perfiles
-    completos se representan como una referencia horizontal con su error real.
+    F1 macro usa las mismas clases en todos los grupos: la unión de etiquetas
+    reales y predichas de la tabla completa. Las clases sin casos ni predicciones
+    aportan cero (zero_division=0). Acepta etiquetas predichas como clase01 o 1.
+    La referencia verde se calcula sobre todas las filas de perfiles completos;
+    para F1 no se promedian los valores de los grupos.
     Devuelve los recuentos y porcentajes, sin modificar la tabla original.
     """
-    if tipo_grafico not in ("lineas", "barras"):
-        raise ValueError('tipo_grafico debe ser "lineas" o "barras".')
+    if metrica not in ("exactitud", "f1_macro"):
+        raise ValueError('metrica debe ser "exactitud" o "f1_macro".')
 
-    datos = tabla_predicciones[["porcentaje_avance", "borde_origen", "acierto"]].copy()
-    datos["error"] = ~datos["acierto"]
-    resumen = (
-        datos.groupby(
-            ["porcentaje_avance", "borde_origen"],
-            dropna=False,
-            observed=True,
-            sort=True,
-        )["error"]
-        .agg(errores="sum", imagenes="size")
-        .reset_index()
+    columnas = ["porcentaje_avance", "borde_origen", "acierto"]
+    if metrica == "f1_macro":
+        columnas += ["Clase Ana", "clase_predicha"]
+    datos = tabla_predicciones[columnas].copy()
+    if metrica == "f1_macro":
+        datos["Clase Ana"] = datos["Clase Ana"].astype(int)
+        datos["clase_predicha"] = (
+            datos["clase_predicha"]
+            .astype("string")
+            .str.removeprefix("clase")
+            .astype(int)
+        )
+        clases = np.union1d(datos["Clase Ana"], datos["clase_predicha"])
+
+        def calcular_f1_macro(grupo: pd.DataFrame) -> float:
+            return 100 * f1_score(
+                grupo["Clase Ana"],
+                grupo["clase_predicha"],
+                labels=clases,
+                average="macro",
+                zero_division=0,
+            )
+
+    grupos = datos.groupby(
+        ["porcentaje_avance", "borde_origen"],
+        dropna=False,
+        observed=True,
+        sort=True,
     )
-    resumen["porcentaje_error"] = 100 * resumen["errores"] / resumen["imagenes"]
-    completos = resumen.loc[resumen["borde_origen"].eq("completo")]
+    resumen = grupos["acierto"].agg(aciertos="sum", imagenes="size").reset_index()
+    completos = datos.loc[datos["borde_origen"].eq("completo")]
+    valor_completos = None
+    if metrica == "exactitud":
+        nombre_metrica = "Exactitud"
+        columna_metrica = "exactitud_porcentual"
+        resumen[columna_metrica] = 100 * resumen["aciertos"] / resumen["imagenes"]
+        if not completos.empty:
+            valor_completos = 100 * completos["acierto"].mean()
+    else:
+        nombre_metrica = "F1 macro"
+        columna_metrica = "f1_macro_porcentual"
+        resumen[columna_metrica] = [calcular_f1_macro(grupo) for _, grupo in grupos]
+        if not completos.empty:
+            valor_completos = calcular_f1_macro(completos)
     cortes = resumen.loc[
         ~resumen["borde_origen"].eq("completo") & resumen["porcentaje_avance"].notna()
     ].copy()
@@ -120,38 +167,26 @@ def graficar_error_por_avance_y_origen(
     fig, ax = plt.subplots(figsize=(9, 5))
     for indice, origen in enumerate(origenes):
         serie = cortes.loc[cortes["borde_origen"].eq(origen)]
-        if tipo_grafico == "lineas":
-            ax.plot(
-                serie["porcentaje_avance"],
-                serie["porcentaje_error"],
-                label=origen.capitalize(),
-                color=colores.get(origen),
-                marker=marcadores.get(origen, "o"),
-            )
-        else:
-            # Barras contiguas en cada avance; los grupos ausentes no se rellenan.
-            paso = min((b - a for a, b in zip(avances, avances[1:])), default=10)
-            ancho = paso * 0.8 / len(origenes)
-            desplazamiento = (indice - (len(origenes) - 1) / 2) * ancho
-            ax.bar(
-                serie["porcentaje_avance"] + desplazamiento,
-                serie["porcentaje_error"],
-                width=ancho,
-                label=origen.capitalize(),
-                color=colores.get(origen),
-            )
-    if not completos.empty:
-        error_completos = 100 * completos["errores"].sum() / completos["imagenes"].sum()
+
+        ax.plot(
+            serie["porcentaje_avance"],
+            serie[columna_metrica],
+            label=origen.capitalize(),
+            color=colores.get(origen),
+            marker=marcadores.get(origen, "o"),
+        )
+
+    if valor_completos is not None:
         ax.axhline(
-            error_completos,
-            color="#7c8797",
+            valor_completos,
+            color="green",
             linestyle="--",
-            label=f"Perfiles completos: {error_completos:.1f} %",
+            label=f"Perfiles completos: {valor_completos:.1f} %",
         )
     ax.set(
-        title="Error según avance del corte y borde de origen",
+        title=f"{nombre_metrica} según avance del corte y borde de origen",
         xlabel="Avance del corte (%)",
-        ylabel="Error (%)",
+        ylabel=f"{nombre_metrica} (%)",
         ylim=(0, 100),
     )
     if avances:
@@ -164,6 +199,93 @@ def graficar_error_por_avance_y_origen(
     fig.tight_layout()
     plt.show()
     return resumen
+
+
+def graficar_recall_por_clase_y_avance(
+    tabla_predicciones: pd.DataFrame,
+    borde_origen: Literal["tope", "base", "completo"] = "tope",
+) -> pd.DataFrame:
+    """Grafica recall (%) por clase real y porcentaje de perfil conservado.
+
+    Selecciona el origen indicado y muestra las clases 1–11 salvo la 4.
+    Cada celda es 100 × aciertos / ejemplos de esa clase y avance. Acepta
+    clases numéricas o etiquetas como ``clase01``. Una predicción de clase 4
+    sigue contando como error para las otras clases.
+
+    Los perfiles completos se agrupan al 100 %. Los grupos sin ejemplos se
+    muestran como «—» (NaN); la media macro promedia solo las clases con
+    ejemplos en cada porcentaje. Devuelve la matriz sin redondear, incluida
+    la fila macro, sin modificar la tabla original.
+    """
+    datos = seleccionar_predicciones_por_borde_origen(tabla_predicciones, borde_origen)
+    clases = [1, 2, 3, 5, 6, 7, 8, 9, 10, 11]
+    for columna in ("Clase Ana", "clase_predicha"):
+        datos[columna] = (
+            datos[columna]
+            .astype("string")
+            .str.removeprefix("clase")
+            .astype(float)
+            .astype(int)
+        )
+    datos = datos.loc[datos["Clase Ana"].isin(clases)].copy()
+    if borde_origen == "completo":
+        datos["porcentaje_avance"] = 100
+    datos = datos.dropna(subset=["porcentaje_avance"])
+    if datos.empty:
+        raise ValueError(f"No hay ejemplos con avance para {borde_origen!r}.")
+    datos["acierto"] = datos["Clase Ana"].eq(datos["clase_predicha"])
+    matriz = (
+        datos.groupby(["Clase Ana", "porcentaje_avance"], observed=True)["acierto"]
+        .mean()
+        .unstack("porcentaje_avance")
+        .reindex(clases)
+        .mul(100)
+        .sort_index(axis=1)
+    )
+    matriz.index = [f"Clase {clase}" for clase in clases]
+    matriz.index.name = "Clase"
+    matriz.loc["Media (macro)"] = matriz.mean(axis=0)
+
+    fig, ax = plt.subplots(figsize=(max(5, len(matriz.columns) * 0.65 + 2), 6))
+    colores = plt.get_cmap("RdYlGn").copy()
+    colores.set_bad("#eeeeee")
+    ax.imshow(
+        np.ma.masked_invalid(matriz.to_numpy()),
+        cmap=colores,
+        vmin=0,
+        vmax=100,
+        aspect="auto",
+    )
+    for fila, valores in enumerate(matriz.to_numpy()):
+        for columna, valor in enumerate(valores):
+            ax.text(
+                columna,
+                fila,
+                "—" if pd.isna(valor) else f"{valor:.0f}",
+                ha="center",
+                va="center",
+                color="white"
+                if pd.notna(valor) and (valor < 25 or valor > 75)
+                else "black",
+                fontsize=10,
+            )
+    ax.set_xticks(
+        range(len(matriz.columns)), [f"{avance:g}" for avance in matriz.columns]
+    )
+    ax.set_yticks(range(len(matriz)), matriz.index)
+    ax.axhline(len(clases) - 0.5, color="white", linewidth=3)
+    ax.get_yticklabels()[-1].set_fontweight("bold")
+    ax.tick_params(length=0)
+    ax.spines[:].set_visible(False)
+    ax.set(
+        title=borde_origen.capitalize(),
+        ylabel="Clase",
+        xlabel="Porcentaje del perfil conservado (%)",
+    )
+    fig.suptitle("Sensibilidad (Recall) por clase (%)", fontsize=16, fontweight="bold")
+    fig.tight_layout()
+    plt.show()
+    return matriz
 
 
 def validar_identificadores_metadata(metadata_unificado: pd.DataFrame) -> None:
