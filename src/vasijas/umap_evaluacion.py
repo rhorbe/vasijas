@@ -1,4 +1,4 @@
-"""Extracción de características y visualización exploratoria del test persistido."""
+"""Extracción de características y visualización exploratoria de conjuntos persistidos."""
 
 from collections.abc import Callable, Iterable
 from dataclasses import asdict, dataclass
@@ -27,7 +27,12 @@ from vasijas.paths import ruta_relativa
 
 DIMENSION_CARACTERISTICAS_RESNET18 = 512
 COLUMNAS_COORDENADAS_UMAP = ["UMAP_1", "UMAP_2"]
-COLUMNAS_IDENTIDAD_TEST = {"Identificador", "ruta_relativa", "clase_carpeta", "split"}
+COLUMNAS_IDENTIDAD_IMAGENES = {
+    "Identificador",
+    "ruta_relativa",
+    "clase_carpeta",
+    "split",
+}
 
 
 @dataclass(frozen=True)
@@ -108,43 +113,77 @@ def obtener_muestra_metadata(
     return metadata.head(cantidad)
 
 
+def validar_conjuntos_metadata(
+    metadata: pd.DataFrame,
+    conjuntos: str | Iterable[str] | None,
+) -> None:
+    """Restringe los splits a los indicados; None admite cualquier conjunto.
+
+    Comprueba pertenencia, sin exigir que todos los conjuntos tengan muestras.
+    """
+    validar_columnas_metadata(metadata, {"split"})
+    if metadata["split"].isna().any():
+        raise ValueError("Cada imagen debe tener un conjunto asignado en split.")
+    if conjuntos is None:
+        return
+    permitidos = {conjuntos} if isinstance(conjuntos, str) else set(conjuntos)
+    if not metadata["split"].isin(permitidos).all():
+        raise ValueError(
+            "La metadata debe contener solamente imágenes de los conjuntos "
+            f"seleccionados: {sorted(permitidos)}."
+        )
+
+
+def validar_metadata(
+    metadata: pd.DataFrame,
+    columnas_requeridas: set[str],
+    data_dir: Path,
+    *,
+    conjuntos: str | Iterable[str] | None = None,
+) -> None:
+    """Valida columnas, identidad, valores requeridos y archivos de las imágenes.
+
+    Admite todos los splits por defecto. conjuntos permite limitar los aceptados.
+    Conserva los datos y su orden; no selecciona ni descarta filas.
+    """
+    columnas_identidad = COLUMNAS_IDENTIDAD_IMAGENES | columnas_requeridas
+    validar_columnas_metadata(metadata, columnas_identidad)
+    if metadata.empty:
+        raise ValueError("La metadata no contiene imágenes.")
+    validar_identificadores_metadata(metadata)
+    if metadata[list(columnas_identidad)].isna().any().any():
+        raise ValueError(
+            "Cada imagen debe tener identificador, ruta, clase y split, "
+            "y valores no nulos en las columnas requeridas."
+        )
+    if not metadata["ruta_relativa"].is_unique:
+        raise ValueError("Las rutas de las imágenes deben ser únicas.")
+    validar_conjuntos_metadata(metadata, conjuntos)
+    validar_archivos_imagenes(metadata["ruta_relativa"], data_dir)
+
+
 def validar_metadata_test(
     metadata_test: pd.DataFrame,
     columnas_requeridas: set[str],
     data_dir: Path,
 ) -> None:
-    """Valida identidad, campos requeridos y archivos de las imágenes de test."""
-    columnas_identidad = COLUMNAS_IDENTIDAD_TEST | columnas_requeridas
-    validar_columnas_metadata(metadata_test, columnas_identidad)
-    if metadata_test.empty:
-        raise ValueError("No hay imágenes con split == 'test' en la metadata.")
-    validar_identificadores_metadata(metadata_test)
-    if metadata_test[list(columnas_identidad)].isna().any().any():
-        raise ValueError(
-            "Cada imagen de test debe tener identificador, ruta, clase y split."
-        )
-    if not metadata_test["ruta_relativa"].is_unique:
-        raise ValueError("Las rutas de las imágenes de test deben ser únicas.")
-    if not metadata_test["split"].eq("test").all():
-        raise ValueError("La metadata debe contener solamente imágenes del split test.")
-    validar_archivos_imagenes_test(metadata_test["ruta_relativa"], data_dir)
+    """Conserva la validación exclusiva de test para los notebooks existentes."""
+    validar_metadata(metadata_test, columnas_requeridas, data_dir, conjuntos="test")
 
 
-def validar_archivos_imagenes_test(rutas_relativas: pd.Series, data_dir: Path) -> None:
+def validar_archivos_imagenes(rutas_relativas: pd.Series, data_dir: Path) -> None:
     """Exige que todas las rutas pertenezcan al directorio y sean archivos existentes."""
     directorio = data_dir.resolve()
     rutas_test = [(data_dir / ruta).resolve() for ruta in rutas_relativas]
     if any(not ruta.is_relative_to(directorio) for ruta in rutas_test):
-        raise ValueError("Las rutas de test deben estar dentro de DATA_DIR.")
+        raise ValueError("Las rutas de las imágenes deben estar dentro de DATA_DIR.")
     faltantes = [
         relativa
         for relativa, ruta in zip(rutas_relativas, rutas_test)
         if not ruta.is_file()
     ]
     if faltantes:
-        raise FileNotFoundError(
-            f"Faltan {len(faltantes)} imágenes de test: {faltantes[:10]}"
-        )
+        raise FileNotFoundError(f"Faltan {len(faltantes)} imágenes: {faltantes[:10]}")
 
 
 def cargar_resnet18_entrenada(
@@ -265,7 +304,7 @@ def extraer_caracteristicas_test(
     Conserva la identidad por ruta, independientemente del orden del loader.
     Exige exactamente una muestra por imagen de test, incluido el último lote.
     """
-    validar_columnas_metadata(metadata_split, COLUMNAS_IDENTIDAD_TEST)
+    validar_columnas_metadata(metadata_split, COLUMNAS_IDENTIDAD_IMAGENES)
     metadata_test = seleccionar_metadata(metadata_split, "test")
     requeridas = ["Identificador", "ruta_relativa", "clase_carpeta"]
     if metadata_test.empty or metadata_test[requeridas].isna().any().any():
@@ -301,8 +340,10 @@ def extraer_caracteristicas_test(
 def validar_entrada_proyeccion_umap(
     caracteristicas: np.ndarray,
     metadata_test: pd.DataFrame,
+    *,
+    conjuntos: str | Iterable[str] | None = "test",
 ) -> None:
-    """Exige vectores finitos alineados con al menos tres imágenes de test."""
+    """Exige vectores finitos alineados con al menos tres imágenes de los splits elegidos."""
     if caracteristicas.ndim != 2 or caracteristicas.shape[1] == 0:
         raise ValueError("Las características deben ser una matriz de vectores.")
     if len(caracteristicas) != len(metadata_test) or len(caracteristicas) < 3:
@@ -311,8 +352,7 @@ def validar_entrada_proyeccion_umap(
         )
     if not np.isfinite(caracteristicas).all():
         raise ValueError("Las características contienen valores no finitos.")
-    if not metadata_test["split"].eq("test").all():
-        raise ValueError("UMAP debe recibir solamente imágenes del split test.")
+    validar_conjuntos_metadata(metadata_test, conjuntos)
 
 
 def validar_configuracion_umap(
@@ -370,18 +410,24 @@ def proyectar_caracteristicas_umap(
     caracteristicas: np.ndarray,
     metadata_test: pd.DataFrame,
     configuracion: ConfiguracionUmap,
+    *,
+    conjuntos: str | Iterable[str] | None = "test",
 ) -> pd.DataFrame:
-    """Valida y proyecta test sin etiquetas; devuelve metadata con coordenadas."""
+    """Proyecta los splits permitidos sin etiquetas; devuelve metadata con coordenadas."""
     vectores = np.asarray(caracteristicas)
-    validar_entrada_proyeccion_umap(vectores, metadata_test)
+    validar_entrada_proyeccion_umap(vectores, metadata_test, conjuntos=conjuntos)
     validar_configuracion_umap(configuracion, len(vectores))
     coordenadas = ajustar_umap(vectores, configuracion)
     validar_coordenadas_umap(coordenadas, len(metadata_test))
     return crear_tabla_umap(metadata_test.reset_index(drop=True), coordenadas)
 
 
-def validar_tabla_vistas_fracciones(tabla: pd.DataFrame) -> None:
-    """Exige puntos de test con metadatos completos y coordenadas finitas."""
+def validar_tabla_vistas_fracciones(
+    tabla: pd.DataFrame,
+    *,
+    conjuntos: str | Iterable[str] | None = "test",
+) -> None:
+    """Exige puntos de los splits permitidos con metadatos completos y coordenadas finitas."""
     requeridas = ["split", "borde_origen", "porcentaje_avance", "UMAP_1", "UMAP_2"]
     faltantes = set(requeridas) - set(tabla.columns)
     if faltantes:
@@ -390,8 +436,7 @@ def validar_tabla_vistas_fracciones(tabla: pd.DataFrame) -> None:
         )
     if tabla.empty or tabla[requeridas].isna().any().any():
         raise ValueError("Se requieren puntos y metadatos completos para colorear.")
-    if not tabla["split"].eq("test").all():
-        raise ValueError("Las vistas deben contener solamente imágenes del split test.")
+    validar_conjuntos_metadata(tabla, conjuntos)
     if not np.isfinite(tabla[COLUMNAS_COORDENADAS_UMAP].to_numpy(dtype=float)).all():
         raise ValueError("Las coordenadas deben ser finitas.")
 
@@ -426,12 +471,14 @@ def validar_presencia_tope_y_base(origen: pd.Series) -> None:
 
 def preparar_datos_vistas_fracciones(
     tabla_umap: pd.DataFrame,
+    *,
+    conjuntos: str | Iterable[str] | None = "test",
 ) -> tuple[pd.Series, pd.Series, pd.DataFrame]:
     """Valida y devuelve orígenes, porcentajes numéricos y filas de recortes.
 
     Conserva la tabla original, sus índices y coordenadas; no vuelve a ajustar UMAP.
     """
-    validar_tabla_vistas_fracciones(tabla_umap)
+    validar_tabla_vistas_fracciones(tabla_umap, conjuntos=conjuntos)
     origen = normalizar_origenes_recorte(tabla_umap["borde_origen"])
     porcentaje = pd.to_numeric(tabla_umap["porcentaje_avance"], errors="raise")
     validar_porcentajes_perfil(porcentaje, origen)
@@ -448,10 +495,14 @@ def obtener_limites_grafico_umap(
     return eje.get_xlim(), eje.get_ylim()
 
 
-def imprimir_resumen_fracciones(origen: pd.Series) -> None:
-    """Informa los recuentos por origen y los totales de fracciones y de test."""
+def imprimir_resumen_fracciones(
+    origen: pd.Series, descripcion_conjunto: str = "de test"
+) -> None:
+    """Informa los recuentos por origen y los totales de fracciones e imágenes."""
     for categoria in ("completo", "tope", "base"):
-        print(f"{categoria}: {int(origen.eq(categoria).sum())} imágenes de test")
+        print(
+            f"{categoria}: {int(origen.eq(categoria).sum())} imágenes {descripcion_conjunto}"
+        )
     cantidad_fracciones = int(origen.isin(["tope", "base"]).sum())
     print(f"Fracciones: {cantidad_fracciones} · Total: {len(origen)}")
 
@@ -508,6 +559,7 @@ def graficar_umap_test(
     tabla: pd.DataFrame,
     *,
     posicion_leyenda: Literal["interior", "exterior"] = "exterior",
+    titulo: str | None = None,
 ) -> Figure:
     """Colorea cada imagen por su clase real con una leyenda discreta."""
     if posicion_leyenda not in {"interior", "exterior"}:
@@ -519,7 +571,10 @@ def graficar_umap_test(
         grupo = tabla.loc[tabla["clase_carpeta"].eq(clase)]
         _dibujar_grupo_umap(eje, grupo, clase, colores(indice))
     configurar_ejes_umap(
-        eje, f"UMAP de características ResNet18 · test (n={len(tabla)})"
+        eje,
+        titulo
+        if titulo is not None
+        else f"UMAP de características ResNet18 · test (n={len(tabla)})",
     )
     if posicion_leyenda == "interior":
         configurar_leyenda_interior_umap(figura)
@@ -548,6 +603,8 @@ def graficar_umap_por_origen(
     origen: pd.Series,
     limites_x: tuple[float, float],
     limites_y: tuple[float, float],
+    *,
+    titulo: str | None = None,
 ) -> Figure:
     """Crea la vista de recortes con coordenadas y orígenes ya preparados.
 
@@ -559,7 +616,9 @@ def graficar_umap_por_origen(
     cantidad_fracciones = int(origen.isin(["tope", "base"]).sum())
     configurar_ejes_umap(
         eje,
-        f"UMAP test · fracciones por origen (n={cantidad_fracciones})",
+        titulo
+        if titulo is not None
+        else f"UMAP test · fracciones por origen (n={cantidad_fracciones})",
         limites_x=limites_x,
         limites_y=limites_y,
     )
@@ -604,6 +663,8 @@ def graficar_umap_por_porcentaje(
     porcentaje: pd.Series,
     limites_x: tuple[float, float],
     limites_y: tuple[float, float],
+    *,
+    titulo: str | None = None,
 ) -> Figure:
     """Crea la vista por porcentaje con coordenadas y porcentajes ya preparados.
 
@@ -615,7 +676,9 @@ def graficar_umap_por_porcentaje(
     agregar_barra_porcentaje_conservado(figura, eje, puntos)
     configurar_ejes_umap(
         eje,
-        f"UMAP test · porcentaje conservado (n={len(tabla_umap)})",
+        titulo
+        if titulo is not None
+        else f"UMAP test · porcentaje conservado (n={len(tabla_umap)})",
         limites_x=limites_x,
         limites_y=limites_y,
     )
@@ -666,11 +729,13 @@ def guardar_vistas_adicionales_umap(
     figuras: Iterable[tuple[str, Figure]],
     directorio_salida: Path,
     ruta_modelo: Path,
+    *,
+    prefijo: str = "umap_test",
 ) -> tuple[Path, ...]:
     """Guarda las vistas con el nombre del modelo y devuelve las rutas en orden."""
     rutas = []
     for nombre, figura in figuras:
-        ruta_figura = directorio_salida / f"umap_test_{nombre}_{ruta_modelo.stem}.png"
+        ruta_figura = directorio_salida / f"{prefijo}_{nombre}_{ruta_modelo.stem}.png"
         rutas.append(guardar_figura_umap(figura, ruta_figura))
     return tuple(rutas)
 

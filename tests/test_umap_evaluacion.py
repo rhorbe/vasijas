@@ -34,6 +34,7 @@ from vasijas.umap_evaluacion import (
     validar_caracteristicas_resnet18,
     validar_configuracion_umap,
     validar_coordenadas_umap,
+    validar_metadata,
     validar_metadata_resultado_umap,
     validar_metadata_test,
     validar_orden_rutas_extraidas,
@@ -370,7 +371,7 @@ def test_preparacion_fracciones_normaliza_sin_alterar_tabla(tabla_vistas_fraccio
         ),
         (
             lambda t: t.assign(split="train"),
-            "Las vistas deben contener solamente imágenes del split test.",
+            "La metadata debe contener solamente imágenes de los conjuntos seleccionados: ['test'].",
         ),
         (lambda t: t.assign(UMAP_1=np.inf), "Las coordenadas deben ser finitas."),
         (lambda t: t.assign(borde_origen="otro"), "Orígenes desconocidos: ['otro']"),
@@ -721,7 +722,7 @@ def test_extraccion_restaura_modos_si_falla_el_modelo():
         (
             lambda t: t.assign(split="train"),
             ValueError,
-            "solamente imágenes del split test",
+            "solamente imágenes de los conjuntos seleccionados",
         ),
         (lambda t: t.drop(columns="split"), ValueError, "Faltan columnas requeridas"),
         (
@@ -772,3 +773,137 @@ def test_grafico_clases_conserva_leyenda_exterior_por_defecto():
         plt.close(figura)
     with pytest.raises(ValueError, match="posición de la leyenda"):
         graficar_umap_test(tabla, posicion_leyenda="desconocida")
+
+
+@pytest.fixture
+def metadata_todos_los_conjuntos(tmp_path):
+    metadata = pd.DataFrame(
+        {
+            "Identificador": ["a", "b", "c"],
+            "ruta_relativa": ["a.png", "b.png", "c.png"],
+            "clase_carpeta": ["clase01", "clase02", "clase01"],
+            "split": ["train", "val", "test"],
+            "borde_origen": ["completo", "tope", "base"],
+            "porcentaje_avance": [100, 25, 75],
+            "dato_opcional": [None, None, None],
+        }
+    )
+    for ruta in metadata["ruta_relativa"]:
+        (tmp_path / ruta).touch()
+    return metadata
+
+
+@pytest.mark.parametrize(
+    "conjuntos",
+    [
+        None,
+        ["train", "val", "test"],
+        ("train", "val", "test"),
+        {"train", "val", "test"},
+    ],
+)
+def test_validacion_generica_acepta_todos_los_conjuntos_sin_mutarlos(
+    metadata_todos_los_conjuntos, tmp_path, conjuntos
+):
+    metadata = metadata_todos_los_conjuntos
+    original = metadata.copy(deep=True)
+    validar_metadata(
+        metadata, {"borde_origen", "porcentaje_avance"}, tmp_path, conjuntos=conjuntos
+    )
+    pd.testing.assert_frame_equal(metadata, original)
+
+
+def test_validacion_generica_restringe_conjuntos_y_columnas_requeridas(
+    metadata_todos_los_conjuntos, tmp_path
+):
+    metadata = metadata_todos_los_conjuntos
+    validar_metadata(metadata.iloc[:1], set(), tmp_path, conjuntos="train")
+    with pytest.raises(ValueError, match="conjuntos seleccionados"):
+        validar_metadata(metadata, set(), tmp_path, conjuntos="test")
+    with pytest.raises(ValueError, match="Faltan columnas requeridas"):
+        validar_metadata(metadata, {"columna_ausente"}, tmp_path)
+    with pytest.raises(ValueError, match="valores no nulos"):
+        validar_metadata(metadata, {"dato_opcional"}, tmp_path)
+    with pytest.raises(ValueError, match="no contiene imágenes"):
+        validar_metadata(metadata.iloc[:0], set(), tmp_path)
+
+
+def test_flujo_unificado_valida_proyecta_y_prepara_todos_los_splits(
+    metadata_todos_los_conjuntos, tmp_path, monkeypatch
+):
+    metadata = metadata_todos_los_conjuntos
+    conjuntos = ["train", "val", "test"]
+    caracteristicas = np.arange(12).reshape(3, 4)
+
+    class UmapUnificado:
+        def __init__(self, **kwargs):
+            pass
+
+        def fit_transform(self, vectores):
+            np.testing.assert_array_equal(vectores, caracteristicas)
+            return np.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
+
+    monkeypatch.setitem(sys.modules, "umap", SimpleNamespace(UMAP=UmapUnificado))
+    validar_metadata(metadata, set(), tmp_path, conjuntos=conjuntos)
+    tabla = proyectar_caracteristicas_umap(
+        caracteristicas, metadata, ConfiguracionUmap(n_neighbors=2), conjuntos=conjuntos
+    )
+    validar_metadata_resultado_umap(tabla, metadata)
+    assert tabla["split"].tolist() == conjuntos
+    origen, porcentaje, fracciones = preparar_datos_vistas_fracciones(
+        tabla, conjuntos=conjuntos
+    )
+    assert origen.tolist() == ["completo", "tope", "base"]
+    assert porcentaje.tolist() == [100, 25, 75]
+    assert fracciones["split"].tolist() == ["val", "test"]
+    # La protección de los notebooks exclusivos de test sigue activa.
+    with pytest.raises(ValueError, match="conjuntos seleccionados"):
+        preparar_datos_vistas_fracciones(tabla)
+    with pytest.raises(ValueError, match="conjuntos seleccionados"):
+        proyectar_caracteristicas_umap(
+            caracteristicas, metadata, ConfiguracionUmap(n_neighbors=2)
+        )
+
+
+def test_vistas_unificadas_admiten_titulos_y_prefijo_propio(
+    metadata_todos_los_conjuntos, tmp_path, capsys
+):
+    tabla = crear_tabla_umap(
+        metadata_todos_los_conjuntos, np.array([[1, 2], [3, 4], [5, 6]])
+    )
+    origen, porcentaje, _ = preparar_datos_vistas_fracciones(tabla, conjuntos=None)
+    figuras = []
+    try:
+        figuras.append(graficar_umap_test(tabla, titulo="UMAP unificado por clase"))
+        figuras.append(
+            graficar_umap_por_origen(
+                tabla, origen, (0, 6), (0, 7), titulo="UMAP unificado por origen"
+            )
+        )
+        figuras.append(
+            graficar_umap_por_porcentaje(
+                tabla,
+                porcentaje,
+                (0, 6),
+                (0, 7),
+                titulo="UMAP unificado por porcentaje",
+            )
+        )
+        assert [figura.axes[0].get_title() for figura in figuras] == [
+            "UMAP unificado por clase",
+            "UMAP unificado por origen",
+            "UMAP unificado por porcentaje",
+        ]
+        rutas = guardar_vistas_adicionales_umap(
+            [("porcentaje", figuras[2])],
+            tmp_path,
+            Path("modelo.pth"),
+            prefijo="umap_unificado",
+        )
+        assert rutas == (tmp_path / "umap_unificado_porcentaje_modelo.png",)
+        assert rutas[0].is_file()
+        imprimir_resumen_fracciones(origen, descripcion_conjunto="seleccionadas")
+        assert "imágenes de test" not in capsys.readouterr().out
+    finally:
+        for figura in figuras:
+            plt.close(figura)
