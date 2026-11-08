@@ -32,8 +32,11 @@ listing:
     filter-ui: false
   - id: experimentos
     contents: "output/experiments/*.ipynb"
-    type: default
-    fields: [title]
+    type: table
+    fields: [filename]
+    field-links: [filename]
+    field-display-names:
+      filename: "Experimento"
     sort: "filename asc"
     sort-ui: false
     filter-ui: false
