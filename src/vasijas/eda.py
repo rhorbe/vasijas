@@ -95,6 +95,23 @@ def agrupar_en_filas(
     elementos: list[T],
     cantidad_columnas: int = 3,
 ) -> list[list[T]]:
+    """Agrupa los elementos en filas conservando su orden original.
+
+    Args:
+        elementos: Lista de elementos que se desea agrupar.
+        cantidad_columnas: Cantidad máxima de elementos por fila. Por defecto, 3.
+
+    Returns:
+        Lista de filas. La última puede tener menos elementos que
+        ``cantidad_columnas``. Si ``elementos`` está vacío, devuelve una lista vacía.
+
+    Raises:
+        ValueError: Si ``cantidad_columnas`` es menor que 1.
+
+    Examples:
+        >>> agrupar_en_filas([1, 2, 3, 4, 5], cantidad_columnas=2)
+        [[1, 2], [3, 4], [5]]
+    """
     if cantidad_columnas < 1:
         raise ValueError("cantidad_columnas debe ser mayor que cero")
 
@@ -102,6 +119,33 @@ def agrupar_en_filas(
         elementos[inicio : inicio + cantidad_columnas]
         for inicio in range(0, len(elementos), cantidad_columnas)
     ]
+
+
+def mostrar_en_columnas(
+    textos: list[str],
+    cantidad_columnas: int = 5,
+) -> None:
+    """Imprime textos en columnas alineadas, conservando el orden por filas.
+
+    El ancho se ajusta al texto más largo y las columnas se separan con dos
+    espacios. Por defecto muestra cinco columnas. Una lista vacía no imprime
+    nada; una cantidad de columnas menor que uno produce un ValueError.
+    """
+    filas = agrupar_en_filas(textos, cantidad_columnas=cantidad_columnas)
+    ancho = calcular_ancho_maximo(textos)
+    for fila in filas:
+        print("  " + "  ".join(f"{texto:<{ancho}}" for texto in fila).rstrip())
+
+
+def mostrar_duplas(duplas: list[tuple[str, T]]) -> None:
+    """Imprime una dupla por fila, alineando la columna del segundo dato.
+
+    El primer dato es un texto y el segundo puede ser, por ejemplo, un conteo.
+    Conserva el orden recibido. Una lista vacía no imprime nada.
+    """
+    ancho = calcular_ancho_maximo([texto for texto, _ in duplas])
+    for texto, valor in duplas:
+        print(f"  {texto:<{ancho}} {valor}")
 
 
 def get_archivos_sin_registro(
