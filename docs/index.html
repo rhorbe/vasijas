@@ -159,7 +159,7 @@ ul.task-list li input[type="checkbox"] {
 
 
   window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-experimentos .list');
+    const listingTargetEl = window.document.querySelector('#listing-evaluacion .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
       return;
@@ -172,7 +172,7 @@ ul.task-list li input[type="checkbox"] {
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-experimentos'] = new List('listing-experimentos', options);
+    window['quarto-listings']['listing-evaluacion'] = new List('listing-evaluacion', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -187,7 +187,7 @@ ul.task-list li input[type="checkbox"] {
 
 
   window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-evaluacion .list');
+    const listingTargetEl = window.document.querySelector('#listing-experimentos .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
       return;
@@ -196,11 +196,11 @@ ul.task-list li input[type="checkbox"] {
     const options = {
       valueNames: ['listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
 
-      searchColumns: [],
+      searchColumns: ["listing-title","listing-author","listing-image","listing-description"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-evaluacion'] = new List('listing-evaluacion', options);
+    window['quarto-listings']['listing-experimentos'] = new List('listing-experimentos', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -261,8 +261,8 @@ window.Quarto = {
   <li><a href="#exploración" id="toc-exploración" class="nav-link active" data-scroll-target="#exploración">Exploración</a></li>
   <li><a href="#preparación" id="toc-preparación" class="nav-link" data-scroll-target="#preparación">Preparación</a></li>
   <li><a href="#entrenamiento" id="toc-entrenamiento" class="nav-link" data-scroll-target="#entrenamiento">Entrenamiento</a></li>
-  <li><a href="#experimentos" id="toc-experimentos" class="nav-link" data-scroll-target="#experimentos">Experimentos</a></li>
   <li><a href="#evaluación" id="toc-evaluación" class="nav-link" data-scroll-target="#evaluación">Evaluación</a></li>
+  <li><a href="#experimentos" id="toc-experimentos" class="nav-link" data-scroll-target="#experimentos">Experimentos</a></li>
   </ul>
 </nav>
     </div>
@@ -299,7 +299,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="exploración">Exploración</h2>
 <div id="listing-exploracion" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1794148019426" data-listing-reading-time-sort="1" data-listing-word-count-sort="118">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1794150782614" data-listing-reading-time-sort="1" data-listing-word-count-sort="118">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./notebooks/01.exploracion/01.EDA.html" class="no-external">Análisis Exploratorio de los Datos</a>
@@ -318,7 +318,18 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="preparación">Preparación</h2>
 <div id="listing-preparacion" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1789152820031" data-listing-reading-time-sort="1" data-listing-word-count-sort="53">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1789152820030" data-listing-reading-time-sort="2" data-listing-word-count-sort="236">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/02.preparacion/02.Normalizacion_nombres.html" class="no-external">Normalización de nombres</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="./notebooks/02.preparacion/02.Normalizacion_nombres.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1789152820031" data-listing-reading-time-sort="1" data-listing-word-count-sort="53">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./notebooks/02.preparacion/03.Agregado_de_ubicacion_a_dataset.html" class="no-external">Agregado de ubicación a metadata</a>
@@ -326,17 +337,6 @@ window.Quarto = {
 </div>
 <div class="metadata">
 <a href="./notebooks/02.preparacion/03.Agregado_de_ubicacion_a_dataset.html" class="no-external">
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1789767831746" data-listing-reading-time-sort="1" data-listing-word-count-sort="139">
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./notebooks/02.preparacion/08.Centrado_de_fracciones.html" class="no-external">Centrado de fracciones</a>
-</h3>
-</div>
-<div class="metadata">
-<a href="./notebooks/02.preparacion/08.Centrado_de_fracciones.html" class="no-external">
 </a>
 </div>
 </div>
@@ -362,18 +362,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-listing-file-modified-sort="1789152820036" data-listing-reading-time-sort="2" data-listing-word-count-sort="244">
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./notebooks/02.preparacion/07.Corte_en_fracciones.html" class="no-external">Corte en fracciones</a>
-</h3>
-</div>
-<div class="metadata">
-<a href="./notebooks/02.preparacion/07.Corte_en_fracciones.html" class="no-external">
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-listing-file-modified-sort="1789152820035" data-listing-reading-time-sort="1" data-listing-word-count-sort="167">
+<div class="quarto-post image-right" data-index="4" data-listing-file-modified-sort="1789152820035" data-listing-reading-time-sort="1" data-listing-word-count-sort="167">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./notebooks/02.preparacion/06.Corte_en_mitades.html" class="no-external">Corte en mitades</a>
@@ -384,40 +373,29 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-listing-file-modified-sort="1791730532055" data-listing-reading-time-sort="2" data-listing-word-count-sort="251">
+<div class="quarto-post image-right" data-index="5" data-listing-file-modified-sort="1789152820036" data-listing-reading-time-sort="2" data-listing-word-count-sort="244">
 <div class="body">
 <h3 class="no-anchor listing-title">
-<a href="./notebooks/02.preparacion/10.Division_de_perfiles_completos_en_train_val_y_test.html" class="no-external">División (Split) del dataset de perfiles completos</a>
+<a href="./notebooks/02.preparacion/07.Corte_en_fracciones.html" class="no-external">Corte en fracciones</a>
 </h3>
 </div>
 <div class="metadata">
-<a href="./notebooks/02.preparacion/10.Division_de_perfiles_completos_en_train_val_y_test.html" class="no-external">
+<a href="./notebooks/02.preparacion/07.Corte_en_fracciones.html" class="no-external">
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-listing-file-modified-sort="1792982568902" data-listing-reading-time-sort="2" data-listing-word-count-sort="289">
+<div class="quarto-post image-right" data-index="6" data-listing-file-modified-sort="1789767831746" data-listing-reading-time-sort="1" data-listing-word-count-sort="139">
 <div class="body">
 <h3 class="no-anchor listing-title">
-<a href="./notebooks/02.preparacion/12.Division_de_union_en_train_val_y_test.html" class="no-external">División (Split) del dataset unificado de perfiles completos y fracciones</a>
+<a href="./notebooks/02.preparacion/08.Centrado_de_fracciones.html" class="no-external">Centrado de fracciones</a>
 </h3>
 </div>
 <div class="metadata">
-<a href="./notebooks/02.preparacion/12.Division_de_union_en_train_val_y_test.html" class="no-external">
+<a href="./notebooks/02.preparacion/08.Centrado_de_fracciones.html" class="no-external">
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-listing-file-modified-sort="1789152820030" data-listing-reading-time-sort="2" data-listing-word-count-sort="236">
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./notebooks/02.preparacion/02.Normalizacion_nombres.html" class="no-external">Normalización de nombres</a>
-</h3>
-</div>
-<div class="metadata">
-<a href="./notebooks/02.preparacion/02.Normalizacion_nombres.html" class="no-external">
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="9" data-listing-file-modified-sort="1788909978477" data-listing-reading-time-sort="1" data-listing-word-count-sort="61">
+<div class="quarto-post image-right" data-index="7" data-listing-file-modified-sort="1788909978477" data-listing-reading-time-sort="1" data-listing-word-count-sort="61">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./notebooks/02.preparacion/09.Prueba_de_transformaciones.html" class="no-external">Transformaciones de datos con PyTorch</a>
@@ -428,7 +406,18 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-listing-file-modified-sort="1789767831748" data-listing-reading-time-sort="1" data-listing-word-count-sort="112">
+<div class="quarto-post image-right" data-index="8" data-listing-file-modified-sort="1791730532055" data-listing-reading-time-sort="2" data-listing-word-count-sort="251">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/02.preparacion/10.Division_de_perfiles_completos_en_train_val_y_test.html" class="no-external">División (Split) del dataset de perfiles completos</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="./notebooks/02.preparacion/10.Division_de_perfiles_completos_en_train_val_y_test.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="9" data-listing-file-modified-sort="1789767831748" data-listing-reading-time-sort="1" data-listing-word-count-sort="112">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./notebooks/02.preparacion/11.Union_datasets_fracciones_y_completos.html" class="no-external">Unión de datasets</a>
@@ -436,6 +425,17 @@ window.Quarto = {
 </div>
 <div class="metadata">
 <a href="./notebooks/02.preparacion/11.Union_datasets_fracciones_y_completos.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="10" data-listing-file-modified-sort="1792982568902" data-listing-reading-time-sort="2" data-listing-word-count-sort="289">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/02.preparacion/12.Division_de_union_en_train_val_y_test.html" class="no-external">División (Split) del dataset unificado de perfiles completos y fracciones</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="./notebooks/02.preparacion/12.Division_de_union_en_train_val_y_test.html" class="no-external">
 </a>
 </div>
 </div>
@@ -455,6 +455,47 @@ window.Quarto = {
 </div>
 <div class="metadata">
 <a href="./notebooks/03.entrenamiento/13.Entrenamiento_resnet18.html" class="no-external">
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">No matching items</div>
+</div>
+</section>
+<section id="evaluación" class="level2">
+<h2 class="anchored" data-anchor-id="evaluación">Evaluación</h2>
+<div id="listing-evaluacion" class="quarto-listing quarto-listing-container-default">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1793454583023" data-listing-reading-time-sort="3" data-listing-word-count-sort="555">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/04.evaluacion/14.Predicciones_usando_split_test.html" class="no-external">Evaluación del modelo sobre el split de prueba</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="./notebooks/04.evaluacion/14.Predicciones_usando_split_test.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1793673969870" data-listing-reading-time-sort="3" data-listing-word-count-sort="441">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/04.evaluacion/15.Umap_conjunto_test.html" class="no-external">UMAP del conjunto de test</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="./notebooks/04.evaluacion/15.Umap_conjunto_test.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-listing-file-modified-sort="1793673969870" data-listing-reading-time-sort="3" data-listing-word-count-sort="438">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/04.evaluacion/16.Umap_unificado.html" class="no-external">UMAP unificado de train, val y test</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="./notebooks/04.evaluacion/16.Umap_unificado.html" class="no-external">
 </a>
 </div>
 </div>
@@ -642,15 +683,6 @@ window.Quarto = {
 </a>
 </div>
 </div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
-</section>
-<section id="evaluación" class="level2">
-<h2 class="anchored" data-anchor-id="evaluación">Evaluación</h2>
-<div id="listing-evaluacion" class="quarto-listing quarto-listing-container-default">
-<div class="list quarto-listing-default">
-
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
 </div>

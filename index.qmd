@@ -6,33 +6,35 @@ listing:
     contents: "notebooks/01.exploracion/*.ipynb"
     type: default
     fields: [title]
+    sort: "filename asc"
     sort-ui: false
     filter-ui: false
   - id: preparacion
     contents: "notebooks/02.preparacion/*.ipynb"
     type: default
     fields: [title]
+    sort: "filename asc"
     sort-ui: false
     filter-ui: false
   - id: entrenamiento
     contents: "notebooks/03.entrenamiento/*.ipynb"
     type: default
     fields: [title]
+    sort: "filename asc"
+    sort-ui: false
+    filter-ui: false
+  - id: evaluacion
+    contents: "notebooks/04.evaluacion/*.ipynb"
+    type: default
+    fields: [title]
+    sort: "filename asc"
     sort-ui: false
     filter-ui: false
   - id: experimentos
     contents: "output/experiments/*.ipynb"
     type: default
     fields: [title]
-    sort-ui: false
-    filter-ui: false
-  - id: evaluacion
-    contents:
-      - "notebooks/04.evaluacion/14.Umap.ipynb"
-      - "notebooks/04.evaluacion/15.Predicciones_usando_split_test.ipynb"
-      - "notebooks/04.evaluacion/16.Predicciones_usando_sin_clase.ipynb"
-    type: default
-    fields: [title]
+    sort: "filename asc"
     sort-ui: false
     filter-ui: false
 ---
@@ -54,12 +56,12 @@ listing:
 ::: {#entrenamiento}
 :::
 
-## Experimentos
-
-::: {#experimentos}
-:::
-
 ## Evaluación
 
 ::: {#evaluacion}
+:::
+
+## Experimentos
+
+::: {#experimentos}
 :::

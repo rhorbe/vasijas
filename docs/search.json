@@ -571,7 +571,7 @@
     "href": "index.html#preparación",
     "title": "Vasijas",
     "section": "Preparación",
-    "text": "Preparación\n\n\n\n\n\nAgregado de ubicación a metadata\n\n\n\n\n\n\n\n\n\n\nCentrado de fracciones\n\n\n\n\n\n\n\n\n\n\nClasificación de perfiles\n\n\n\n\n\n\n\n\n\n\nConversión de perfiles a imágenes cuadradas\n\n\n\n\n\n\n\n\n\n\nCorte en fracciones\n\n\n\n\n\n\n\n\n\n\nCorte en mitades\n\n\n\n\n\n\n\n\n\n\nDivisión (Split) del dataset de perfiles completos\n\n\n\n\n\n\n\n\n\n\nDivisión (Split) del dataset unificado de perfiles completos y fracciones\n\n\n\n\n\n\n\n\n\n\nNormalización de nombres\n\n\n\n\n\n\n\n\n\n\nTransformaciones de datos con PyTorch\n\n\n\n\n\n\n\n\n\n\nUnión de datasets\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Preparación\n\n\n\n\n\nNormalización de nombres\n\n\n\n\n\n\n\n\n\n\nAgregado de ubicación a metadata\n\n\n\n\n\n\n\n\n\n\nClasificación de perfiles\n\n\n\n\n\n\n\n\n\n\nConversión de perfiles a imágenes cuadradas\n\n\n\n\n\n\n\n\n\n\nCorte en mitades\n\n\n\n\n\n\n\n\n\n\nCorte en fracciones\n\n\n\n\n\n\n\n\n\n\nCentrado de fracciones\n\n\n\n\n\n\n\n\n\n\nTransformaciones de datos con PyTorch\n\n\n\n\n\n\n\n\n\n\nDivisión (Split) del dataset de perfiles completos\n\n\n\n\n\n\n\n\n\n\nUnión de datasets\n\n\n\n\n\n\n\n\n\n\nDivisión (Split) del dataset unificado de perfiles completos y fracciones\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html#entrenamiento",
@@ -581,18 +581,18 @@
     "text": "Entrenamiento\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
+    "objectID": "index.html#evaluación",
+    "href": "index.html#evaluación",
+    "title": "Vasijas",
+    "section": "Evaluación",
+    "text": "Evaluación\n\n\n\n\n\nEvaluación del modelo sobre el split de prueba\n\n\n\n\n\n\n\n\n\n\nUMAP del conjunto de test\n\n\n\n\n\n\n\n\n\n\nUMAP unificado de train, val y test\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "index.html#experimentos",
     "href": "index.html#experimentos",
     "title": "Vasijas",
     "section": "Experimentos",
     "text": "Experimentos\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\n\n\nEntrenamiento de CNN ResNet-18 con Transfer Learning\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html#evaluación",
-    "href": "index.html#evaluación",
-    "title": "Vasijas",
-    "section": "Evaluación",
-    "text": "Evaluación\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "notebooks/01.exploracion/01.EDA.html",
