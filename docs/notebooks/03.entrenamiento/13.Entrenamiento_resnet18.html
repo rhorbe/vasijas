@@ -120,11 +120,11 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Este notebook será ejecutado varias veces con distintos parámetros. Para ello se utilizará Papermill, una herramienta para parametrizar y ejecutar Jupyter Notebooks.</p>
 <section id="objetivos" class="level2">
 <h2 class="anchored" data-anchor-id="objetivos">Objetivos</h2>
 <ul>
 <li>Construir un modelo baseline de clasificación mediante transfer learning con ResNet18 preentrenada.</li>
-<li>Entrenar inicialmente solo la capa clasificadora y descongelar <code>layer4</code> en <code>UNFREEZE_EPOCH</code> con una tasa de aprendizaje menor.</li>
 <li>Aplicar transformaciones y aumentación de datos al conjunto de entrenamiento.</li>
 <li>Entrenar y validar el modelo registrando loss y accuracy por época.</li>
 <li>Detener el entrenamiento si val_loss no mejora suficientemente durante la paciencia configurada.</li>
@@ -135,10 +135,97 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="dispositivo-para-procesamiento" class="level2">
 <h2 class="anchored" data-anchor-id="dispositivo-para-procesamiento">Dispositivo para procesamiento</h2>
+<div id="13c7016bbf1e6754" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-11-08T18:26:29.761201800Z&quot;,&quot;start_time&quot;:&quot;2026-11-08T18:26:29.729046600Z&quot;}}" data-execution_count="3">
+<div class="cell-output cell-output-stdout">
+<pre><code>Dispositivo utilizado para procesamiento: CPU</code></pre>
+</div>
+</div>
 </section>
 <section id="división-de-datos" class="level2">
 <h2 class="anchored" data-anchor-id="división-de-datos">División de datos</h2>
 <p>La pertenencia de cada imagen a <code>train</code>, <code>val</code> o <code>test</code> se lee de la metadata generada por el notebook de división. La relación se realiza mediante <code>ruta_relativa</code>; por tanto, el split no se recalcula aunque cambien la semilla o los parámetros del entrenamiento.</p>
+<div id="80938cae994634fd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-11-08T18:26:30.976619800Z&quot;,&quot;start_time&quot;:&quot;2026-11-08T18:26:29.793724300Z&quot;}}" data-execution_count="5">
+<div class="cell-output cell-output-stdout">
+<pre><code>Dataset seleccionado: completos
+Directorio de datos: C:\Users\rafae\Dev\vasijas\data\10.cuadrados_divididos_en_train_val_y_test
+Metadata de split: data\10.cuadrados_divididos_en_train_val_y_test\metadata.csv
+Clases: clase01 clase02 clase03 clase05 clase06 clase07 clase08 clase09 clase10 clase11
+Split persistido -&gt; train: 749, val: 161, test: 161</code></pre>
+</div>
+</div>
+<div id="c2646034cc3924da" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-11-08T18:27:37.505722500Z&quot;,&quot;start_time&quot;:&quot;2026-11-08T18:26:31.034837500Z&quot;}}" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13.Entrenamiento_resnet18_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="ec18bc38abd0749a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-11-08T18:29:38.555521500Z&quot;,&quot;start_time&quot;:&quot;2026-11-08T18:27:37.556130600Z&quot;}}" data-execution_count="8">
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/2
+Train Loss: 1.6998 | Train Acc: 0.4833 | Val Loss: 1.5599 | Val Acc: 0.5528
+Tiempo de epoch: 0:01:33.803732
+
+Epoch 2/2
+Train Loss: 1.2879 | Train Acc: 0.6021 | Val Loss: 1.2916 | Val Acc: 0.5839
+Tiempo de epoch: 0:00:27.114546
+
+Se restauran los pesos de epoch 2 (val_loss=1.2916).
+Tiempo total de entrenamiento: 0:02:00.968282</code></pre>
+</div>
+</div>
+<div id="c5f8dd38c999cd9d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-11-08T18:29:38.991545500Z&quot;,&quot;start_time&quot;:&quot;2026-11-08T18:29:38.602012500Z&quot;}}" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13.Entrenamiento_resnet18_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13.Entrenamiento_resnet18_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="87a06fdb2ea497ab" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-11-08T18:30:41.449145700Z&quot;,&quot;start_time&quot;:&quot;2026-11-08T18:29:38.994533500Z&quot;}}" data-execution_count="10">
+<div class="cell-output cell-output-stdout">
+<pre><code>Test Acc: 0.5280
+              precision    recall  f1-score   support
+
+     clase01       0.00      0.00      0.00         4
+     clase02       0.00      0.00      0.00         7
+     clase03       0.00      0.00      0.00        11
+     clase05       0.80      0.50      0.62         8
+     clase06       0.00      0.00      0.00         8
+     clase07       0.00      0.00      0.00         7
+     clase08       0.53      0.98      0.69        42
+     clase09       0.00      0.00      0.00         3
+     clase10       0.88      0.43      0.58        53
+     clase11       0.32      0.94      0.48        18
+
+    accuracy                           0.53       161
+   macro avg       0.25      0.29      0.24       161
+weighted avg       0.51      0.53      0.46       161
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13.Entrenamiento_resnet18_files/figure-html/cell-11-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="8210ac633d5231cb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;ExecuteTime&quot;,&quot;value&quot;:{&quot;end_time&quot;:&quot;2026-11-08T18:30:41.570657800Z&quot;,&quot;start_time&quot;:&quot;2026-11-08T18:30:41.477229200Z&quot;}}" data-execution_count="11">
+<div class="cell-output cell-output-stdout">
+<pre><code>Modelo guardado en: output\models\model_resnet18_completos_default.pth</code></pre>
+</div>
+</div>
 
 
 </section>
