@@ -225,24 +225,3 @@ quarto preview
 
 El índice reúne los notebooks de exploración, preparación,
 entrenamiento, evaluación y experimentos.
-
-## Desarrollo
-
-Ejecutar las pruebas:
-
-```bash
-uv run pytest
-```
-
-Revisar estilo y formato:
-
-```bash
-uv run ruff check .
-uv run ruff format --check .
-```
-
-Instalar los hooks del repositorio:
-
-```bash
-uv run pre-commit install
-```
