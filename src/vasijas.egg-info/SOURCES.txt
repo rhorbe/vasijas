@@ -6,6 +6,7 @@ src/vasijas/config.py
 src/vasijas/datasets.py
 src/vasijas/eda.py
 src/vasijas/entrenamiento_cnn.py
+src/vasijas/evaluacion.py
 src/vasijas/imagenes.py
 src/vasijas/metadata.py
 src/vasijas/nombres.py
@@ -15,8 +16,15 @@ src/vasijas/reporting.py
 src/vasijas/split_dataset.py
 src/vasijas/transformaciones.py
 src/vasijas/ubicacion.py
+src/vasijas/umap_evaluacion.py
 src/vasijas.egg-info/PKG-INFO
 src/vasijas.egg-info/SOURCES.txt
 src/vasijas.egg-info/dependency_links.txt
 src/vasijas.egg-info/requires.txt
 src/vasijas.egg-info/top_level.txt
+tests/test_evaluacion.py
+tests/test_evaluacion_sin_clase.py
+tests/test_mejor_estado_validacion.py
+tests/test_metricas_por_avance.py
+tests/test_recall_por_clase_y_avance.py
+tests/test_umap_evaluacion.py

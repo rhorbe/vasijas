@@ -5,6 +5,7 @@ Summary: Proyecto de Tesis - Vasijas
 Author-email: Rafael Orbe <rafaelorbe@outlook.com>
 Requires-Python: >=3.11
 Requires-Dist: ipykernel>=7.2.0
+Requires-Dist: ipywidgets>=8.1.9
 Requires-Dist: load-dotenv>=0.1.0
 Requires-Dist: matplotlib>=3.10.8
 Requires-Dist: nbconvert>=7.16.6
@@ -22,6 +23,7 @@ Requires-Dist: scipy-stubs>=1.17.1.1
 Requires-Dist: seaborn>=0.13.2
 Requires-Dist: torch>=2.10.0
 Requires-Dist: torchvision>=0.25.0
+Requires-Dist: umap-learn>=0.5.12
 Provides-Extra: dev
 Requires-Dist: pre-commit; extra == "dev"
 Requires-Dist: pytest; extra == "dev"
