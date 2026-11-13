@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Rafael Horacio Orbe">
+
+<title>Entrenamiento de CNN ResNet-18 con Transfer Learning</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a0f9fd0d421825b736dc1bbcbcba2219.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+
+  <ul>
+  <li><a href="#objetivos" id="toc-objetivos" class="nav-link active" data-scroll-target="#objetivos">Objetivos</a></li>
+  <li><a href="#dispositivo-para-procesamiento" id="toc-dispositivo-para-procesamiento" class="nav-link" data-scroll-target="#dispositivo-para-procesamiento">Dispositivo para procesamiento</a></li>
+  <li><a href="#división-de-datos" id="toc-división-de-datos" class="nav-link" data-scroll-target="#división-de-datos">División de datos</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Entrenamiento de CNN ResNet-18 con Transfer Learning</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">autor</div>
+    <div class="quarto-title-meta-contents">
+             <p>Rafael Horacio Orbe </p>
+          </div>
+  </div>
+
+
+
+  </div>
+
+
+
+</header>
+
+
+<section id="objetivos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos">Objetivos</h2>
+<ul>
+<li>Construir un modelo baseline de clasificación mediante transfer learning con ResNet18 preentrenada.</li>
+<li>Entrenar inicialmente solo la capa clasificadora y descongelar <code>layer4</code> en <code>UNFREEZE_EPOCH</code> con una tasa de aprendizaje menor.</li>
+<li>Aplicar transformaciones y aumentación de datos al conjunto de entrenamiento.</li>
+<li>Entrenar y validar el modelo registrando loss y accuracy por época.</li>
+<li>Detener el entrenamiento si val_loss no mejora suficientemente durante la paciencia configurada.</li>
+<li>Evaluar el modelo de la mejor época de validación sobre el conjunto de prueba.</li>
+<li>Analizar los resultados mediante accuracy, precision, recall, F1-score, reporte de clasificación y matriz de confusión normalizada.</li>
+<li>Guardar los pesos restaurados de la mejor época de validación (o los finales si se desactiva la parada anticipada).</li>
+</ul>
+</section>
+<section id="dispositivo-para-procesamiento" class="level2">
+<h2 class="anchored" data-anchor-id="dispositivo-para-procesamiento">Dispositivo para procesamiento</h2>
+<div id="13c7016bbf1e6754" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:0.053943,&quot;end_time&quot;:&quot;2026-10-15T18:10:01.798507+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T18:10:01.744564+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="3">
+<div class="cell-output cell-output-stdout">
+<pre><code>Dispositivo utilizado para procesamiento: CUDA - NVIDIA GeForce GTX 1650</code></pre>
+</div>
+</div>
+</section>
+<section id="división-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="división-de-datos">División de datos</h2>
+<p>La pertenencia de cada imagen a <code>train</code>, <code>val</code> o <code>test</code> se lee de la metadata generada por el notebook de división. La relación se realiza mediante <code>ruta_relativa</code>; por tanto, el split no se recalcula aunque cambien la semilla o los parámetros del entrenamiento.</p>
+<div id="80938cae994634fd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:2.202568,&quot;end_time&quot;:&quot;2026-10-15T18:10:04.021771+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T18:10:01.819203+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="6">
+<div class="cell-output cell-output-stdout">
+<pre><code>Dataset seleccionado: unificado
+Directorio de datos: /home/rafael/Dev/vasijas/data/12.unificado_divididos_en_train_val_y_test
+Metadata de split: data/12.unificado_divididos_en_train_val_y_test/metadata.csv
+Clases: clase01 clase02 clase03 clase05 clase06 clase07 clase08 clase09 clase10 clase11
+Split persistido -&gt; train: 14231, val: 3059, test: 3059</code></pre>
+</div>
+</div>
+<div id="c2646034cc3924da" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:1.149494,&quot;end_time&quot;:&quot;2026-10-15T18:10:05.173698+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T18:10:04.024204+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="7">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_exp_resnet18_unificado_bs16_lr3e-4_weighted_unfreeze_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="ac5cff20ce78fde" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:0.011921,&quot;end_time&quot;:&quot;2026-10-15T18:10:05.188847+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T18:10:05.176926+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="8">
+<div class="cell-output cell-output-stdout">
+<pre><code>Conteo train por clase: [342, 608, 950, 741, 684, 646, 3724, 266, 4712, 1558]
+Pesos de clase: [4.161, 2.341, 1.498, 1.921, 2.081, 2.203, 0.382, 5.35, 0.302, 0.913]</code></pre>
+</div>
+</div>
+<div id="ec18bc38abd0749a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:7240.064573,&quot;end_time&quot;:&quot;2026-10-15T20:10:45.256477+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T18:10:05.191904+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="9">
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/300
+Train Loss: 1.9639 | Train Acc: 0.3855 | Val Loss: 1.7681 | Val Acc: 0.3942
+Tiempo de epoch: 0:01:27.240000
+
+Epoch 2/300
+Train Loss: 1.6907 | Train Acc: 0.4696 | Val Loss: 1.6256 | Val Acc: 0.4191
+Tiempo de epoch: 0:01:24.354470
+
+Epoch 3/300
+Train Loss: 1.5957 | Train Acc: 0.4987 | Val Loss: 1.6742 | Val Acc: 0.3671
+Tiempo de epoch: 0:01:24.214123
+
+Epoch 4/300
+Train Loss: 1.5324 | Train Acc: 0.5076 | Val Loss: 1.5843 | Val Acc: 0.4041
+Tiempo de epoch: 0:01:24.210426
+
+Epoch 5/300
+Train Loss: 1.4929 | Train Acc: 0.5113 | Val Loss: 1.5607 | Val Acc: 0.3880
+Tiempo de epoch: 0:01:24.171907
+
+Epoch 6/300
+Train Loss: 1.4643 | Train Acc: 0.5205 | Val Loss: 1.4980 | Val Acc: 0.4740
+Tiempo de epoch: 0:01:24.341734
+
+Epoch 7/300
+Train Loss: 1.4512 | Train Acc: 0.5246 | Val Loss: 1.5805 | Val Acc: 0.3759
+Tiempo de epoch: 0:01:24.253228
+
+Epoch 8/300
+Train Loss: 1.4188 | Train Acc: 0.5249 | Val Loss: 1.4815 | Val Acc: 0.4394
+Tiempo de epoch: 0:01:24.359295
+
+Epoch 9/300
+Train Loss: 1.3979 | Train Acc: 0.5363 | Val Loss: 1.5224 | Val Acc: 0.4220
+Tiempo de epoch: 0:01:24.325327
+
+Epoch 10/300
+Train Loss: 1.3961 | Train Acc: 0.5298 | Val Loss: 1.4142 | Val Acc: 0.4861
+Tiempo de epoch: 0:01:24.344517
+
+Epoch 11: se descongela layer4 con lr=3.00e-05 (head lr=3.00e-04)
+
+Epoch 11/300
+Train Loss: 1.1871 | Train Acc: 0.5819 | Val Loss: 1.1310 | Val Acc: 0.5907
+Tiempo de epoch: 0:01:57.813563
+
+Epoch 12/300
+Train Loss: 0.9889 | Train Acc: 0.6359 | Val Loss: 0.9187 | Val Acc: 0.6535
+Tiempo de epoch: 0:01:56.075285
+
+Epoch 13/300
+Train Loss: 0.8783 | Train Acc: 0.6643 | Val Loss: 0.8980 | Val Acc: 0.6505
+Tiempo de epoch: 0:01:56.194922
+
+Epoch 14/300
+Train Loss: 0.8197 | Train Acc: 0.6738 | Val Loss: 0.9755 | Val Acc: 0.6100
+Tiempo de epoch: 0:01:56.120893
+
+Epoch 15/300
+Train Loss: 0.7716 | Train Acc: 0.6885 | Val Loss: 0.8748 | Val Acc: 0.6675
+Tiempo de epoch: 0:01:56.293454
+
+Epoch 16/300
+Train Loss: 0.7325 | Train Acc: 0.7056 | Val Loss: 0.8540 | Val Acc: 0.6623
+Tiempo de epoch: 0:01:56.190298
+
+Epoch 17/300
+Train Loss: 0.6975 | Train Acc: 0.7104 | Val Loss: 0.8629 | Val Acc: 0.6878
+Tiempo de epoch: 0:01:56.242880
+
+Epoch 18/300
+Train Loss: 0.6676 | Train Acc: 0.7251 | Val Loss: 0.8087 | Val Acc: 0.6878
+Tiempo de epoch: 0:01:56.260677
+
+Epoch 19/300
+Train Loss: 0.6674 | Train Acc: 0.7276 | Val Loss: 0.9529 | Val Acc: 0.6365
+Tiempo de epoch: 0:01:56.272617
+
+Epoch 20/300
+Train Loss: 0.6301 | Train Acc: 0.7340 | Val Loss: 0.7780 | Val Acc: 0.6966
+Tiempo de epoch: 0:01:56.237982
+
+Epoch 21/300
+Train Loss: 0.6183 | Train Acc: 0.7363 | Val Loss: 0.7111 | Val Acc: 0.7385
+Tiempo de epoch: 0:01:56.266646
+
+Epoch 22/300
+Train Loss: 0.5997 | Train Acc: 0.7489 | Val Loss: 0.7918 | Val Acc: 0.6999
+Tiempo de epoch: 0:01:56.063104
+
+Epoch 23/300
+Train Loss: 0.5783 | Train Acc: 0.7484 | Val Loss: 0.9571 | Val Acc: 0.6355
+Tiempo de epoch: 0:01:56.178506
+
+Epoch 24/300
+Train Loss: 0.5906 | Train Acc: 0.7468 | Val Loss: 0.8125 | Val Acc: 0.6751
+Tiempo de epoch: 0:01:56.117894
+
+Epoch 25/300
+Train Loss: 0.5636 | Train Acc: 0.7543 | Val Loss: 0.7646 | Val Acc: 0.7019
+Tiempo de epoch: 0:01:56.184774
+
+Epoch 26/300
+Train Loss: 0.5545 | Train Acc: 0.7598 | Val Loss: 0.8284 | Val Acc: 0.6878
+Tiempo de epoch: 0:01:56.097407
+
+Epoch 27/300
+Train Loss: 0.5404 | Train Acc: 0.7627 | Val Loss: 0.8251 | Val Acc: 0.6921
+Tiempo de epoch: 0:01:56.161546
+
+Epoch 28/300
+Train Loss: 0.5203 | Train Acc: 0.7729 | Val Loss: 0.8049 | Val Acc: 0.6764
+Tiempo de epoch: 0:01:56.181954
+
+Epoch 29/300
+Train Loss: 0.5114 | Train Acc: 0.7749 | Val Loss: 0.7582 | Val Acc: 0.7087
+Tiempo de epoch: 0:01:56.092183
+
+Epoch 30/300
+Train Loss: 0.5136 | Train Acc: 0.7722 | Val Loss: 0.9512 | Val Acc: 0.6430
+Tiempo de epoch: 0:01:56.177298
+
+Epoch 31/300
+Train Loss: 0.4945 | Train Acc: 0.7765 | Val Loss: 0.6873 | Val Acc: 0.7414
+Tiempo de epoch: 0:01:56.800407
+
+Epoch 32/300
+Train Loss: 0.4970 | Train Acc: 0.7763 | Val Loss: 0.7853 | Val Acc: 0.6878
+Tiempo de epoch: 0:01:56.290120
+
+Epoch 33/300
+Train Loss: 0.4843 | Train Acc: 0.7810 | Val Loss: 0.7618 | Val Acc: 0.7019
+Tiempo de epoch: 0:01:56.448495
+
+Epoch 34/300
+Train Loss: 0.4746 | Train Acc: 0.7853 | Val Loss: 0.6993 | Val Acc: 0.7231
+Tiempo de epoch: 0:01:56.268119
+
+Epoch 35/300
+Train Loss: 0.4647 | Train Acc: 0.7855 | Val Loss: 0.6552 | Val Acc: 0.7643
+Tiempo de epoch: 0:01:56.158167
+
+Epoch 36/300
+Train Loss: 0.4810 | Train Acc: 0.7873 | Val Loss: 0.8006 | Val Acc: 0.6943
+Tiempo de epoch: 0:01:56.152707
+
+Epoch 37/300
+Train Loss: 0.4520 | Train Acc: 0.7992 | Val Loss: 0.7697 | Val Acc: 0.7346
+Tiempo de epoch: 0:01:56.250640
+
+Epoch 38/300
+Train Loss: 0.4464 | Train Acc: 0.8007 | Val Loss: 0.7266 | Val Acc: 0.7323
+Tiempo de epoch: 0:01:56.255336
+
+Epoch 39/300
+Train Loss: 0.4278 | Train Acc: 0.8014 | Val Loss: 0.6806 | Val Acc: 0.7473
+Tiempo de epoch: 0:01:56.308138
+
+Epoch 40/300
+Train Loss: 0.4472 | Train Acc: 0.7957 | Val Loss: 0.7157 | Val Acc: 0.7218
+Tiempo de epoch: 0:01:56.575515
+
+Epoch 41/300
+Train Loss: 0.4421 | Train Acc: 0.7977 | Val Loss: 0.6607 | Val Acc: 0.7466
+Tiempo de epoch: 0:01:56.293783
+
+Epoch 42/300
+Train Loss: 0.4115 | Train Acc: 0.8069 | Val Loss: 0.7912 | Val Acc: 0.7225
+Tiempo de epoch: 0:01:56.314395
+
+Epoch 43/300
+Train Loss: 0.4207 | Train Acc: 0.8037 | Val Loss: 0.8964 | Val Acc: 0.6623
+Tiempo de epoch: 0:01:56.223455
+
+Epoch 44/300
+Train Loss: 0.4088 | Train Acc: 0.8075 | Val Loss: 0.7364 | Val Acc: 0.7385
+Tiempo de epoch: 0:01:56.249126
+
+Epoch 45/300
+Train Loss: 0.3974 | Train Acc: 0.8116 | Val Loss: 0.6776 | Val Acc: 0.7748
+Tiempo de epoch: 0:01:56.095398
+
+Epoch 46/300
+Train Loss: 0.4125 | Train Acc: 0.8041 | Val Loss: 0.7298 | Val Acc: 0.7287
+Tiempo de epoch: 0:01:56.132639
+
+Epoch 47/300
+Train Loss: 0.4122 | Train Acc: 0.8109 | Val Loss: 0.8973 | Val Acc: 0.6679
+Tiempo de epoch: 0:01:56.358801
+
+Epoch 48/300
+Train Loss: 0.3900 | Train Acc: 0.8127 | Val Loss: 0.8122 | Val Acc: 0.6979
+Tiempo de epoch: 0:01:56.275948
+
+Epoch 49/300
+Train Loss: 0.3867 | Train Acc: 0.8210 | Val Loss: 0.7654 | Val Acc: 0.7270
+Tiempo de epoch: 0:01:56.207347
+
+Epoch 50/300
+Train Loss: 0.3923 | Train Acc: 0.8172 | Val Loss: 0.6719 | Val Acc: 0.7512
+Tiempo de epoch: 0:01:56.054700
+
+Epoch 51/300
+Train Loss: 0.3923 | Train Acc: 0.8106 | Val Loss: 0.6996 | Val Acc: 0.7532
+Tiempo de epoch: 0:01:56.167702
+
+Epoch 52/300
+Train Loss: 0.3819 | Train Acc: 0.8158 | Val Loss: 0.6700 | Val Acc: 0.7578
+Tiempo de epoch: 0:01:56.217213
+
+Epoch 53/300
+Train Loss: 0.3670 | Train Acc: 0.8269 | Val Loss: 0.8943 | Val Acc: 0.6760
+Tiempo de epoch: 0:01:56.231758
+
+Epoch 54/300
+Train Loss: 0.3641 | Train Acc: 0.8218 | Val Loss: 0.7474 | Val Acc: 0.7290
+Tiempo de epoch: 0:01:56.287394
+
+Epoch 55/300
+Train Loss: 0.3549 | Train Acc: 0.8268 | Val Loss: 0.7240 | Val Acc: 0.7574
+Tiempo de epoch: 0:01:56.319406
+
+Epoch 56/300
+Train Loss: 0.3618 | Train Acc: 0.8266 | Val Loss: 0.6883 | Val Acc: 0.7499
+Tiempo de epoch: 0:01:56.112860
+
+Epoch 57/300
+Train Loss: 0.3647 | Train Acc: 0.8264 | Val Loss: 0.7036 | Val Acc: 0.7650
+Tiempo de epoch: 0:01:56.133632
+
+Epoch 58/300
+Train Loss: 0.3551 | Train Acc: 0.8266 | Val Loss: 0.7270 | Val Acc: 0.7571
+Tiempo de epoch: 0:01:56.273286
+
+Epoch 59/300
+Train Loss: 0.3542 | Train Acc: 0.8325 | Val Loss: 0.6648 | Val Acc: 0.7601
+Tiempo de epoch: 0:01:56.169839
+
+Epoch 60/300
+Train Loss: 0.3525 | Train Acc: 0.8236 | Val Loss: 0.7335 | Val Acc: 0.7480
+Tiempo de epoch: 0:01:56.178779
+
+Epoch 61/300
+Train Loss: 0.3533 | Train Acc: 0.8300 | Val Loss: 0.7381 | Val Acc: 0.7473
+Tiempo de epoch: 0:01:56.308222
+
+Epoch 62/300
+Train Loss: 0.3501 | Train Acc: 0.8385 | Val Loss: 0.7135 | Val Acc: 0.7486
+Tiempo de epoch: 0:01:56.160269
+
+Epoch 63/300
+Train Loss: 0.3427 | Train Acc: 0.8328 | Val Loss: 0.6869 | Val Acc: 0.7558
+Tiempo de epoch: 0:01:56.158926
+
+Epoch 64/300
+Train Loss: 0.3258 | Train Acc: 0.8386 | Val Loss: 0.7598 | Val Acc: 0.7326
+Tiempo de epoch: 0:01:56.125909
+
+Epoch 65/300
+Train Loss: 0.3411 | Train Acc: 0.8352 | Val Loss: 0.6718 | Val Acc: 0.7532
+Tiempo de epoch: 0:01:56.270844
+
+Parada anticipada en epoch 65: 30 épocas sin mejora suficiente de val_loss.
+Se restauran los pesos de epoch 35 (val_loss=0.6552).
+Tiempo total de entrenamiento: 2:00:40.036364</code></pre>
+</div>
+</div>
+<div id="c5f8dd38c999cd9d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:0.122936,&quot;end_time&quot;:&quot;2026-10-15T20:10:45.382250+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T20:10:45.259314+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="10">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_exp_resnet18_unificado_bs16_lr3e-4_weighted_unfreeze_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_exp_resnet18_unificado_bs16_lr3e-4_weighted_unfreeze_files/figure-html/cell-11-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="87a06fdb2ea497ab" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:15.778427,&quot;end_time&quot;:&quot;2026-10-15T20:11:01.164625+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T20:10:45.386198+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="11">
+<div class="cell-output cell-output-stdout">
+<pre><code>Test Acc: 0.7509
+              precision    recall  f1-score   support
+
+     clase01       0.64      0.87      0.74        76
+     clase02       0.38      0.42      0.40       133
+     clase03       0.72      0.70      0.71       209
+     clase05       0.78      0.84      0.81       152
+     clase06       0.52      0.59      0.55       152
+     clase07       0.89      0.69      0.78       133
+     clase08       0.83      0.71      0.76       798
+     clase09       0.21      0.47      0.29        57
+     clase10       0.87      0.90      0.88      1007
+     clase11       0.72      0.64      0.68       342
+
+    accuracy                           0.75      3059
+   macro avg       0.65      0.68      0.66      3059
+weighted avg       0.77      0.75      0.76      3059
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_exp_resnet18_unificado_bs16_lr3e-4_weighted_unfreeze_files/figure-html/cell-12-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="8210ac633d5231cb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;papermill&quot;,&quot;value&quot;:{&quot;duration&quot;:0.040527,&quot;end_time&quot;:&quot;2026-10-15T20:11:01.209950+00:00&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2026-10-15T20:11:01.169423+00:00&quot;,&quot;status&quot;:&quot;completed&quot;}}" data-tags="[]" data-execution_count="12">
+<div class="cell-output cell-output-stdout">
+<pre><code>Modelo guardado en: output/models/model_resnet18_unificado_bs16_lr3e-4_weighted_unfreeze.pth</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button,
+          { trigger: "manual",
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined;
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              }
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            }
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

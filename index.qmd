@@ -1,0 +1,70 @@
+---
+title: "Vasijas"
+format: html
+listing:
+  - id: exploracion
+    contents: "notebooks/01.exploracion/*.ipynb"
+    type: default
+    fields: [title]
+    sort: "filename asc"
+    sort-ui: false
+    filter-ui: false
+  - id: preparacion
+    contents: "notebooks/02.preparacion/*.ipynb"
+    type: default
+    fields: [title]
+    sort: "filename asc"
+    sort-ui: false
+    filter-ui: false
+  - id: entrenamiento
+    contents: "notebooks/03.entrenamiento/*.ipynb"
+    type: default
+    fields: [title]
+    sort: "filename asc"
+    sort-ui: false
+    filter-ui: false
+  - id: evaluacion
+    contents: "notebooks/04.evaluacion/*.ipynb"
+    type: default
+    fields: [title]
+    sort: "filename asc"
+    sort-ui: false
+    filter-ui: false
+  - id: experimentos
+    contents: "output/experiments/*.ipynb"
+    type: table
+    fields: [filename]
+    field-links: [filename]
+    field-display-names:
+      filename: "Experimento"
+    sort: "filename asc"
+    sort-ui: false
+    filter-ui: false
+---
+
+Índice de reportes generados por el proyecto.
+
+## Exploración
+
+::: {#exploracion}
+:::
+
+## Preparación
+
+::: {#preparacion}
+:::
+
+## Entrenamiento
+
+::: {#entrenamiento}
+:::
+
+## Evaluación
+
+::: {#evaluacion}
+:::
+
+## Experimentos
+
+::: {#experimentos}
+:::
