@@ -7,6 +7,9 @@ generación de perfiles parciales, entrenamiento por transferencia y evaluación
 El trabajo se organiza en notebooks Jupyter, con funciones reutilizables en
 el paquete Python `vasijas`.
 
+## Reportes de ejecución
+Ver en: https://rhorbe.github.io/vasijas/
+
 ## Funcionalidades
 
 - Exploración de imágenes y metadatos.
