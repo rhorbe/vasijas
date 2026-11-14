@@ -1,0 +1,7 @@
+Identificador,Tiene asa,Tendencia Formal,Borde,Cuello,Cuerpo,Base,Clase Ana,Diametro Borde,Diametro Base,Altura Total,Cronologia,Ubicacion,id_perfil_completo,borde_origen,porcentaje_avance
+ej_01a_tope,No,IV,1,D,7,1,5.0,159,161,178,ibero,Ejemplo Nombre Yacimiento,ej_01a,tope,50.0
+ej_01a_base,No,IV,1,D,7,1,5.0,159,161,178,ibero,Ejemplo Nombre Yacimiento,ej_01a,base,50.0
+ej_02a_tope,Si,V,7,B,10,2,7.0,42,32,58,romano,Ejemplo Nombre Yacimiento,ej_02a,tope,50.0
+ej_02a_base,Si,V,7,B,10,2,7.0,42,32,58,romano,Ejemplo Nombre Yacimiento,ej_02a,base,50.0
+ej_02b_tope,No,II,1,B,2,2,11.0,160,41,45,ibero,Ejemplo Nombre Yacimiento,ej_02b,tope,50.0
+ej_02b_base,No,II,1,B,2,2,11.0,160,41,45,ibero,Ejemplo Nombre Yacimiento,ej_02b,base,50.0

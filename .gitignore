@@ -10,13 +10,11 @@
 .idea/inspectionProfiles/profiles_settings.xml
 .env
 notebooks/__pycache__/*
-/data
+/data/
 __pycache__/
 .quarto/
 /_freeze/
-/output/quarto/
 
 /.quarto/
 
 **/*.quarto_ipynb
-/output/reports/*

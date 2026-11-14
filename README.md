@@ -7,6 +7,17 @@ generación de perfiles parciales, entrenamiento por transferencia y evaluación
 El trabajo se organiza en notebooks Jupyter, con funciones reutilizables en
 el paquete Python `vasijas`.
 
+## Conjunto de datos
+Dado que no se cuenta con autorización para la publicación del conjunto de datos utilizado
+para este trabajo es que solo se publicarán datos de ejemplo.
+
+Algunas de las imágenes utilizadas están disponibles en el trabajo:
+https://github.com/celiacintas/vasijas/tree/iberianGAN
+
+## Reportes de ejecución
+En el siguiente enlace se pueden encontrar los reportes de salida de los notebooks Jupyter
+Utilizados para este trabajo: https://rhorbe.github.io/vasijas/
+
 ## Funcionalidades
 
 - Exploración de imágenes y metadatos.
