@@ -1,0 +1,33 @@
+project:
+  type: website
+  output-dir: docs/
+  render:
+    - index.qmd
+    - notebooks/01.exploracion/*.ipynb
+    - notebooks/02.preparacion/*.ipynb
+    - notebooks/03.entrenamiento/*.ipynb
+    - notebooks/04.evaluacion/*.ipynb
+    - output/experiments/*.ipynb
+
+author: Rafael Horacio Orbe
+author-title: "autor"
+
+toc: true
+toc-depth: 3
+toc-title: "Tabla de contenidos"
+
+preview:
+  port: 5555
+  browser: true
+
+jupyter: python3
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
+format:
+  html:
+    number-sections: false
+    theme: cosmo

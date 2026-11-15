@@ -1,0 +1,162 @@
+﻿Identificador,Tiene asa,Tendencia Formal,Borde,Cuello,Cuerpo,Base,Clase Ana,Diametro Borde,Diametro Base,Altura Total,Cronologia,Ubicacion,ruta_relativa,clase_predicha,confianza
+al_08c,Si,IV,11,B,7,1,,116,52,248,ibero,Almedinilla,sin_clase/al_08c.png,clase05,0.8118102550506592
+al_09d,No,II,11,B,6,1,,250,221,50,ibero,Almedinilla,sin_clase/al_09d.png,clase10,0.9992619156837463
+al_09g,Si,IV,13,B,4,1,,105,76,185,ibero,Almedinilla,sin_clase/al_09g.png,clase06,0.8828192949295044
+al_09i,No,II,2,B,1,2,,150,153,235,ibero,Almedinilla,sin_clase/al_09i.png,clase10,0.9412423968315125
+al_09j,No,II,2,B,1,2,,100,61,120,ibero,Almedinilla,sin_clase/al_09j.png,clase10,0.9747723340988159
+al_11f,No,III,1,B,10,4,,136,15,122,ibero,Almedinilla,sin_clase/al_11f.png,clase11,0.606754720211029
+al_15a,Si,IV,15,B,6,1,,166,70,407,ibero,Almedinilla,sin_clase/al_15a.png,clase01,0.9984311461448669
+at_008,Si,V,11,B,10,3,,70,36,135,romano,Atalayuelas,sin_clase/at_008.png,clase08,0.8122140169143677
+at_010,No,V,11,B,10,1,,83,34,71,romano,Atalayuelas,sin_clase/at_010.png,clase10,0.5492115616798401
+at_021,No,II,8,B,1,2,,77,38,28,romano,Atalayuelas,sin_clase/at_021.png,clase11,0.742615282535553
+at_034,No,V,11,B,10,1,,85,34,79,romano,Atalayuelas,sin_clase/at_034.png,clase05,0.3858250379562378
+at_035,No,V,11,B,10,1,,75,33,63,romano,Atalayuelas,sin_clase/at_035.png,clase05,0.6337311267852783
+ba_115_5,Si,IV,4,C,4,1,,0,0,0,ibero,Baza,sin_clase/ba_115_5.png,clase03,0.9948896169662476
+ba_131_1,Si,IV,1,B,4,1,,0,0,0,ibero,Baza,sin_clase/ba_131_1.png,clase08,0.7785279750823975
+ba_132_1,Si,IV,7,B,3,1,,0,0,0,ibero,Baza,sin_clase/ba_132_1.png,clase08,0.9920015335083008
+ba_136_3,Si,II,7,B,6,1,,214,117,186,ibero,Baza,sin_clase/ba_136_3.png,clase06,0.9093289971351624
+ba_143_1,Si,IV,1,D,4,2,,0,0,0,ibero,Baza,sin_clase/ba_143_1.png,clase03,0.9678786396980286
+ba_150_1,Si,IV,1,E,4,3,,0,0,0,ibero,Baza,sin_clase/ba_150_1.png,clase03,0.9667719602584839
+ba_150_5,No,II,14,B,2,2,,131,79,45,ibero,Baza,sin_clase/ba_150_5.png,clase10,0.9997205138206482
+ba_163_1,No,II,7,C,3,1,,164,92,256,ibero,Baza,sin_clase/ba_163_1.png,clase08,0.9835198521614075
+ba_17_2,No,IV,8,B,1,1,,80,42,40,ibero,Baza,sin_clase/ba_17_2.png,clase10,0.9779894948005676
+ba_18_2,No,III,4,B,9,1,,120,25,27,ibero,Baza,sin_clase/ba_18_2.png,clase11,0.9550088047981262
+ba_184_1,No,IV,1,B,5,4,,0,0,0,ibero,Baza,sin_clase/ba_184_1.png,clase02,0.9858869314193726
+ba_184_2,No,IV,1,B,3,4,,0,0,0,ibero,Baza,sin_clase/ba_184_2.png,clase08,0.9950522780418396
+ba_184_3,No,IV,1,B,5,4,,0,0,0,ibero,Baza,sin_clase/ba_184_3.png,clase08,0.97239750623703
+ba_184_4,No,IV,1,B,3,4,,0,0,0,ibero,Baza,sin_clase/ba_184_4.png,clase08,0.9931012392044067
+ba_196_1,No,II,1,B,2,2,,189,104,56,ibero,Baza,sin_clase/ba_196_1.png,clase10,0.9987785220146179
+ba_196_2,No,II,6,B,2,2,,196,105,52,ibero,Baza,sin_clase/ba_196_2.png,clase10,0.9845459461212158
+ba_206_3,No,IV,11,C,4,1,,21,22,89,ibero,Baza,sin_clase/ba_206_3.png,clase03,0.9893231987953186
+ba_206_4,No,II,14,B,2,3,,45,40,54,ibero,Baza,sin_clase/ba_206_4.png,clase10,0.5003584623336792
+ba_26_1,Si,IV,1,E,4,2,,0,0,0,ibero,Baza,sin_clase/ba_26_1.png,clase07,0.9966410398483276
+ba_38_1,No,IV,7,B,4,1,,128,57,132,ibero,Baza,sin_clase/ba_38_1.png,clase08,0.9768190979957581
+ba_40_1,Si,IV,1,E,4,2,,0,0,0,ibero,Baza,sin_clase/ba_40_1.png,clase03,0.9814375638961792
+ba_40_4,Si,IV,1,E,4,2,,0,0,0,ibero,Baza,sin_clase/ba_40_4.png,clase03,0.7475190758705139
+ba_41_1,Si,IV,1,E,4,2,,0,0,0,ibero,Baza,sin_clase/ba_41_1.png,clase03,0.9826556444168091
+ba_41_2,Si,IV,1,E,4,2,,0,0,0,ibero,Baza,sin_clase/ba_41_2.png,clase07,0.7202655076980591
+ba_42_1,Si,IV,1,E,4,2,,0,0,0,ibero,Baza,sin_clase/ba_42_1.png,clase03,0.9427770972251892
+ba_42_3,Si,IV,1,E,4,1,,0,0,0,ibero,Baza,sin_clase/ba_42_3.png,clase03,0.9574010372161865
+ba_45_1,Si,IV,1,E,4,1,,0,0,0,ibero,Baza,sin_clase/ba_45_1.png,clase03,0.9315491914749146
+ba_47_2,No,II,11,B,2,2,,206,55,74,ibero,Baza,sin_clase/ba_47_2.png,clase10,0.9999886751174927
+ba_60_2,Si,IV,1,E,4,1,,0,0,0,ibero,Baza,sin_clase/ba_60_2.png,clase03,0.9984265565872192
+ba_64_1,No,IV,1,B,7,1,,0,0,0,ibero,Baza,sin_clase/ba_64_1.png,clase05,0.9991980195045471
+ba_9_5,No,II,14,B,2,2,,200,103,57,ibero,Baza,sin_clase/ba_9_5.png,clase10,0.9992852807044983
+ba_91_4,No,II,1,B,2,1,,0,0,0,ibero,Baza,sin_clase/ba_91_4.png,clase10,0.9711087346076965
+bm_10_35,No,III,7,B,9,3,,0,0,0,ibero,Baños de la Muela,sin_clase/bm_10_35.png,clase10,0.999997615814209
+bm_10b_24,No,II,8,B,2,2,,0,0,0,ibero,Baños de la Muela,sin_clase/bm_10b_24.png,clase10,0.9999973773956299
+bm_10b_25,No,IV,7,D,3,1,,0,0,0,ibero,Baños de la Muela,sin_clase/bm_10b_25.png,clase07,0.8419801592826843
+bm_10b_26,No,II,0,B,2,2,,0,0,0,ibero,Baños de la Muela,sin_clase/bm_10b_26.png,clase10,0.9999854564666748
+bm_14,No,II,7,B,2,3,,0,0,0,ibero,Baños de la Muela,sin_clase/bm_14.png,clase10,0.9944897890090942
+bm_115,No,IV,1,C,3,1,,0,0,0,ibero,Baños de la Muela,sin_clase/bm_115.png,clase03,0.9802019000053406
+ca_9_8,No,IV,7,B,5,1,,108,60,81,ibero,Cazalilla,sin_clase/ca_9_8.png,clase05,0.8226115107536316
+cc_2,No,IV,7,B,4,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_2.png,clase08,0.34411755204200745
+cc_03,No,IV,1,D,4,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_03.png,clase03,0.9993471503257751
+cc_04,No,IV,1,D,4,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_04.png,clase03,0.9999284744262695
+cc_05,No,IV,1,D,4,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_05.png,clase03,0.9994902610778809
+cc_06,No,II,7,B,2,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_06.png,clase10,0.9999345541000366
+cc_6_04_2,No,IV,7,B,3,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_04_2.png,clase08,0.9923852682113647
+cc_06_6,No,IV,1,B,5,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_06_6.png,clase08,0.9976988434791565
+cc_06_7,No,IV,1,B,3,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_06_7.png,clase08,0.9832338690757751
+cc_6_05_1,No,II,11,B,2,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_05_1.png,clase10,0.9999809265136719
+cc_6_05_2,No,II,14,B,2,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_05_2.png,clase10,0.9984812140464783
+cc_6_05_3,No,V,7,B,10,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_05_3.png,clase03,0.6455433368682861
+cc_6_05_5,No,II,11,B,2,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_05_5.png,clase10,0.9993950128555298
+cc_6_05_6,No,II,11,B,2,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_05_6.png,clase10,0.9999898672103882
+cc_6_06_1,No,IV,1,B,4,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_06_1.png,clase09,0.6974515914916992
+cc_6_06_2,No,IV,1,B,4,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_6_06_2.png,clase08,0.9311766028404236
+cc_07_2_1,No,IV,1,B,0,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_07_2_1.png,clase03,0.5254887342453003
+cc_07_4_1,No,IV,7,B,5,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_07_4_1.png,clase02,0.6433318257331848
+cc_07_5_1,No,IV,4,C,3,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_07_5_1.png,clase03,0.5185929536819458
+cc_07,No,IV,1,B,5,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_07.png,clase08,0.9791291952133179
+cc_8_07_1,No,II,4,B,2,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_8_07_1.png,clase11,0.9999957084655762
+cc_9_08_1,No,II,11,B,2,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_9_08_1.png,clase10,0.99992835521698
+cc_9_09,Si,IV,12,B,7,4,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_9_09.png,clase01,0.9999986886978149
+cc_9_11_2,No,IV,7,B,4,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_9_11_2.png,clase06,0.9558693170547485
+cc_9_12,Si,IV,12,B,7,4,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_9_12.png,clase01,0.9999270439147949
+cc_9_13,Si,IV,12,B,7,4,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_9_13.png,clase01,0.9999946355819702
+cc_9_14,Si,IV,12,B,7,4,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_9_14.png,clase01,0.9999951124191284
+cc_10_1_1,No,II,11,B,2,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_10_1_1.png,clase10,0.999761164188385
+cc_10_2_1,No,II,11,B,1,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_10_2_1.png,clase10,0.9991114735603333
+cc_11_1_1,No,II,4,B,2,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_11_1_1.png,clase11,0.8927053809165955
+cc_11_2_1,No,II,4,B,2,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_11_2_1.png,clase11,0.993807852268219
+cc_13_14_1_3,No,II,14,B,1,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_13_14_1_3.png,clase10,0.9918067455291748
+cc_13_14_2_1,No,II,11,B,2,2,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_13_14_2_1.png,clase10,1.0
+cc_13_14_2_3,No,II,11,B,2,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_13_14_2_3.png,clase10,0.9993064403533936
+cc_13_14_1_1,No,II,1,B,2,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_13_14_1_1.png,clase11,0.9983232617378235
+cc_13_14_2_2,No,IV,1,B,5,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_13_14_2_2.png,clase02,0.6596174240112305
+cc_13_14_03,No,IV,1,B,3,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_13_14_03.png,clase08,0.9973269701004028
+cc_014_4,No,IV,1,B,5,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_014_4.png,clase08,0.991940438747406
+cc_16_7,No,IV,1,B,3,1,,106,50,121,ibero,Castellones de Ceal,sin_clase/cc_16_7.png,clase08,0.9990206956863403
+cc_19_3,Si,IV,16,B,8,1,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_19_3.png,clase02,0.8965192437171936
+cc_19_3_1,Si,II,9,B,2,3,,0,0,0,ibero,Castellones de Ceal,sin_clase/cc_19_3_1.png,clase10,0.9973697662353516
+cg_10,No,IV,15,E,5,1,,30,45,110,ibero,Cerrillo de los Gordos,sin_clase/cg_10.png,clase07,0.9954138994216919
+cg_13,Si,V,16,B,10,3,,75,43,82,romano,Cerrillo de los Gordos,sin_clase/cg_13.png,clase03,0.71214359998703
+cg_14,No,II,4,B,1,1,,610,248,180,romano,Cerrillo de los Gordos,sin_clase/cg_14.png,clase10,0.6255585551261902
+cg_15,No,II,4,B,1,1,,400,209,90,romano,Cerrillo de los Gordos,sin_clase/cg_15.png,clase10,0.970782458782196
+cg_17,No,IV,7,D,4,2,,76,43,90,romano,Cerrillo de los Gordos,sin_clase/cg_17.png,clase03,0.9815545082092285
+cg_18,No,IV,8,B,4,1,,60,38,90,romano,Cerrillo de los Gordos,sin_clase/cg_18.png,clase07,0.48699140548706055
+cg_23,No,IV,15,E,5,1,,37,46,156,ibero,Cerrillo de los Gordos,sin_clase/cg_23.png,clase07,0.9824819564819336
+cg_24,No,IV,1,B,4,1,,0,0,0,ibero,Cerrillo de los Gordos,sin_clase/cg_24.png,clase08,0.9970341920852661
+cg_33,Si,V,11,B,9,2,,87,43,80,romano,Cerrillo de los Gordos,sin_clase/cg_33.png,clase10,0.9354680776596069
+el_01_2,No,II,16,B,2,2,,0,0,0,ibero,Estacar de Luciano,sin_clase/el_01_2.png,clase10,0.9999942779541016
+el_04_2,Si,V,7,B,10,2,,111,55,217,romano,Estacar de Luciano,sin_clase/el_04_2.png,clase07,0.4976281225681305
+er_09_2,No,IV,7,B,8,4,,30,12,50,ibero,Estacar de Robarinas,sin_clase/er_09_2.png,clase08,0.8041437268257141
+er_09_3,No,IV,7,B,4,1,,81,37,68,ibero,Estacar de Robarinas,sin_clase/er_09_3.png,clase09,0.5946841239929199
+er_09_5,No,IV,7,B,8,1,,58,26,58,ibero,Estacar de Robarinas,sin_clase/er_09_5.png,clase11,0.8207486867904663
+er_12_1,No,III,7,B,13,2,,64,20,50,ibero,Estacar de Robarinas,sin_clase/er_12_1.png,clase10,0.4466768801212311
+er_19,No,IV,1,B,5,1,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_19.png,clase02,0.9990056157112122
+er_19_2,No,III,7,B,13,1,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_19_2.png,clase10,0.9790748953819275
+er_20,No,V,1,B,15,1,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_20.png,clase05,0.8760685920715332
+er_20_2,No,III,1,B,9,1,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_20_2.png,clase11,0.999964714050293
+er_22_1,No,II,7,B,4,2,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_22_1.png,clase10,0.5661999583244324
+er_23_1,No,II,7,B,4,2,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_23_1.png,clase10,0.9991163611412048
+er_48,No,III,7,B,13,2,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_48.png,clase10,0.7342048287391663
+er_53,No,II,11,B,2,2,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_53.png,clase10,0.994939923286438
+er_58_1,No,II,7,B,4,2,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_58_1.png,clase10,0.9999926090240479
+er_59,No,IV,7,B,5,1,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_59.png,clase08,0.9287548661231995
+er_63,No,II,7,B,2,2,,0,0,0,ibero,Estacar de Robarinas,sin_clase/er_63.png,clase10,0.9999901056289673
+gu_049,No,IV,11,B,6,1,,60,34,57,ibero,La Guardia,sin_clase/gu_049.png,clase10,0.891755998134613
+mb_11,No,IV,7,C,4,1,,312,257,348,ibero,Marroquies Bajos,sin_clase/mb_11.png,clase08,0.9906206130981445
+mb_16,No,II,4,B,2,1,,140,30,20,ibero,Marroquies Bajos,sin_clase/mb_16.png,clase11,0.70277339220047
+mb_29,Si,IV,16,D,3,2,,46,49,162,romano,Marroquies Bajos,sin_clase/mb_29.png,clase03,0.5730703473091125
+mc_01,No,II,7,B,2,2,,0,0,0,ibero,Molino de Caldona,sin_clase/mc_01.png,clase10,0.9999885559082031
+mc_02,No,II,11,B,2,2,,0,0,0,ibero,Molino de Caldona,sin_clase/mc_02.png,clase10,0.9999921321868896
+mc_03,No,IV,16,B,0,1,,0,0,0,ibero,Molino de Caldona,sin_clase/mc_03.png,clase08,0.8358703851699829
+pa_01,No,IV,1,B,4,1,,0,0,0,ibero,Los Patos,sin_clase/pa_01.png,clase08,0.9601948857307434
+pa_04,No,IV,7,B,13,2,,0,0,0,ibero,Los Patos,sin_clase/pa_04.png,clase07,0.9888132214546204
+pa_04_01_2,No,II,1,B,0,2,,0,0,0,ibero,Los Patos,sin_clase/pa_04_01_2.png,clase11,0.9981051683425903
+pa_04_01_3,No,II,1,B,0,1,,0,0,0,ibero,Los Patos,sin_clase/pa_04_01_3.png,clase11,0.9059560894966125
+pa_12,No,II,11,B,2,2,,0,0,0,ibero,Los Patos,sin_clase/pa_12.png,clase10,0.9992054104804993
+pa_15,No,II,7,B,2,2,,0,0,0,ibero,Los Patos,sin_clase/pa_15.png,clase10,0.9993708729743958
+pa_18,No,IV,4,D,4,1,,0,0,0,ibero,Los Patos,sin_clase/pa_18.png,clase03,0.9998853206634521
+pa_20,Si,IV,1,E,3,1,,0,0,0,ibero,Los Patos,sin_clase/pa_20.png,clase03,0.5730875134468079
+pa_23,No,IV,7,B,3,1,,0,0,0,ibero,Los Patos,sin_clase/pa_23.png,clase08,0.798645555973053
+pa_57,No,IV,1,B,3,1,,0,0,0,ibero,Los Patos,sin_clase/pa_57.png,clase02,0.5237206816673279
+pa_59,No,II,11,B,2,2,,0,0,0,ibero,Los Patos,sin_clase/pa_59.png,clase10,0.9999620914459229
+pa_60,No,IV,1,B,5,1,,0,0,0,ibero,Los Patos,sin_clase/pa_60.png,clase02,0.5931727290153503
+pa_62,No,IV,1,B,3,1,,0,0,0,ibero,Los Patos,sin_clase/pa_62.png,clase08,0.9977157115936279
+pa_63,Si,IV,16,B,3,1,,0,0,0,ibero,Los Patos,sin_clase/pa_63.png,clase08,0.941848874092102
+pa_64,No,IV,4,D,4,1,,0,0,0,ibero,Los Patos,sin_clase/pa_64.png,clase03,0.9998587369918823
+pa_68,No,IV,4,D,4,1,,0,0,0,ibero,Los Patos,sin_clase/pa_68.png,clase03,0.99967360496521
+pn_3_2,No,IV,11,B,0,1,,90,37,60,romano,Puerta Norte,sin_clase/pn_3_2.png,clase10,0.8524122834205627
+pn_5_4,Si,IV,14,B,6,1,,40,35,30,romano,Puerta Norte,sin_clase/pn_5_4.png,clase10,0.7684207558631897
+pn_6_1,No,IV,1,B,4,1,,241,112,319,romano,Puerta Norte,sin_clase/pn_6_1.png,clase08,0.9963445067405701
+pn_6_4,No,III,7,B,9,1,,105,52,30,ibero,Puerta Norte,sin_clase/pn_6_4.png,clase10,0.8647282719612122
+pn_9_3,No,IV,11,D,3,2,,78,42,90,romano,Puerta Norte,sin_clase/pn_9_3.png,clase07,0.532030463218689
+pn_9_4,No,IV,11,D,3,2,,78,48,90,romano,Puerta Norte,sin_clase/pn_9_4.png,clase03,0.9000111818313599
+pn_15_5,No,IV,11,B,3,1,,22,30,26,romano,Puerta Norte,sin_clase/pn_15_5.png,clase08,0.9897211194038391
+pn_23_5,No,IV,7,D,4,2,,85,53,92,romano,Puerta Norte,sin_clase/pn_23_5.png,clase07,0.6571398973464966
+pn_27_1,No,II,12,B,2,1,,110,46,86,romano,Puerta Norte,sin_clase/pn_27_1.png,clase10,0.5859861373901367
+pn_57_33,No,V,7,B,10,1,,40,30,47,ibero,Puerta Norte,sin_clase/pn_57_33.png,clase07,0.9946739673614502
+pn_75_67,Si,IV,11,B,5,2,,73,46,88,romano,Puerta Norte,sin_clase/pn_75_67.png,clase08,0.9946618676185608
+pn_96_797,No,IV,4,B,8,1,,0,0,0,ibero,Puerta Norte,sin_clase/pn_96_797.png,clase08,0.9787221550941467
+pt_16,No,IV,1,C,4,1,,0,0,0,ibero,Puente Tablas,sin_clase/pt_16.png,clase09,0.9689628481864929
+pt_29,No,II,1,B,2,1,,96,13,24,ibero,Puente Tablas,sin_clase/pt_29.png,clase11,0.9999572038650513
+pt_41_49,No,II,11,B,2,2,,0,0,0,ibero,Puente Tablas,sin_clase/pt_41_49.png,clase10,0.999970555305481
+tu_19_3,No,IV,11,B,6,4,,67,32,207,ibero,Tútugi,sin_clase/tu_19_3.png,clase01,0.9976021647453308
+tu_40_2,Si,IV,13,B,5,1,,0,0,0,ibero,Tútugi,sin_clase/tu_40_2.png,clase01,0.934618353843689
+tu_87_1,Si,IV,1,C,4,1,,86,72,168,ibero,Tútugi,sin_clase/tu_87_1.png,clase06,0.9460393786430359
+tu_87_6,No,II,11,B,2,2,,144,43,30,ibero,Tútugi,sin_clase/tu_87_6.png,clase10,0.9897711277008057
+tu_87_7,No,II,11,B,2,2,,147,44,37,ibero,Tútugi,sin_clase/tu_87_7.png,clase10,0.9678970575332642
+tu_90_6,No,III,7,B,0,1,,23,38,41,ibero,Tútugi,sin_clase/tu_90_6.png,clase05,0.9968309998512268

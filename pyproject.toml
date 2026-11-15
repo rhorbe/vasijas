@@ -1,0 +1,43 @@
+[project]
+name = "vasijas"
+authors = [{ name = "Rafael Orbe", email = "rafaelorbe@outlook.com" }]
+version = "0.1.0"
+description = "Proyecto de Tesis - Vasijas"
+
+requires-python = ">=3.11"
+dependencies = [
+    "ipykernel>=7.2.0",
+    "ipywidgets>=8.1.9",
+    "load-dotenv>=0.1.0",
+    "matplotlib>=3.10.8",
+    "nbconvert>=7.16.6",
+    "notebook>=7.6.0",
+    "numpy>=2.4.2",
+    "opencv-python>=4.13.0.92",
+    "pandas>=3.0.1",
+    "pandas-stubs~=3.0.1",
+    "papermill>=2.7.0",
+    "pyyaml>=6.0.3",
+    "scikit-image>=0.26.0",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.1",
+    "scipy-stubs>=1.17.1.1",
+    "seaborn>=0.13.2",
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+    "umap-learn>=0.5.12",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+    "ruff",
+]
